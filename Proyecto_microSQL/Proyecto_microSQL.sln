@@ -1,0 +1,28 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 14
+VisualStudioVersion = 14.0.25420.1
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Proyecto_microSQL", "Proyecto_microSQL\Proyecto_microSQL.csproj", "{AC2E8B71-AC81-4359-ACC6-18C8EF0D3497}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Btree", "Btree\Btree.csproj", "{44D94039-CA85-4EB6-BB0F-A267E6DBC364}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{AC2E8B71-AC81-4359-ACC6-18C8EF0D3497}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AC2E8B71-AC81-4359-ACC6-18C8EF0D3497}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AC2E8B71-AC81-4359-ACC6-18C8EF0D3497}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AC2E8B71-AC81-4359-ACC6-18C8EF0D3497}.Release|Any CPU.Build.0 = Release|Any CPU
+		{44D94039-CA85-4EB6-BB0F-A267E6DBC364}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{44D94039-CA85-4EB6-BB0F-A267E6DBC364}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{44D94039-CA85-4EB6-BB0F-A267E6DBC364}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{44D94039-CA85-4EB6-BB0F-A267E6DBC364}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
