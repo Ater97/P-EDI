@@ -10,14 +10,14 @@ namespace Proyecto_microSQL.Utilidades
     class Utilities
     {
         // string path = "@C:\microSQL\microSQL.ini";
-        string path = @"Archivo\";
-        //string path = @"C:\Users\sebas\Desktop\microSQL.ini";
+        //string path = @"Archivo\microSQL.ini";
+        string path = @"C:\Users\sebas\Desktop\microSQL.txt";
         public bool CrearDefault()
         {
-            try
+           try
             {
                 FileStream fs = File.Create(path);
-
+                fs.Close();
                 using (StreamWriter file = new StreamWriter(path, true))
                 {
                     file.WriteLine("SELECT,SELECT");
@@ -39,17 +39,13 @@ namespace Proyecto_microSQL.Utilidades
         }
 
         public List<string> CargarComando()
-        {
-            int counter = 0;
+        {  
             List<string> comandolst = new List<string>();
-            StreamReader file = new StreamReader(path);
-            string line;
-            while ((line = file.ReadLine()) != null)
+            string[] lines = File.ReadAllLines(path);
+            for (int i = 0; i < lines.Length - 1; i += 2)
             {
-                comandolst.Add(line);
-                counter++;
+                comandolst.Add(lines[i] + "," + lines[i + 1]);
             }
-            file.Close();
             return comandolst;
         }
     }
