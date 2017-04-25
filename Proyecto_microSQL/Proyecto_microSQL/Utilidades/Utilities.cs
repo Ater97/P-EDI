@@ -39,14 +39,24 @@ namespace Proyecto_microSQL.Utilidades
         }
 
         public List<string> CargarComando()
-        {  
-            List<string> comandolst = new List<string>();
-            string[] lines = File.ReadAllLines(path);
-            for (int i = 0; i < lines.Length - 1; i += 2)
+        {
+            try
             {
-                comandolst.Add(lines[i] + "," + lines[i + 1]);
+                string[]line;
+                List<string> comandolst = new List<string>();
+                string[] lines = File.ReadAllLines(path);
+                for (int i = 0; i < lines.Length; i ++)
+                {
+                    line = lines[i].Split(',');
+                    comandolst.Add(line[0]);
+                }
+                return comandolst;
             }
-            return comandolst;
+            catch
+            {
+                return null;
+            }
         }
+
     }
 }

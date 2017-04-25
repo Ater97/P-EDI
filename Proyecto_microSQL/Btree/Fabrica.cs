@@ -42,8 +42,8 @@ namespace Btree
         /// </summary>
         public void crearFolder()
         {
-            direccion = @"C:\Users\sebas\Desktop\BTree tests\";
-            // direccion = @"C:\Users\bryan\Desktop\BTree tests\";
+            direccion = @"C:\Users\sebas\Desktop\microSQL\";
+            // direccion = @"C:\Users\bryan\Desktop\microSQL\";
             // direccion = @"Archivo\";
             Directory.CreateDirectory(direccion);
             direccion = Path.Combine(direccion, nombreArchivo);
@@ -231,7 +231,6 @@ namespace Btree
                 BNode<TLlave, T> nodo = new BNode<TLlave, T>(grado, componentes);
                 return nodo;
             }
-
         }
 
         /// <summary>

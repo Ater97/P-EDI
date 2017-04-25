@@ -38,15 +38,17 @@ namespace Proyecto_microSQL
                 OpenFileDialog ofd = new OpenFileDialog();
                 if (DialogResult.OK == ofd.ShowDialog())
                 {
+                    string[] line;
                     string path = ofd.FileName;
                     if (ofd.FileName.Trim() != "")
                     {
                         string data = File.ReadAllText(ofd.FileName).Replace("\r\n", ",");
                         string[] strcomandos = data.Split(',');
                         //<Palabra Reservada>, <Comando en otro idioma> 
-                        for (int i = 0; i < strcomandos.Length; i += 2)
+                        for (int i = 0; i < strcomandos.Length; i ++)
                         {
-                            comandolst.Add(strcomandos[i] + "," + strcomandos[i + 1]);
+                            line = strcomandos[i].Split(',');
+                            comandolst.Add(strcomandos[i]);
                         }
                         Path.Text = path;
                     }

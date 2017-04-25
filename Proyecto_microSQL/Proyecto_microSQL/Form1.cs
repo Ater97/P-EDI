@@ -31,12 +31,10 @@ namespace Proyecto_microSQL
         }
         private void CargaComandos_form2_Click(object sender, EventArgs e)
         {
-        
             (frm2).Show(); 
             groupBox1.Enabled = false;
             groupBox1.Visible = false;
             comandolst = frm2.getcomando();
-           
         }
         
         private void Continuar_Click(object sender, EventArgs e)
@@ -57,6 +55,47 @@ namespace Proyecto_microSQL
         private void groupBox2_Enter(object sender, EventArgs e)
         {
 
+        }
+
+        private void richTextBox1_TextChanged(object sender, EventArgs e)
+        {
+            for (int i = 0; i < comandolst.Count(); i++)
+            {
+                CheckKeyword(comandolst[i], Color.Blue);
+            }
+
+            if (comandolst[0] == richTextBox1.Text)
+            {
+                MessageBox.Show("sdfdsfs");
+            }
+            if (comandolst[1] == richTextBox1.Text)
+            {
+                MessageBox.Show("good");
+            }
+        }
+
+        private void CheckKeyword(string word, Color color)
+        {
+            try
+            {
+                if (richTextBox1.Text.Contains(word))
+                {
+                    int index = -1;
+                    int selectStart = richTextBox1.SelectionStart;
+
+                    while ((index = richTextBox1.Text.IndexOf(word, (index + 1))) != -1)
+                    {
+                        richTextBox1.Select(index, word.Length);
+                        richTextBox1.SelectionColor = color;
+                        richTextBox1.Select(selectStart, 0);
+                        richTextBox1.SelectionColor = Color.Black;
+                    }
+                }
+            }
+            catch
+            {
+
+            }
         }
     }
 }
