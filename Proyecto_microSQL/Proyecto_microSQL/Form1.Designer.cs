@@ -36,6 +36,7 @@
             this.dataGridView1 = new System.Windows.Forms.DataGridView();
             this.treeView1 = new System.Windows.Forms.TreeView();
             this.richTextBox1 = new System.Windows.Forms.RichTextBox();
+            this.Enter = new System.Windows.Forms.Button();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
@@ -85,6 +86,7 @@
             // 
             // groupBox2
             // 
+            this.groupBox2.Controls.Add(this.Enter);
             this.groupBox2.Controls.Add(this.richTextBox1);
             this.groupBox2.Controls.Add(this.treeView1);
             this.groupBox2.Controls.Add(this.dataGridView1);
@@ -115,12 +117,23 @@
             // 
             // richTextBox1
             // 
+            this.richTextBox1.AutoWordSelection = true;
             this.richTextBox1.Location = new System.Drawing.Point(240, 16);
             this.richTextBox1.Name = "richTextBox1";
-            this.richTextBox1.Size = new System.Drawing.Size(468, 218);
+            this.richTextBox1.Size = new System.Drawing.Size(468, 188);
             this.richTextBox1.TabIndex = 4;
             this.richTextBox1.Text = "";
             this.richTextBox1.TextChanged += new System.EventHandler(this.richTextBox1_TextChanged);
+            // 
+            // Enter
+            // 
+            this.Enter.Location = new System.Drawing.Point(633, 210);
+            this.Enter.Name = "Enter";
+            this.Enter.Size = new System.Drawing.Size(75, 23);
+            this.Enter.TabIndex = 5;
+            this.Enter.Text = "Enter";
+            this.Enter.UseVisualStyleBackColor = true;
+            this.Enter.Click += new System.EventHandler(this.Enter_Click_1);
             // 
             // Form1
             // 
@@ -149,6 +162,7 @@
         private System.Windows.Forms.DataGridView dataGridView1;
         private System.Windows.Forms.RichTextBox richTextBox1;
         private System.Windows.Forms.TreeView treeView1;
+        private System.Windows.Forms.Button Enter;
     }
 }
 

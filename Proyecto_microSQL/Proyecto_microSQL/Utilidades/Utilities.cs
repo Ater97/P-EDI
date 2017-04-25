@@ -9,11 +9,22 @@ namespace Proyecto_microSQL.Utilidades
 {
     class Utilities
     {
+        string path = @"C:\Users\sebas\Desktop\microSQL\";
+
+        public void crearFolder()
+        {
+            // direccion = @"C:\Users\bryan\Desktop\microSQL\";
+            // direccion = @"Archivo\";
+            Directory.CreateDirectory(path);
+            Directory.CreateDirectory(Path.Combine(path, "tablas"));
+        }
+
         // string path = "@C:\microSQL\microSQL.ini";
         //string path = @"Archivo\microSQL.ini";
-        string path = @"C:\Users\sebas\Desktop\microSQL.txt";
+       
         public bool CrearDefault()
         {
+          path = Path.Combine(path, "microSQL.txt"); 
            try
             {
                 FileStream fs = File.Create(path);
@@ -58,5 +69,6 @@ namespace Proyecto_microSQL.Utilidades
             }
         }
 
+     
     }
 }
