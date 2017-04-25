@@ -10,8 +10,8 @@ namespace Proyecto_microSQL.Utilidades
     class Utilities
     {
         // string path = "@C:\microSQL\microSQL.ini";
-        //string path = @"Archivo\";
-        string path = @"C:\Users\sebas\Desktop\microSQL.ini";
+        string path = @"Archivo\";
+        //string path = @"C:\Users\sebas\Desktop\microSQL.ini";
         public bool CrearDefault()
         {
             try
