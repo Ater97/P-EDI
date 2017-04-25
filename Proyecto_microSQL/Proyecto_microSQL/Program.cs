@@ -17,7 +17,9 @@ namespace Proyecto_microSQL
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new Form1());
+            (new Form1()).Show();
+            Application.Run(); 
+
         }
     }
 }
