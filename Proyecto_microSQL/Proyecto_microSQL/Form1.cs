@@ -17,13 +17,19 @@ namespace Proyecto_microSQL
         {
             InitializeComponent();
         }
+
+        int caracter; //Se utiliza para la numeracion de lineas
         Form2 frm2 = new Form2();
         List<string> comandolst = new List<string>();
         Utilities U = new Utilities();
 
         private void Form1_Load(object sender, EventArgs e)
         {
-
+            /*  Para pintar el número de linea que se esta utilizando   */
+            /*  Intervalo = 10 para evitar que parpadee 
+                Inicia el Timer */
+            timer1.Interval = 10;
+            timer1.Start();
         }
 
         private void Enter_Click(object sender, EventArgs e)
@@ -97,5 +103,61 @@ namespace Proyecto_microSQL
 
             }
         }
+
+
+        #region Numero de Linea
+
+        /// <summary>
+        /// Timer dedicado a la actualizacion constante del picture box
+        /// que pinta las lineas del editor de de texto.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void timer1_Tick(object sender, EventArgs e)
+        {
+            /*  Cada tick, actualiza el picturebox  */
+            pBLineas.Refresh();
+        }
+
+        /// <summary>
+        /// Funcion del picture box encargada de pintar el numero de linea
+        /// correspondiente a la que el usuario este trabajando en el editor.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void pBLineas_Paint(object sender, PaintEventArgs e)
+        {
+            /*  Inicializa siempre en 0 por cada actualizacion que realice el picture box   */
+            caracter = 0;
+            /*  Inicializa en la altura en la primera posicion del editor   */
+            int altura = richTextBox1.GetPositionFromCharIndex(0).Y;
+
+            if(richTextBox1.Lines.Length > 0)
+            {
+                //No se encuentra en la primera linea del editor
+                for(int i = 0; i <= richTextBox1.Lines.Length -1; i++)
+                {
+                    /*  Encuentra y dibuja el número de linea que corresponde   */
+                    e.Graphics.DrawString((i+1).ToString(), richTextBox1.Font, Brushes.Blue, pBLineas.Width - (e.Graphics.MeasureString((i+1).ToString(), richTextBox1.Font).Width + 10), altura);
+                    /*  Se actualiza a la siguiente linea del editor    */
+                    caracter += richTextBox1.Lines[i].Length + 1;
+                    /*  Recalcula la altura donde deba pintar en el picture box */
+                    altura = richTextBox1.GetPositionFromCharIndex(caracter).Y;
+                }
+
+            }
+            else
+            {
+                /*  Se encuentra en la primera linea del editor.
+                 *  Inicializa la primera linea siempre en '1'   */
+                e.Graphics.DrawString("1", richTextBox1.Font, Brushes.Blue, pBLineas.Width - (e.Graphics.MeasureString("1", richTextBox1.Font).Width + 10), altura);
+            }
+
+
+        }
+
+        #endregion
+
+
     }
 }

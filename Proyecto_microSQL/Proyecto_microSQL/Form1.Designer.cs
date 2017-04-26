@@ -28,18 +28,22 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.Continuar = new System.Windows.Forms.Button();
             this.CargaComandos_form2 = new System.Windows.Forms.Button();
             this.label1 = new System.Windows.Forms.Label();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
-            this.dataGridView1 = new System.Windows.Forms.DataGridView();
-            this.treeView1 = new System.Windows.Forms.TreeView();
-            this.richTextBox1 = new System.Windows.Forms.RichTextBox();
             this.Enter = new System.Windows.Forms.Button();
+            this.richTextBox1 = new System.Windows.Forms.RichTextBox();
+            this.treeView1 = new System.Windows.Forms.TreeView();
+            this.dataGridView1 = new System.Windows.Forms.DataGridView();
+            this.pBLineas = new System.Windows.Forms.PictureBox();
+            this.timer1 = new System.Windows.Forms.Timer(this.components);
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pBLineas)).BeginInit();
             this.SuspendLayout();
             // 
             // groupBox1
@@ -86,6 +90,7 @@
             // 
             // groupBox2
             // 
+            this.groupBox2.Controls.Add(this.pBLineas);
             this.groupBox2.Controls.Add(this.Enter);
             this.groupBox2.Controls.Add(this.richTextBox1);
             this.groupBox2.Controls.Add(this.treeView1);
@@ -93,41 +98,16 @@
             this.groupBox2.Enabled = false;
             this.groupBox2.Location = new System.Drawing.Point(0, 0);
             this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(722, 397);
+            this.groupBox2.Size = new System.Drawing.Size(748, 430);
             this.groupBox2.TabIndex = 4;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "2.";
             this.groupBox2.Visible = false;
             this.groupBox2.Enter += new System.EventHandler(this.groupBox2_Enter);
             // 
-            // dataGridView1
-            // 
-            this.dataGridView1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dataGridView1.Location = new System.Drawing.Point(240, 240);
-            this.dataGridView1.Name = "dataGridView1";
-            this.dataGridView1.Size = new System.Drawing.Size(468, 150);
-            this.dataGridView1.TabIndex = 2;
-            // 
-            // treeView1
-            // 
-            this.treeView1.Location = new System.Drawing.Point(3, 16);
-            this.treeView1.Name = "treeView1";
-            this.treeView1.Size = new System.Drawing.Size(231, 374);
-            this.treeView1.TabIndex = 3;
-            // 
-            // richTextBox1
-            // 
-            this.richTextBox1.AutoWordSelection = true;
-            this.richTextBox1.Location = new System.Drawing.Point(240, 16);
-            this.richTextBox1.Name = "richTextBox1";
-            this.richTextBox1.Size = new System.Drawing.Size(468, 188);
-            this.richTextBox1.TabIndex = 4;
-            this.richTextBox1.Text = "";
-            this.richTextBox1.TextChanged += new System.EventHandler(this.richTextBox1_TextChanged);
-            // 
             // Enter
             // 
-            this.Enter.Location = new System.Drawing.Point(633, 210);
+            this.Enter.Location = new System.Drawing.Point(667, 236);
             this.Enter.Name = "Enter";
             this.Enter.Size = new System.Drawing.Size(75, 23);
             this.Enter.TabIndex = 5;
@@ -135,11 +115,52 @@
             this.Enter.UseVisualStyleBackColor = true;
             this.Enter.Click += new System.EventHandler(this.Enter_Click_1);
             // 
+            // richTextBox1
+            // 
+            this.richTextBox1.AutoWordSelection = true;
+            this.richTextBox1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.richTextBox1.Location = new System.Drawing.Point(285, 19);
+            this.richTextBox1.Name = "richTextBox1";
+            this.richTextBox1.Size = new System.Drawing.Size(457, 214);
+            this.richTextBox1.TabIndex = 4;
+            this.richTextBox1.Text = "";
+            this.richTextBox1.TextChanged += new System.EventHandler(this.richTextBox1_TextChanged);
+            // 
+            // treeView1
+            // 
+            this.treeView1.Location = new System.Drawing.Point(3, 16);
+            this.treeView1.Name = "treeView1";
+            this.treeView1.Size = new System.Drawing.Size(232, 408);
+            this.treeView1.TabIndex = 3;
+            // 
+            // dataGridView1
+            // 
+            this.dataGridView1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.dataGridView1.Location = new System.Drawing.Point(240, 265);
+            this.dataGridView1.Name = "dataGridView1";
+            this.dataGridView1.Size = new System.Drawing.Size(502, 159);
+            this.dataGridView1.TabIndex = 2;
+            // 
+            // pBLineas
+            // 
+            this.pBLineas.BackColor = System.Drawing.SystemColors.ScrollBar;
+            this.pBLineas.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.pBLineas.Location = new System.Drawing.Point(241, 19);
+            this.pBLineas.Name = "pBLineas";
+            this.pBLineas.Size = new System.Drawing.Size(45, 214);
+            this.pBLineas.TabIndex = 6;
+            this.pBLineas.TabStop = false;
+            this.pBLineas.Paint += new System.Windows.Forms.PaintEventHandler(this.pBLineas_Paint);
+            // 
+            // timer1
+            // 
+            this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(723, 402);
+            this.ClientSize = new System.Drawing.Size(760, 442);
             this.Controls.Add(this.groupBox2);
             this.Controls.Add(this.groupBox1);
             this.Name = "Form1";
@@ -149,6 +170,7 @@
             this.groupBox1.PerformLayout();
             this.groupBox2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pBLineas)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -163,6 +185,8 @@
         private System.Windows.Forms.RichTextBox richTextBox1;
         private System.Windows.Forms.TreeView treeView1;
         private System.Windows.Forms.Button Enter;
+        private System.Windows.Forms.PictureBox pBLineas;
+        private System.Windows.Forms.Timer timer1;
     }
 }
 

@@ -9,7 +9,7 @@ namespace Proyecto_microSQL.Utilidades
 {
     class Utilities
     {
-        string path = @"C:\Users\sebas\Desktop\microSQL\";
+        string path = @"C:\Users\bryan\Desktop\microSQL\";
 
         public void crearFolder()
         {
