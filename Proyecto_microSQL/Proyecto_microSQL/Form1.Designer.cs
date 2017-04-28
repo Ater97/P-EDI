@@ -107,8 +107,7 @@
             // 
             // pBLineas
             // 
-            this.pBLineas.BackColor = System.Drawing.SystemColors.ScrollBar;
-            this.pBLineas.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.pBLineas.BackColor = System.Drawing.SystemColors.Info;
             this.pBLineas.Location = new System.Drawing.Point(241, 19);
             this.pBLineas.Name = "pBLineas";
             this.pBLineas.Size = new System.Drawing.Size(45, 214);
@@ -129,7 +128,7 @@
             // richTextBox1
             // 
             this.richTextBox1.AutoWordSelection = true;
-            this.richTextBox1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.richTextBox1.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.richTextBox1.Location = new System.Drawing.Point(285, 19);
             this.richTextBox1.Name = "richTextBox1";
             this.richTextBox1.Size = new System.Drawing.Size(457, 214);

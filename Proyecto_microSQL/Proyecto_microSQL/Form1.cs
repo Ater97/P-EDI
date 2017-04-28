@@ -68,8 +68,9 @@ namespace Proyecto_microSQL
         string str;
         private void richTextBox1_TextChanged(object sender, EventArgs e)
         {
+            int position = richTextBox1.SelectionStart;
             richTextBox1.Text = richTextBox1.Text.ToUpper();
-
+            
             for (int i = 0; i < comandolst.Count(); i++)
             {
                 CheckKeywordColor(comandolst[i], Color.Blue);
@@ -81,8 +82,10 @@ namespace Proyecto_microSQL
                 richTextBox1.Text = " " + str;
                 fg = false;
             }
-            richTextBox1.SelectionStart = richTextBox1.Text.Length;
+
+            richTextBox1.SelectionStart = position;
             richTextBox1.Focus();
+            
             #endregion
         }
 
