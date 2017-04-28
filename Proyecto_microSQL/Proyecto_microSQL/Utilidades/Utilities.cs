@@ -11,8 +11,9 @@ namespace Proyecto_microSQL.Utilidades
 {
     class Utilities
     {
-        string path = @"C:\Users\bryan\Desktop\microSQL\";
+        string path = @"C:\Users\sebas\Desktop\microSQL\";
 
+        #region CreateStuff
         public void crearFolder()
         {
             Directory.CreateDirectory(path);
@@ -99,6 +100,7 @@ namespace Proyecto_microSQL.Utilidades
                 return false;
             }
         }
+#endregion
 
         public bool VerificarColumnas(string line)
         {
@@ -119,6 +121,16 @@ namespace Proyecto_microSQL.Utilidades
                 return true;
             }
             return false;
+        }
+
+        public List<string> splitArray(string[] complete, int index)
+        {
+            List<string> newLines = new List<string>();
+            for (int i = index; i < complete.Count(); i++)
+            {
+                newLines.Add(complete[index]);
+            }
+            return newLines;
         }
 
         public bool SetID(string line)

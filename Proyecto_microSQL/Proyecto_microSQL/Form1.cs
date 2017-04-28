@@ -70,17 +70,19 @@ namespace Proyecto_microSQL
         {
             int position = richTextBox1.SelectionStart;
             richTextBox1.Text = richTextBox1.Text.ToUpper();
-            
+
             for (int i = 0; i < comandolst.Count(); i++)
             {
                 CheckKeywordColor(comandolst[i], Color.Blue);
             }
+
             #region bug
             if (fg)
             {
                 str = richTextBox1.Text;
                 richTextBox1.Text = " " + str;
                 fg = false;
+                position = 2;
             }
 
             richTextBox1.SelectionStart = position;
