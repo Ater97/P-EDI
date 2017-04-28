@@ -28,6 +28,10 @@ namespace Proyecto_microSQL
      
         public List<string> getcomando()
         {
+            comandolst.Add("INT PRIMARY KEY");
+            comandolst.Add("VARCHAR(100)");
+            comandolst.Add("DATETIME");
+            comandolst.Add("INT");
             return comandolst;
         }
 

@@ -19,8 +19,8 @@ namespace Proyecto_microSQL
         }
 
         int caracter; //Se utiliza para la numeracion de lineas
-        Form2 frm2 = new Form2();
-        List<string> comandolst = new List<string>();
+        Form2 frm2 = new Form2(); //Form para la carga de palabras reservadas
+        List<string> comandolst = new List<string>(); //lista de palabras reservadas
         Utilities U = new Utilities();
 
         private void Form1_Load(object sender, EventArgs e)
@@ -64,7 +64,8 @@ namespace Proyecto_microSQL
         {
 
         }
-        
+        bool fg = true;
+        string str;
         private void richTextBox1_TextChanged(object sender, EventArgs e)
         {
             richTextBox1.Text = richTextBox1.Text.ToUpper();
@@ -73,9 +74,16 @@ namespace Proyecto_microSQL
             {
                 CheckKeywordColor(comandolst[i], Color.Blue);
             }
-
+            #region bug
+            if (fg)
+            {
+                str = richTextBox1.Text;
+                richTextBox1.Text = " " + str;
+                fg = false;
+            }
             richTextBox1.SelectionStart = richTextBox1.Text.Length;
             richTextBox1.Focus();
+            #endregion
         }
 
         private void CheckKeywordColor(string word, Color color)
@@ -92,18 +100,33 @@ namespace Proyecto_microSQL
                     richTextBox1.Select(selectStart, 0);
                     richTextBox1.SelectionColor = Color.Black;
                 }
+                //richTextBox1.Text += Environment.NewLine;
             }
         }
 
         private void Enter_Click_1(object sender, EventArgs e)
         {
-            //CREATE TABLE
-            if (richTextBox1.Text == comandolst[4])
+            richTextBox1.Text += Environment.NewLine;
+            string[] Lines = richTextBox1.Lines;
+            
+            for (int i = 0; i < Lines.Count(); i++)
             {
+                //CREATE TABLE
+                if(Lines[i].Contains(comandolst[4]))
+                {
+                    U.CrearArbol(Lines[i + 1]); //crear arbol
+                    U.SetID(Lines[i + 3]); // creat tabla
 
+                    //U.VerificarColumnas( );
+
+                    break;
+                }
+                else
+                {
+                    MessageBox.Show("Por favor revise la sintaxis");
+                }
             }
         }
-
 
         #region Numero de Linea
 
@@ -157,7 +180,5 @@ namespace Proyecto_microSQL
         }
 
         #endregion
-
-
     }
 }

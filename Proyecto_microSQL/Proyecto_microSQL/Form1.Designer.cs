@@ -34,16 +34,16 @@
             this.CargaComandos_form2 = new System.Windows.Forms.Button();
             this.label1 = new System.Windows.Forms.Label();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.pBLineas = new System.Windows.Forms.PictureBox();
             this.Enter = new System.Windows.Forms.Button();
             this.richTextBox1 = new System.Windows.Forms.RichTextBox();
             this.treeView1 = new System.Windows.Forms.TreeView();
             this.dataGridView1 = new System.Windows.Forms.DataGridView();
-            this.pBLineas = new System.Windows.Forms.PictureBox();
             this.timer1 = new System.Windows.Forms.Timer(this.components);
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pBLineas)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             this.SuspendLayout();
             // 
             // groupBox1
@@ -105,6 +105,17 @@
             this.groupBox2.Visible = false;
             this.groupBox2.Enter += new System.EventHandler(this.groupBox2_Enter);
             // 
+            // pBLineas
+            // 
+            this.pBLineas.BackColor = System.Drawing.SystemColors.ScrollBar;
+            this.pBLineas.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.pBLineas.Location = new System.Drawing.Point(241, 19);
+            this.pBLineas.Name = "pBLineas";
+            this.pBLineas.Size = new System.Drawing.Size(45, 214);
+            this.pBLineas.TabIndex = 6;
+            this.pBLineas.TabStop = false;
+            this.pBLineas.Paint += new System.Windows.Forms.PaintEventHandler(this.pBLineas_Paint);
+            // 
             // Enter
             // 
             this.Enter.Location = new System.Drawing.Point(667, 236);
@@ -141,17 +152,6 @@
             this.dataGridView1.Size = new System.Drawing.Size(502, 159);
             this.dataGridView1.TabIndex = 2;
             // 
-            // pBLineas
-            // 
-            this.pBLineas.BackColor = System.Drawing.SystemColors.ScrollBar;
-            this.pBLineas.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.pBLineas.Location = new System.Drawing.Point(241, 19);
-            this.pBLineas.Name = "pBLineas";
-            this.pBLineas.Size = new System.Drawing.Size(45, 214);
-            this.pBLineas.TabIndex = 6;
-            this.pBLineas.TabStop = false;
-            this.pBLineas.Paint += new System.Windows.Forms.PaintEventHandler(this.pBLineas_Paint);
-            // 
             // timer1
             // 
             this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
@@ -169,8 +169,8 @@
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
             this.groupBox2.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pBLineas)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).EndInit();
             this.ResumeLayout(false);
 
         }
