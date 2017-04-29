@@ -74,12 +74,20 @@ namespace Proyecto_microSQL.Utilidades
             }
         }
 
-        public bool CrearTabla(string tableName)
+        public bool CrearArchivoTabla(string line, List<string> columns)
         {
             try
             {
-                FileStream fs = File.Create(path + "tablas\\" + tableName + ".tabla");
-                fs.Close();
+                string[] name = line.Split(new string[] { "INT" }, StringSplitOptions.None);
+                if (name[1].Contains("PRIMARY KEY"))
+                {
+                    FileStream fs = File.Create(path + "tablas\\" + name[0] + ".tabla");
+                    fs.Close();
+                    using (StreamWriter file = new StreamWriter(path + "tablas\\" + name[0] + ".tabla", true))
+                    {
+                        file.WriteLine(string.Join(",", columns));
+                    }
+                }
                 return true;
             }
             catch
@@ -94,6 +102,7 @@ namespace Proyecto_microSQL.Utilidades
             {
                 BTree<string, string> a = new BTree<string, string>(treeName, 5);
                 return true;
+
             }
             catch
             {
@@ -102,46 +111,68 @@ namespace Proyecto_microSQL.Utilidades
         }
 #endregion
 
-        public bool VerificarColumnas(string line)
-        {
-            string[] temp = line.Split(new string[] { " " }, StringSplitOptions.None);
-            if (temp[0] == "INT")
-            {
-
-                return true;
-            }
-            else if(temp[0] == "VARCHAR(100)")
-            {
-
-                return true;
-            }
-            else if(temp[0] == "DATETIME")
-            {
-
-                return true;
-            }
-            return false;
-        }
-
         public List<string> splitArray(string[] complete, int index)
         {
             List<string> newLines = new List<string>();
             for (int i = index; i < complete.Count(); i++)
             {
-                newLines.Add(complete[index]);
+                if (complete[i].Trim() == ")" || complete[i].Trim() == "}" || complete[i].Trim() == ">")
+                {
+                    break;
+                }
+                newLines.Add(complete[i]);
             }
             return newLines;
         }
 
-        public bool SetID(string line)
+        //public bool SetID(string line, string[] columns)
+        //{
+        //    string[] name = line.Split(new string[] { "INT" }, StringSplitOptions.None);
+        //    if (name[1].Contains("PRIMARY KEY"))
+        //    {
+        //        CrearTabla(name[0], columns);
+        //        return true;
+        //    }
+        //    return false;
+        //}
+
+        public bool crearTabla(List<string> lineas, string tableName) //verificar formato
         {
-            string[] name = line.Split(new string[] { "INT" }, StringSplitOptions.None);
-            if (name[1].Contains("PRIMARY KEY"))
+            List<string> columnas = new List<string>();
+            int[] count = new int[3]; //conteo tipo de dato
+            for (int i = 0; i < lineas.Count(); i++)
             {
-                CrearTabla(name[0]);
-                return true;
+                if (count[0] > 3 || count[1] > 3 || count[2] > 3)
+                {
+                    return false;
+                }
+
+                string[] temp = lineas[i].Split(new string[] { " " }, StringSplitOptions.None);
+
+                if (temp[1] == "INT")
+                {
+                    columnas.Add(temp[0] + " (" + temp[1] + ")");
+                    count[0]++;
+                }
+                else if (temp[1] == "VARCHAR(100)")
+                {
+                    columnas.Add(temp[0] + " (" + temp[1] + ")");
+                    count[1]++;
+                }
+                else if (temp[1] == "DATETIME")
+                {
+                    columnas.Add(temp[0] + " (" + temp[1] + ")");
+                    count[2]++;
+                }
+                else
+                {
+                    return false;
+                }
             }
-            return false;
+            CrearArchivoTabla(tableName, columnas);
+
+            return true;
         }
+
     }
 }

@@ -120,12 +120,12 @@ namespace Proyecto_microSQL
                 if(Lines[i].Contains(comandolst[4]))
                 {
                     U.CrearArbol(Lines[i + 1]); //crear arbol
-                    U.SetID(Lines[i + 3]); // creat tabla
-
-                    //U.VerificarColumnas( );
+                    U.crearTabla(U.splitArray(Lines, i + 4), Lines[i + 3]); 
 
                     break;
                 }
+                //INSERT INTO
+
                 else
                 {
                     MessageBox.Show("Por favor revise la sintaxis");
