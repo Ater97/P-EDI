@@ -74,18 +74,18 @@ namespace Proyecto_microSQL.Utilidades
             }
         }
 
-        public bool CrearArchivoTabla(string line, List<string> columns)
+        public bool CrearArchivoTabla(string id, List<string> columns, string tablename)
         {
             try
             {
-                string[] name = line.Split(new string[] { "INT" }, StringSplitOptions.None);
+                string[] name = id.Split(new string[] { "INT" }, StringSplitOptions.None);
                 if (name[1].Contains("PRIMARY KEY"))
                 {
-                    FileStream fs = File.Create(path + "tablas\\" + name[0] + ".tabla");
+                    FileStream fs = File.Create(path + "tablas\\" + tablename + ".tabla");
                     fs.Close();
-                    using (StreamWriter file = new StreamWriter(path + "tablas\\" + name[0] + ".tabla", true))
+                    using (StreamWriter file = new StreamWriter(path + "tablas\\" + tablename + ".tabla", true))
                     {
-                        file.WriteLine(string.Join(",", columns));
+                        file.WriteLine(name[0] + "," + string.Join(",", columns));
                     }
                 }
                 return true;
@@ -96,20 +96,65 @@ namespace Proyecto_microSQL.Utilidades
             }
         }
 
-        public bool CrearArbol(string treeName)
+        public bool CrearArbol(string treeName, string id ,List<string> types)
         {
             try
             {
-                BTree<string, string> a = new BTree<string, string>(treeName, 5);
-                return true;
+                BTree<int, standardObject> a = new BTree<int, standardObject>(treeName, 5);
 
+                return true;
             }
             catch
             {
                 return false;
             }
         }
-#endregion
+
+        public bool crearTabla(List<string> lineas, string tableName, string id)
+        {
+            List<string> columnas = new List<string>();
+            List<string> type = new List<string>();
+            int[] count = new int[3]; //conteo tipo de dato
+            for (int i = 0; i < lineas.Count(); i++) //verificar formato
+            {
+                if (count[0] > 3 || count[1] > 3 || count[2] > 3)
+                {
+                    return false;
+                }
+
+                string[] temp = lineas[i].Split(new string[] { " " }, StringSplitOptions.None);
+
+                if (temp[1] == "INT")
+                {
+                    columnas.Add(temp[0] + " (" + temp[1] + ")");
+                    type.Add(temp[1]);
+                    count[0]++;
+                }
+                else if (temp[1] == "VARCHAR(100)")
+                {
+                    columnas.Add(temp[0] + " (" + temp[1] + ")");
+                    type.Add(temp[1]);
+                    count[1]++;
+                }
+                else if (temp[1] == "DATETIME")
+                {
+                    columnas.Add(temp[0] + " (" + temp[1] + ")");
+                    type.Add(temp[1]);
+                    count[2]++;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+
+            if (!CrearArchivoTabla(id, columnas, tableName))
+                return false;
+            if (!CrearArbol(tableName, id, type))
+                return false;
+            return true;
+        }
+        #endregion
 
         public List<string> splitArray(string[] complete, int index)
         {
@@ -124,55 +169,75 @@ namespace Proyecto_microSQL.Utilidades
             }
             return newLines;
         }
-
-        //public bool SetID(string line, string[] columns)
-        //{
-        //    string[] name = line.Split(new string[] { "INT" }, StringSplitOptions.None);
-        //    if (name[1].Contains("PRIMARY KEY"))
-        //    {
-        //        CrearTabla(name[0], columns);
-        //        return true;
-        //    }
-        //    return false;
-        //}
-
-        public bool crearTabla(List<string> lineas, string tableName) //verificar formato
+       
+       public int getSplitIndex(string[] completelns, int startindex, string comando)
         {
-            List<string> columnas = new List<string>();
-            int[] count = new int[3]; //conteo tipo de dato
-            for (int i = 0; i < lineas.Count(); i++)
+            for (int i = startindex; i < completelns.Count(); i++)
             {
-                if (count[0] > 3 || count[1] > 3 || count[2] > 3)
-                {
-                    return false;
-                }
-
-                string[] temp = lineas[i].Split(new string[] { " " }, StringSplitOptions.None);
-
-                if (temp[1] == "INT")
-                {
-                    columnas.Add(temp[0] + " (" + temp[1] + ")");
-                    count[0]++;
-                }
-                else if (temp[1] == "VARCHAR(100)")
-                {
-                    columnas.Add(temp[0] + " (" + temp[1] + ")");
-                    count[1]++;
-                }
-                else if (temp[1] == "DATETIME")
-                {
-                    columnas.Add(temp[0] + " (" + temp[1] + ")");
-                    count[2]++;
-                }
-                else
-                {
-                    return false;
-                }
+                if (completelns.Contains(comando))
+                    return i;
             }
-            CrearArchivoTabla(tableName, columnas);
+            return 0;
+        }
+
+        #region Insert
+        public bool insertarArchivoTabla(string tableName, List<string> values)
+        {
+           try
+            {
+                using (StreamWriter file = new StreamWriter(path + "tablas\\" + tableName + ".tabla", true))
+                {
+                    file.WriteLine(string.Join(",", values));
+                }
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+        public bool insertarArbol(string tableName, List<string> values)
+        {
+            try
+            {
+                standardObject newobj = (new standardObject
+                {
+                    ID = int.Parse(values[0]),
+                });
+                //object instance;
+                //for (int i = 0; i < types.Count(); i++)
+                //{
+                //    Type type = Type.GetType( , true);
+
+                //    instance = Activator.CreateInstance(type);
+
+                //    PropertyInfo prop = type.GetProperty(types[i])
+                //}
+
+
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+        public bool Insertar(string tableName, List<string> columns, List<string> values)
+        {
+            for (int i = 0; i < columns.Count(); i++)//verificar formato
+            {
+
+            }
+            for (int i = 0; i < values.Count(); i++)//verificar formato
+            {
+
+            }
 
             return true;
         }
-
+        #endregion
     }
 }
+

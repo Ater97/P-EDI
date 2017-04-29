@@ -119,12 +119,23 @@ namespace Proyecto_microSQL
                 //CREATE TABLE
                 if(Lines[i].Contains(comandolst[4]))
                 {
-                    U.CrearArbol(Lines[i + 1]); //crear arbol
-                    U.crearTabla(U.splitArray(Lines, i + 4), Lines[i + 3]); 
-
+                 if(!U.crearTabla(U.splitArray(Lines, i + 4), Lines[i + 1], Lines[i + 3])) //crear archivo tabla y arbol
+                    {
+                        MessageBox.Show("Por favor revise la sintaxis");
+                    }
                     break;
                 }
                 //INSERT INTO
+                if (Lines[i].Contains(comandolst[6]))
+                {
+                    int indexValues = U.getSplitIndex(Lines, i + 4, comandolst[7]);
+                    if (!U.Insertar(Lines[i + 1], U.splitArray(Lines, i + 4), U.splitArray(Lines, indexValues))) //Insertar datos
+                    {
+                        MessageBox.Show("Por favor revise la sintaxis");
+                    }
+                    break;
+                }
+                //SELECT 
 
                 else
                 {
