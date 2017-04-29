@@ -113,7 +113,8 @@ namespace Proyecto_microSQL
         {
             richTextBox1.Text += Environment.NewLine;
             string[] Lines = richTextBox1.Lines;
-            
+            Lines= U.LimiarArray(Lines); //eliminar espacios en blanco, enters y caracteres extra
+
             for (int i = 0; i < Lines.Count(); i++)
             {
                 //CREATE TABLE
@@ -122,14 +123,17 @@ namespace Proyecto_microSQL
                  if(!U.crearTabla(U.splitArray(Lines, i + 4), Lines[i + 1], Lines[i + 3])) //crear archivo tabla y arbol
                     {
                         MessageBox.Show("Por favor revise la sintaxis");
+                        break;
                     }
+                    richTextBox1.Clear();
+                    fg = true;
                     break;
                 }
                 //INSERT INTO
                 if (Lines[i].Contains(comandolst[6]))
                 {
-                    int indexValues = U.getSplitIndex(Lines, i + 4, comandolst[7]);
-                    if (!U.Insertar(Lines[i + 1], U.splitArray(Lines, i + 4), U.splitArray(Lines, indexValues))) //Insertar datos
+                    int indexValues = U.getSplitIndex(Lines, i + 3, comandolst[7]);
+                    if (!U.Insertar(Lines[i + 1], U.splitArray(Lines, i + 3), U.splitArray(Lines, indexValues))) //Insertar datos
                     {
                         MessageBox.Show("Por favor revise la sintaxis");
                     }

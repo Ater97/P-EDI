@@ -123,22 +123,22 @@ namespace Proyecto_microSQL.Utilidades
                 }
 
                 string[] temp = lineas[i].Split(new string[] { " " }, StringSplitOptions.None);
-
-                if (temp[1] == "INT")
+                temp = LimiarArray(temp);
+                if (temp[1].Contains("INT"))
                 {
-                    columnas.Add(temp[0] + " (" + temp[1] + ")");
+                    columnas.Add(temp[0].Trim() + " (" + temp[1].Trim() + ")");
                     type.Add(temp[1]);
                     count[0]++;
                 }
-                else if (temp[1] == "VARCHAR(100)")
+                else if (temp[1].Contains("VARCHAR(100)"))
                 {
-                    columnas.Add(temp[0] + " (" + temp[1] + ")");
+                    columnas.Add(temp[0].Trim() + " (" + temp[1].Trim() + ")");
                     type.Add(temp[1]);
                     count[1]++;
                 }
-                else if (temp[1] == "DATETIME")
+                else if (temp[1].Contains("DATETIME"))
                 {
-                    columnas.Add(temp[0] + " (" + temp[1] + ")");
+                    columnas.Add(temp[0].Trim() + " (" + temp[1].Trim() + ")");
                     type.Add(temp[1]);
                     count[2]++;
                 }
@@ -161,7 +161,7 @@ namespace Proyecto_microSQL.Utilidades
             List<string> newLines = new List<string>();
             for (int i = index; i < complete.Count(); i++)
             {
-                if (complete[i].Trim() == ")" || complete[i].Trim() == "}" || complete[i].Trim() == ">")
+                if (complete[i].Trim() == ")" || complete[i].Trim() == "}" || complete[i].Trim() == ">" || complete[i].Trim() == "]")
                 {
                     break;
                 }
@@ -174,12 +174,26 @@ namespace Proyecto_microSQL.Utilidades
         {
             for (int i = startindex; i < completelns.Count(); i++)
             {
-                if (completelns.Contains(comando))
-                    return i;
+                if (completelns[i].Contains(comando))
+                    return i + 2;
             }
             return 0;
         }
 
+        public string[] LimiarArray(string[] Lines)
+        {
+            Lines = Lines.Where(x => !string.IsNullOrEmpty(x)).ToArray(); // eliminar espacios en blanco
+
+            var charsToRemove = new string[] { "@", ",", ".", ";" }; //eliminar caracteres extra
+            for (int i = 0; i < Lines.Length; i++)
+            {
+                foreach (var c in charsToRemove)
+                {
+                    Lines[i] = Lines[i].Replace(c, string.Empty);
+                }
+            }
+            return Lines;
+        }
         #region Insert
         public bool insertarArchivoTabla(string tableName, List<string> values)
         {
@@ -197,7 +211,7 @@ namespace Proyecto_microSQL.Utilidades
             }
         }
 
-        public bool insertarArbol(string tableName, List<string> values)
+        public bool insertarArbol(string tableName, List<string> values, List<string> columns)
         {
             try
             {
@@ -205,17 +219,18 @@ namespace Proyecto_microSQL.Utilidades
                 {
                     ID = int.Parse(values[0]),
                 });
-                //object instance;
-                //for (int i = 0; i < types.Count(); i++)
+
+                //for (int i = 0; i < values.Count(); i++)
                 //{
-                //    Type type = Type.GetType( , true);
+                //    Type type = Type.GetType( values[1], true);
 
-                //    instance = Activator.CreateInstance(type);
+                //    object instance = Activator.CreateInstance(type);
 
-                //    PropertyInfo prop = type.GetProperty(types[i])
+                //    PropertyInfo prop = type.GetProperty(values[i]);
                 //}
 
-
+                BTree<int, standardObject> tree = new BTree<int, standardObject>(tableName);
+                
                 return true;
             }
             catch
@@ -234,7 +249,10 @@ namespace Proyecto_microSQL.Utilidades
             {
 
             }
-
+            if (!insertarArbol(tableName, values, columns))
+                return false;
+            if (!insertarArchivoTabla(tableName, values))
+                return false;
             return true;
         }
         #endregion
