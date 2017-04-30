@@ -17,11 +17,12 @@ namespace Proyecto_microSQL
         {
             InitializeComponent();
         }
-
         int caracter; //Se utiliza para la numeracion de lineas
         Form2 frm2 = new Form2(); //Form para la carga de palabras reservadas
         List<string> comandolst = new List<string>(); //lista de palabras reservadas
         Utilities U = new Utilities();
+        DataGridViewManagement D = new DataGridViewManagement();
+        string path = @"C:\Users\sebas\Desktop\microSQL\"; //direccion principal de los archivos
 
         private void Form1_Load(object sender, EventArgs e)
         {
@@ -30,6 +31,8 @@ namespace Proyecto_microSQL
                 Inicia el Timer */
             timer1.Interval = 10;
             timer1.Start();
+            U.setPath(path);
+            D.setPath(path);
         }
 
         private void Enter_Click(object sender, EventArgs e)
@@ -126,6 +129,7 @@ namespace Proyecto_microSQL
                         break;
                     }
                     richTextBox1.Clear();
+                    dataGridView1.DataSource = D.NewDataTable(Lines[i + 1].Trim());
                     fg = true;
                     break;
                 }
@@ -133,26 +137,32 @@ namespace Proyecto_microSQL
                 if (Lines[i].Contains(comandolst[6]))
                 {
                     int indexValues = U.getSplitIndex(Lines, i + 3, comandolst[7]);
-                    if (!U.Insertar(Lines[i + 1], U.splitArray(Lines, i + 3).Item1, U.splitArray(Lines, indexValues).Item1) || 
-                        !U.splitArray(Lines, i + 3).Item2 || !U.splitArray(Lines, indexValues).Item2) //Insertar datos
+                    if (!U.Insertar(Lines[i + 1], U.splitArray(Lines, i + 3).Item1, U.splitArray(Lines, indexValues).Item1)
+                        || !U.splitArray(Lines, i + 3).Item2 || !U.splitArray(Lines, indexValues).Item2) //Insertar datos
                     {
                         MessageBox.Show("Por favor revise la sintaxis");
+                        break;
                     }
                     richTextBox1.Clear();
+                    dataGridView1.DataSource = D.NewDataTable(Lines[i + 1].Trim());
                     fg = true;
                     break;
                 }
                 //SELECT 
                 if(Lines[i].Contains(comandolst[0]))
                 {
-                    if(!U.Select() )
+                    int index = U.getSplitIndex(Lines, i + 1, comandolst[1]);
+                    if (!U.Select(Lines, Lines[index - 1].Trim()))
                     {
-
+                        MessageBox.Show("Por favor revise la sintaxis");
+                        break;
                     }
                     richTextBox1.Clear();
+                    dataGridView1.DataSource = D.NewDataTable(Lines[index - 1].Trim());
                     fg = true;
                     break;
                 }
+
                 else
                 {
                     MessageBox.Show("Por favor revise la sintaxis");

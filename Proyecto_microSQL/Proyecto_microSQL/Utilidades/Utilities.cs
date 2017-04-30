@@ -11,7 +11,11 @@ namespace Proyecto_microSQL.Utilidades
 {
     class Utilities
     {
-        string path = @"C:\Users\sebas\Desktop\microSQL\";
+        string path;
+        public void setPath(string p)
+        {
+            path = p;
+        }
 
         #region CreateStuff
         public void crearFolder()
@@ -148,9 +152,9 @@ namespace Proyecto_microSQL.Utilidades
                 }
             }
 
-            if (!CrearArchivoTabla(id, columnas, tableName))
+            if (!CrearArchivoTabla(id, columnas, tableName.Trim()))
                 return false;
-            if (!CrearArbol(tableName, id, type))
+            if (!CrearArbol(tableName.Trim(), id, type))
                 return false;
             return true;
         }
@@ -242,13 +246,18 @@ namespace Proyecto_microSQL.Utilidades
                     {
                         if (!c[0, 0])
                         {
-                            newobj.MyProperty_int2 = int.Parse(values[i]);
+                            newobj.MyProperty_int1 = int.Parse(values[i]);
                             c[0, 0] = true;
                         }
                         else if (!c[0, 1])
                         {
                             newobj.MyProperty_int2 = int.Parse(values[i]);
                             c[0, 1] = true;
+                        }
+                        else if (!c[0, 2])
+                        {
+                            newobj.MyProperty_int3 = int.Parse(values[i]);
+                            c[0, 2] = true;
                         }
                         else
                             return false;
@@ -315,19 +324,29 @@ namespace Proyecto_microSQL.Utilidades
             {
 
             }
-            if (!insertarArbol(tableName, values, columns))
+            if (!insertarArbol(tableName.Trim(), values, columns))
                 return false;
-            if (!insertarArchivoTabla(tableName, values))
+            if (!insertarArchivoTabla(tableName.Trim(), values))
                 return false;
             return true;
         }
         #endregion
 
         #region SELECT
-        public bool Select()
+        public bool Select(string[] columns, string tableName)
         {
+            try
+            {
+                string data = File.ReadAllText(path + "tablas\\" + tableName + ".tabla").Replace("\r\n", "$");
+                string[] strcomandos = data.Split(',');
 
-            return true;
+
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
         }
         #endregion
     }
