@@ -40,6 +40,7 @@
             this.treeView1 = new System.Windows.Forms.TreeView();
             this.dataGridView1 = new System.Windows.Forms.DataGridView();
             this.timer1 = new System.Windows.Forms.Timer(this.components);
+            this.exportcsv = new System.Windows.Forms.Button();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pBLineas)).BeginInit();
@@ -90,6 +91,7 @@
             // 
             // groupBox2
             // 
+            this.groupBox2.Controls.Add(this.exportcsv);
             this.groupBox2.Controls.Add(this.pBLineas);
             this.groupBox2.Controls.Add(this.Enter);
             this.groupBox2.Controls.Add(this.richTextBox1);
@@ -117,7 +119,7 @@
             // 
             // Enter
             // 
-            this.Enter.Location = new System.Drawing.Point(667, 236);
+            this.Enter.Location = new System.Drawing.Point(667, 239);
             this.Enter.Name = "Enter";
             this.Enter.Size = new System.Drawing.Size(75, 23);
             this.Enter.TabIndex = 5;
@@ -155,6 +157,16 @@
             // 
             this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
             // 
+            // exportcsv
+            // 
+            this.exportcsv.Location = new System.Drawing.Point(586, 239);
+            this.exportcsv.Name = "exportcsv";
+            this.exportcsv.Size = new System.Drawing.Size(75, 23);
+            this.exportcsv.TabIndex = 7;
+            this.exportcsv.Text = " Export";
+            this.exportcsv.UseVisualStyleBackColor = true;
+            this.exportcsv.Click += new System.EventHandler(this.exportcsv_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -186,6 +198,7 @@
         private System.Windows.Forms.Button Enter;
         private System.Windows.Forms.PictureBox pBLineas;
         private System.Windows.Forms.Timer timer1;
+        private System.Windows.Forms.Button exportcsv;
     }
 }
 

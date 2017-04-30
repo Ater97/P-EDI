@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 using Microsoft.VisualBasic.FileIO;
 
 namespace Proyecto_microSQL.Utilidades
@@ -59,5 +60,55 @@ namespace Proyecto_microSQL.Utilidades
                 return null;
             }
         }
+
+        public bool Exporcsv(DataGridViewRowCollection Rows)
+        {
+            try
+            {
+                Stream myStream;
+                SaveFileDialog saveFileDialog1 = new SaveFileDialog();
+
+                saveFileDialog1.Filter = " (*.csv)|*.csv| (*.xlsx*)|*.xlsx ";
+                saveFileDialog1.FilterIndex = 2;
+                saveFileDialog1.RestoreDirectory = true;
+
+                if (saveFileDialog1.ShowDialog() == DialogResult.OK)
+                {
+                    if ((myStream = saveFileDialog1.OpenFile()) != null)
+                    {
+                        var list = new List<string>(Rows.Count);
+                        foreach (DataGridViewRow row in Rows)
+                        {
+                            var sb = new StringBuilder();
+                            foreach (DataGridViewCell cell in row.Cells)
+                            {
+                                sb.Append(cell.FormattedValue + ",");
+                            }
+                            list.Add(sb.ToString());
+                        }
+
+                        myStream.Close();
+                        using (StreamWriter file = new StreamWriter(saveFileDialog1.FileName, true))
+                        {
+                            file.WriteLine("it works");
+                            for (int i = 0; i < Rows.Count; i++)
+                            {
+                                file.WriteLine(list[i]);
+                            }
+
+                        }
+                        
+                    }
+                }
+                return true;
+
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+
     }
 }

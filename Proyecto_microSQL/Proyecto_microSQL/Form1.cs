@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -222,5 +223,16 @@ namespace Proyecto_microSQL
         }
 
         #endregion
+
+        private void exportxlsx_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void exportcsv_Click(object sender, EventArgs e)
+        {
+            if (!D.Exporcsv(dataGridView1.Rows))
+                MessageBox.Show("Ocurrio un error, intente de nuevo");
+        }
     }
 }
