@@ -12,6 +12,7 @@ namespace Proyecto_microSQL.Utilidades
     class Utilities
     {
         string path;
+
         public void setPath(string p)
         {
             path = p;
@@ -127,7 +128,8 @@ namespace Proyecto_microSQL.Utilidades
                 }
 
                 string[] temp = lineas[i].Split(new string[] { " " }, StringSplitOptions.None);
-                temp = LimiarArray(temp);
+                var charsToRemove = new string[] { "@", ",", ".", ";" };
+                temp = LimiarArray(temp, charsToRemove);
                 if (temp[1].Contains("INT"))
                 {
                     columnas.Add(temp[0].Trim() + " (" + temp[1].Trim() + ")");
@@ -186,11 +188,9 @@ namespace Proyecto_microSQL.Utilidades
             return 0;
         }
 
-        public string[] LimiarArray(string[] Lines)
+        public string[] LimiarArray(string[] Lines, string[] toRemove)
         {
-            Lines = Lines.Where(x => !string.IsNullOrEmpty(x)).ToArray(); // eliminar espacios en blanco
-
-            var charsToRemove = new string[] { "@", ",", ".", ";" }; //eliminar caracteres extra
+            var charsToRemove = toRemove; //eliminar caracteres extra
             for (int i = 0; i < Lines.Length; i++)
             {
                 foreach (var c in charsToRemove)
@@ -198,6 +198,9 @@ namespace Proyecto_microSQL.Utilidades
                     Lines[i] = Lines[i].Replace(c, string.Empty);
                 }
             }
+
+            Lines = Lines.Where(x => !string.IsNullOrEmpty(x)).ToArray(); // eliminar espacios en blanco
+
             return Lines;
         }
 
@@ -333,14 +336,56 @@ namespace Proyecto_microSQL.Utilidades
         #endregion
 
         #region SELECT
-        public bool Select(string[] columns, string tableName)
+        public List<string> listDataTable = new List<string>(); 
+        public bool Select(string[] columns, string tableName, int index)
         {
             try
             {
-                string data = File.ReadAllText(path + "tablas\\" + tableName + ".tabla").Replace("\r\n", "$");
-                string[] strcomandos = data.Split(',');
+                string data = File.ReadAllText(path + "tablas\\" + tableName + ".tabla").Replace("\r\n", "$"); //cargar tabla
+              //  BTree<int, standardObject> tree = new BTree<int, standardObject>(tableName, 5); // cargar arbol
+                string[] Table = data.Split('$'); //tabla completa
+                List<string> showlst = new List<string>(); //tabla para mostrar
+                string[] strCol = Table[0].Split(','); //etiquetas columnas
+                bool[] flags = new bool[9]; //banderas por columnas
+                int[] orden = new int[9]; //Orden deseado de columnas
+                string temp = "";
 
+                #region preparations
+                var Remove = new string[] { "(INT)", "(VARCHAR(100))", "(DATETIME)", "FROM" };
+                strCol = LimiarArray(strCol, Remove);
+                for (int i = 1; i < strCol.Count(); i++)
+                {
+                    for (int j = 0; j < strCol.Count(); j++)
+                    {
+                        if (columns[i].Trim() == strCol[j].Trim())
+                        {
+                            flags[j] = true;
+                            temp = temp + columns[i] + ",";
+                            orden[j] = i;
+                            break;
+                        }
+                    }
+                }
+                temp = temp.TrimEnd(',');
+                showlst.Add(temp);
 
+                #endregion
+
+                for (int i = 1; i < Table.Count() - 1; i++)
+                {
+                    temp = "";
+                    string[] row = Table[i].Split(',');
+
+                    for (int j = 0; j < orden.Count(); j++)
+                    {
+                        int ix = orden[j] - 1;
+                        if (ix >= 0)
+                            temp = temp + row[ix] + ",";
+                    }
+                    temp = temp.TrimEnd(',');
+                    showlst.Add(temp);
+                }
+                listDataTable = showlst;
                 return true;
             }
             catch

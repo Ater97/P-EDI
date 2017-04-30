@@ -46,7 +46,7 @@ namespace Proyecto_microSQL
             (frm2).Show();
             comandolst = frm2.getcomando();
         }
-        
+
         private void Continuar_Click(object sender, EventArgs e)
         {
             gbOn();
@@ -61,9 +61,9 @@ namespace Proyecto_microSQL
             groupBox1.Visible = false;
             groupBox2.Enabled = true;
             groupBox2.Visible = true;
-            
+
         }
- 
+
         private void groupBox2_Enter(object sender, EventArgs e)
         {
 
@@ -91,7 +91,7 @@ namespace Proyecto_microSQL
 
             richTextBox1.SelectionStart = position;
             richTextBox1.Focus();
-            
+
             #endregion
         }
 
@@ -112,19 +112,19 @@ namespace Proyecto_microSQL
                 //richTextBox1.Text += Environment.NewLine;
             }
         }
-
+        string[] charsToRemove = new string[] { "@", ",", ".", ";" };
         private void Enter_Click_1(object sender, EventArgs e)
         {
             richTextBox1.Text += Environment.NewLine;
             string[] Lines = richTextBox1.Lines;
-            Lines= U.LimiarArray(Lines); //eliminar espacios en blanco, enters y caracteres extra
+            Lines = U.LimiarArray(Lines, charsToRemove); //eliminar espacios en blanco, enters y caracteres extra
 
             for (int i = 0; i < Lines.Count(); i++)
             {
                 //CREATE TABLE
-                if(Lines[i].Contains(comandolst[4]))
-                {
-                 if(!U.crearTabla(U.splitArray(Lines, i + 4).Item1, Lines[i + 1], Lines[i + 3]) || !U.splitArray(Lines, i + 4).Item2) //crear archivo tabla y arbol
+                if (Lines[i].Contains(comandolst[4]))
+                { //crear archivo tabla y arbol
+                    if (!U.crearTabla(U.splitArray(Lines, i + 4).Item1, Lines[i + 1], Lines[i + 3]) || !U.splitArray(Lines, i + 4).Item2)
                     {
                         MessageBox.Show("Por favor revise la sintaxis");
                         break;
@@ -150,19 +150,20 @@ namespace Proyecto_microSQL
                     break;
                 }
                 //SELECT 
-                if(Lines[i].Contains(comandolst[0]))
+                if (Lines[i].Contains(comandolst[0]))
                 {
                     int index = U.getSplitIndex(Lines, i + 1, comandolst[1]);
-                    if (!U.Select(Lines, Lines[index - 1].Trim()))
+                    if (!U.Select(Lines, Lines[index - 1].Trim(), index))
                     {
                         MessageBox.Show("Por favor revise la sintaxis");
                         break;
                     }
                     richTextBox1.Clear();
-                    dataGridView1.DataSource = D.NewDataTable(Lines[index - 1].Trim());
+                    dataGridView1.DataSource = D.ToDataTable(U.listDataTable);
                     fg = true;
                     break;
                 }
+                //DELETE FROM 
 
                 else
                 {
@@ -198,13 +199,13 @@ namespace Proyecto_microSQL
             /*  Inicializa en la altura en la primera posicion del editor   */
             int altura = richTextBox1.GetPositionFromCharIndex(0).Y;
 
-            if(richTextBox1.Lines.Length > 0)
+            if (richTextBox1.Lines.Length > 0)
             {
                 //No se encuentra en la primera linea del editor
-                for(int i = 0; i <= richTextBox1.Lines.Length -1; i++)
+                for (int i = 0; i <= richTextBox1.Lines.Length - 1; i++)
                 {
                     /*  Encuentra y dibuja el número de linea que corresponde   */
-                    e.Graphics.DrawString((i+1).ToString(), richTextBox1.Font, Brushes.Blue, pBLineas.Width - (e.Graphics.MeasureString((i+1).ToString(), richTextBox1.Font).Width + 10), altura);
+                    e.Graphics.DrawString((i + 1).ToString(), richTextBox1.Font, Brushes.Blue, pBLineas.Width - (e.Graphics.MeasureString((i + 1).ToString(), richTextBox1.Font).Width + 10), altura);
                     /*  Se actualiza a la siguiente linea del editor    */
                     caracter += richTextBox1.Lines[i].Length + 1;
                     /*  Recalcula la altura donde deba pintar en el picture box */
@@ -223,11 +224,6 @@ namespace Proyecto_microSQL
         }
 
         #endregion
-
-        private void exportxlsx_Click(object sender, EventArgs e)
-        {
-
-        }
 
         private void exportcsv_Click(object sender, EventArgs e)
         {

@@ -21,7 +21,7 @@ namespace Proyecto_microSQL.Utilidades
         public DataTable NewDataTable(string tableName)
         {
             DataTable csvData = new DataTable();
-
+         
             try
             {
                 using (TextFieldParser csvReader = new TextFieldParser(path + "tablas\\" + tableName + ".tabla"))
@@ -90,18 +90,14 @@ namespace Proyecto_microSQL.Utilidades
                         myStream.Close();
                         using (StreamWriter file = new StreamWriter(saveFileDialog1.FileName, true))
                         {
-                            file.WriteLine("it works");
                             for (int i = 0; i < Rows.Count; i++)
                             {
                                 file.WriteLine(list[i]);
                             }
-
                         }
-                        
                     }
                 }
                 return true;
-
             }
             catch
             {
@@ -109,6 +105,46 @@ namespace Proyecto_microSQL.Utilidades
             }
         }
 
+        public DataTable ToDataTable(List<string> list)
+        {
+            DataTable dataTable = new DataTable();
+            //try
+            {
 
+               // csvReader.SetDelimiters(new string[] { "," });
+                //csvReader.HasFieldsEnclosedInQuotes = true;
+                string[] colFields = list[0].Split(',');
+
+                foreach (string column in colFields)
+                {
+                    DataColumn serialno = new DataColumn(column);
+                    serialno.AllowDBNull = true;
+                    dataTable.Columns.Add(serialno);
+                }
+
+                for (int j = 1; j < list.Count(); j++)
+                {
+
+                    string[] fieldData = list[j].Split(',');
+                    DataRow dr = dataTable.NewRow();
+
+                    for (int i = 0; i < fieldData.Length; i++)
+                    {
+                        if (fieldData[i] == null)
+                            fieldData[i] = string.Empty;
+
+                        dr[i] = fieldData[i];
+                    }
+                    dataTable.Rows.Add(dr);
+
+                }
+
+                return dataTable;
+            }
+            //catch
+            //{
+            //    return null;
+            //}
+        }
     }
 }
