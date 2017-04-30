@@ -155,7 +155,12 @@ namespace Proyecto_microSQL
                     int index = U.getSplitIndex(Lines, i + 1, comandolst[1]);
                     if (!U.Select(Lines, Lines[index - 1].Trim(), index))
                     {
-                        MessageBox.Show("Por favor revise la sintaxis");
+                        string tem = "Por favor revise la sintaxis. Los siguientes campos son inexistentes:";
+                        for (int j = 0; j < U.Missing.Count(); j++)
+                        {
+                            tem = tem + " " + U.Missing[j]; 
+                        }
+                        MessageBox.Show(tem);
                         break;
                     }
                     richTextBox1.Clear();
@@ -164,7 +169,18 @@ namespace Proyecto_microSQL
                     break;
                 }
                 //DELETE FROM 
-
+                if(Lines[i].Contains(comandolst[2]))
+                {
+                    if(!U.Delete())
+                    {
+                        MessageBox.Show("Por favor revise la sintaxis");
+                        break;
+                    }
+                    richTextBox1.Clear();
+                   // dataGridView1.DataSource = D.NewDataTable(Lines[i + 1].Trim());
+                    fg = true;
+                    break;
+                }
                 else
                 {
                     MessageBox.Show("Por favor revise la sintaxis");

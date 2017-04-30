@@ -336,7 +336,8 @@ namespace Proyecto_microSQL.Utilidades
         #endregion
 
         #region SELECT
-        public List<string> listDataTable = new List<string>(); 
+        public List<string> listDataTable = new List<string>();
+        public List<string> Missing = new List<string>();
         public bool Select(string[] columns, string tableName, int index)
         {
             try
@@ -351,24 +352,37 @@ namespace Proyecto_microSQL.Utilidades
                 string temp = "";
 
                 #region preparations
-                var Remove = new string[] { "(INT)", "(VARCHAR(100))", "(DATETIME)", "FROM" };
+                var Remove = new string[] { "(INT)", "(VARCHAR(100))", "(DATETIME)" };
                 strCol = LimiarArray(strCol, Remove);
                 for (int i = 1; i < strCol.Count(); i++)
                 {
                     for (int j = 0; j < strCol.Count(); j++)
-                    {
+                    {   
                         if (columns[i].Trim() == strCol[j].Trim())
                         {
-                            flags[j] = true;
+                            flags[i - 1] = true;
                             temp = temp + columns[i] + ",";
                             orden[j] = i;
                             break;
                         }
                     }
                 }
+
                 temp = temp.TrimEnd(',');
                 showlst.Add(temp);
+                List<int> missing = new List<int>();
+                Missing = new List<string>();
 
+                if (!check(flags, columns).Item1)  //verificar la existencia de las columnas solicitadas
+                {
+                    missing = check(flags, columns).Item2;
+                    for (int i = 0; i < missing.Count(); i++)
+                    {
+                        Missing.Add(columns[missing[i] + 1]);
+                    }
+                    return false;
+                }
+               
                 #endregion
 
                 for (int i = 1; i < Table.Count() - 1; i++)
@@ -393,6 +407,51 @@ namespace Proyecto_microSQL.Utilidades
                 return false;
             }
         }
+        public Tuple<bool, List<int>> check(bool[] flags, string[] lines)
+        {
+            int index = 0;
+            List<int> missing = new List<int>();
+            bool fg = true;
+            for (int i = 1; i < lines.Count(); i++)
+            {
+                if (!fg)
+                    break;
+                if ("FROM" == lines[i].Trim())
+                {
+                    fg = false;
+                }
+                index++;
+
+            }
+            fg = true;
+            for (int i = 0; i < index - 2; i++)
+            {
+                if (!flags[i])
+                {
+                    missing.Add(i);
+                    fg = false;
+                }
+            }
+
+            return Tuple.Create(fg, missing);
+        }
+
+        #endregion
+
+        #region DELETE
+        public bool Delete()
+        {
+            try
+            {
+
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
         #endregion
     }
 }
