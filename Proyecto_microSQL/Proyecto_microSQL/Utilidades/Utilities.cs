@@ -342,9 +342,18 @@ namespace Proyecto_microSQL.Utilidades
         {
             try
             {
+                listDataTable = new List<string>();
                 string data = File.ReadAllText(path + "tablas\\" + tableName + ".tabla").Replace("\r\n", "$"); //cargar tabla
-              //  BTree<int, standardObject> tree = new BTree<int, standardObject>(tableName, 5); // cargar arbol
-                string[] Table = data.Split('$'); //tabla completa
+                // BTree<int, standardObject> tree = new BTree<int, standardObject>(tableName, 5); // cargar arbol
+                string[] Table = data.Split('$'); 
+
+                if(columns[1].Trim() == "*") //mostrar tabla completa
+                {
+                    if (Mostattod(columns, Table))
+                        return true;
+                    return false;
+                }
+
                 List<string> showlst = new List<string>(); //tabla para mostrar
                 string[] strCol = Table[0].Split(','); //etiquetas columnas
                 bool[] flags = new bool[9]; //banderas por columnas
@@ -435,7 +444,22 @@ namespace Proyecto_microSQL.Utilidades
 
             return Tuple.Create(fg, missing);
         }
+        public bool Mostattod(string[] columns, string[] rows)
+        {
+            try
+            {
+                for (int i = 0; i < rows.Count(); i++)
+                {
+                    listDataTable.Add(rows[i]);
+                }
 
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+        }
         #endregion
 
         #region DELETE
