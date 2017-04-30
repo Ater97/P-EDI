@@ -120,7 +120,7 @@ namespace Proyecto_microSQL
                 //CREATE TABLE
                 if(Lines[i].Contains(comandolst[4]))
                 {
-                 if(!U.crearTabla(U.splitArray(Lines, i + 4), Lines[i + 1], Lines[i + 3])) //crear archivo tabla y arbol
+                 if(!U.crearTabla(U.splitArray(Lines, i + 4).Item1, Lines[i + 1], Lines[i + 3]) || !U.splitArray(Lines, i + 4).Item2) //crear archivo tabla y arbol
                     {
                         MessageBox.Show("Por favor revise la sintaxis");
                         break;
@@ -133,14 +133,26 @@ namespace Proyecto_microSQL
                 if (Lines[i].Contains(comandolst[6]))
                 {
                     int indexValues = U.getSplitIndex(Lines, i + 3, comandolst[7]);
-                    if (!U.Insertar(Lines[i + 1], U.splitArray(Lines, i + 3), U.splitArray(Lines, indexValues))) //Insertar datos
+                    if (!U.Insertar(Lines[i + 1], U.splitArray(Lines, i + 3).Item1, U.splitArray(Lines, indexValues).Item1) || 
+                        !U.splitArray(Lines, i + 3).Item2 || !U.splitArray(Lines, indexValues).Item2) //Insertar datos
                     {
                         MessageBox.Show("Por favor revise la sintaxis");
                     }
+                    richTextBox1.Clear();
+                    fg = true;
                     break;
                 }
                 //SELECT 
+                if(Lines[i].Contains(comandolst[0]))
+                {
+                    if(!U.Select() )
+                    {
 
+                    }
+                    richTextBox1.Clear();
+                    fg = true;
+                    break;
+                }
                 else
                 {
                     MessageBox.Show("Por favor revise la sintaxis");

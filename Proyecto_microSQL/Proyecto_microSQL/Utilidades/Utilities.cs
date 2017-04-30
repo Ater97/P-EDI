@@ -155,19 +155,21 @@ namespace Proyecto_microSQL.Utilidades
             return true;
         }
         #endregion
-
-        public List<string> splitArray(string[] complete, int index)
+        
+        public Tuple< List<string>, bool> splitArray(string[] complete, int index)
         {
+            bool fg = false;
             List<string> newLines = new List<string>();
             for (int i = index; i < complete.Count(); i++)
             {
                 if (complete[i].Trim() == ")" || complete[i].Trim() == "}" || complete[i].Trim() == ">" || complete[i].Trim() == "]")
                 {
+                    fg = true;
                     break;
                 }
                 newLines.Add(complete[i]);
             }
-            return newLines;
+            return Tuple.Create( newLines,fg);
         }
        
        public int getSplitIndex(string[] completelns, int startindex, string comando)
@@ -194,6 +196,7 @@ namespace Proyecto_microSQL.Utilidades
             }
             return Lines;
         }
+
         #region Insert
         public bool insertarArchivoTabla(string tableName, List<string> values)
         {
@@ -215,22 +218,85 @@ namespace Proyecto_microSQL.Utilidades
         {
             try
             {
+                bool[,] c = new bool[3, 3];
                 standardObject newobj = (new standardObject
                 {
                     ID = int.Parse(values[0]),
                 });
 
-                //for (int i = 0; i < values.Count(); i++)
-                //{
-                //    Type type = Type.GetType( values[1], true);
+                var charsToRemove = new string[] {"'"};
+                for (int i = 0; i < values.Count; i++)
+                {
+                    foreach (var ch in charsToRemove)
+                    {
+                        values[i] = values[i].Replace(ch, string.Empty);
+                    }
+                }
 
-                //    object instance = Activator.CreateInstance(type);
+                string data = File.ReadLines(path + "tablas\\" + tableName + ".tabla").First();
+                string[] strDataType = data.Split(',');
 
-                //    PropertyInfo prop = type.GetProperty(values[i]);
-                //}
+                for (int i = 0; i < columns.Count(); i++)
+                {
+                    if (strDataType[i].Contains("(INT)"))
+                    {
+                        if (!c[0, 0])
+                        {
+                            newobj.MyProperty_int2 = int.Parse(values[i]);
+                            c[0, 0] = true;
+                        }
+                        else if (!c[0, 1])
+                        {
+                            newobj.MyProperty_int2 = int.Parse(values[i]);
+                            c[0, 1] = true;
+                        }
+                        else
+                            return false;
+                    }
+                    else if (strDataType[i].Contains("(VARCHAR(100))"))
+                    {
+                        if (!c[1, 0])
+                        {
+                            newobj.MyProperty_vchar1 = values[i];
+                            c[1, 0] = true;
+                        }
+                        else if (!c[1, 1])
+                        {
+                            newobj.MyProperty_vchar2 = values[i];
+                            c[1, 1] = true;
+                        }
+                        else if (!c[1, 2])
+                        {
+                            newobj.MyProperty_vchar3 = values[i];
+                            c[1, 2] = true;
+                        }
+                        else
+                            return false;
+                    }
+                    else if (strDataType[i].Contains("(DATETIME)"))
+                    {
+                        if (!c[2, 0])
+                        {
+                            newobj.MyProperty_dt1 = DateTime.Parse(values[i]);
+                            c[2, 0] = true;
+                        }
+                        else if (!c[2, 1])
+                        {
+                            newobj.MyProperty_dt2 = DateTime.Parse(values[i]);
+                            c[2, 1] = true;
+                        }
+                        else if (!c[2, 2])
+                        {
+                            newobj.MyProperty_dt3 = DateTime.Parse(values[i]);
+                            c[2, 2] = true;
+                        }
+                        else
+                            return false;
+                    }
+                }
 
-                BTree<int, standardObject> tree = new BTree<int, standardObject>(tableName);
-                
+                BTree<int, standardObject> tree = new BTree<int, standardObject>(tableName,5);
+                tree.Insertar(int.Parse(values[0]), newobj);
                 return true;
             }
             catch
@@ -253,6 +319,14 @@ namespace Proyecto_microSQL.Utilidades
                 return false;
             if (!insertarArchivoTabla(tableName, values))
                 return false;
+            return true;
+        }
+        #endregion
+
+        #region SELECT
+        public bool Select()
+        {
+
             return true;
         }
         #endregion
