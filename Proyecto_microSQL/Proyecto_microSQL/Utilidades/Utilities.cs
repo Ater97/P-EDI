@@ -67,16 +67,23 @@ namespace Proyecto_microSQL.Utilidades
                     line = lines[i].Split(',');
                     comandolst.Add(line[0]);
                 }
-                comandolst.Add("INT PRIMARY KEY");
-                comandolst.Add("VARCHAR(100)");
-                comandolst.Add("DATETIME");
-                comandolst.Add("INT");
+
                 return comandolst;
             }
             catch
             {
                 return null;
             }
+        }
+
+        public List<string> CargarTiposDefault()
+        {
+            List<string> tipos = new List<string>();
+            tipos.Add("INT PRIMARY KEY");
+            tipos.Add("VARCHAR(100)");
+            tipos.Add("DATETIME");
+            tipos.Add("INT");
+            return tipos;
         }
 
         public bool CrearArchivoTabla(string id, List<string> columns, string tablename)
@@ -161,7 +168,41 @@ namespace Proyecto_microSQL.Utilidades
             return true;
         }
         #endregion
-        
+
+        #region Errores De Sintaxis
+
+        public int VerificarSintaxisCrearTabla(List<string> datos)
+        {
+            for (int i = 0; i < datos.Count; i++)
+            {
+
+            }
+            return 0;
+        }
+
+        public int VerificiarSintaxisSelect()
+        {
+            return 0;
+        }
+
+        public int VerificiarSintaxisDelete()
+        {
+            return 0;
+        }
+
+        public int VerificarSintaxisDropTable()
+        {
+            return 0;
+        }
+
+        public int VerificarSintaxisInsertTo()
+        {
+            return 0;
+        }
+
+
+        #endregion
+
         public Tuple< List<string>, bool> splitArray(string[] complete, int index)
         {
             bool fg = false;
@@ -178,7 +219,7 @@ namespace Proyecto_microSQL.Utilidades
             return Tuple.Create( newLines,fg);
         }
        
-       public int getSplitIndex(string[] completelns, int startindex, string comando)
+        public int getSplitIndex(string[] completelns, int startindex, string comando)
         {
             for (int i = startindex; i < completelns.Count(); i++)
             {

@@ -21,9 +21,12 @@ namespace Proyecto_microSQL
         int caracter; //Se utiliza para la numeracion de lineas
         Form2 frm2 = new Form2(); //Form para la carga de palabras reservadas
         List<string> comandolst = new List<string>(); //lista de palabras reservadas
+        List<string> tiposDeDato = new List<string>(); //lista de los tipos de datos reservados.
         Utilities U = new Utilities();
         DataGridViewManagement D = new DataGridViewManagement();
-        string path = @"C:\Users\sebas\Desktop\microSQL\"; //direccion principal de los archivos
+        Errors system = new Errors();
+
+        string path = @"C:\Users\bryan\Desktop\microSQL\"; //direccion principal de los archivos
 
         private void Form1_Load(object sender, EventArgs e)
         {
@@ -45,6 +48,7 @@ namespace Proyecto_microSQL
             gbOn();
             (frm2).Show();
             comandolst = frm2.getcomando();
+            tiposDeDato = U.CargarTiposDefault();
         }
 
         private void Continuar_Click(object sender, EventArgs e)
@@ -52,6 +56,7 @@ namespace Proyecto_microSQL
             gbOn();
             U.CrearDefault();
             comandolst = U.CargarComando();
+            tiposDeDato = U.CargarTiposDefault();
         }
 
         public void gbOn()
@@ -113,8 +118,103 @@ namespace Proyecto_microSQL
             }
         }
         string[] charsToRemove = new string[] { "@", ",", ".", ";" };
+
         private void Enter_Click_1(object sender, EventArgs e)
         {
+            int numeroError = 0;
+            bool flag;
+            int i = 0;
+            string texto = string.Empty;
+            string comando = string.Empty;
+            List<string> linea;
+            List<string> funcion;
+
+            for (i = 0; i < richTextBox1.Lines.Length; i++)
+            {
+                texto += " " + richTextBox1.Lines[i];
+            }
+
+            linea = texto.Split(' ').ToList();
+            linea.RemoveAll((y) => y == "");
+
+            //No se puede procesar porque no hay mas datos.
+            if (linea.Count <= 1)
+            {
+                numeroError = 7;
+            }
+
+            //Algoritmo de verificación de errores
+            i = 0;
+            while (i < linea.Count && numeroError == 0)
+            {
+                funcion = new List<string>();
+
+                flag = true;
+                for (int j = 0; j < comandolst.Count; j++)
+                {
+                    if (linea[i] == comandolst[j] || linea[i] + " " + linea[i + 1] == comandolst[j])
+                    {
+                        flag = false;
+                        comando = comandolst[j];
+                        break;
+                    }
+                }
+
+                //No se encontro ningun comando que inicie alguna función.
+                if (flag == true)
+                {
+                    numeroError = 5;
+                    //MessageBox.Show(system.Errores(5), "ERROR", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    break;
+                }
+                else
+                {
+                    //Analiza si el comando es VALUES/FROM/WHERE/GO
+                    if (comando == comandolst[1] || comando == comandolst[3] || comando == comandolst[7] || comando == comandolst[8])
+                    {
+                        numeroError = 6;
+                    }
+
+                    //Buscar el GO correspondiente a la funcion
+                    while (numeroError == 0 && i < linea.Count && linea[i] != comandolst[comandolst.Count - 1])
+                    {
+                        if (linea[i] != comandolst[0] && linea[i] != comandolst[2] && linea[i] != comandolst[4] && linea[i] != comandolst[5] && linea[i] != comandolst[6])
+                        {
+                            //Va insertando la informacion de la funcion encontrada
+                            funcion.Add(linea[i]);
+                            i++;
+                        }
+                        else
+                        {
+                            // Esto sucede cuando no encuentra el GO correspondiente a la función
+                            // y encuentra otra funcion.
+                            numeroError = 2;
+                            break;
+                        }
+                    }
+                    i++;
+
+                    //Cuando llego al final del codigo y no encontro ningun G0
+                    if (i > linea.Count)
+                    {
+                        numeroError = 2;
+                    }
+
+                    //Numero de Error = 0 indica que no hay errores hasta el momento
+                    if (numeroError == 0)
+                    {
+                        numeroError = AnalizarCodigo(comando, funcion);
+                    }
+                }
+            }
+
+            if (numeroError != 0)
+            {
+                MessageBox.Show(system.Errores(numeroError), "ERROR", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+
+
+            /*
             richTextBox1.Text += Environment.NewLine;
             string[] Lines = richTextBox1.Lines;
             Lines = U.LimiarArray(Lines, charsToRemove); //eliminar espacios en blanco, enters y caracteres extra
@@ -186,6 +286,47 @@ namespace Proyecto_microSQL
                     MessageBox.Show("Por favor revise la sintaxis");
                 }
             }
+
+            */
+        }
+
+        private int AnalizarCodigo(string comando, List<string> datos)
+        {
+            /*  Si llega a generar un error retornaran el numero de error correspondiente
+             *  en caso no ocurra ningun error retorna 0   */
+
+            //SELECT
+            if (comando == comandolst[0])
+            {
+                return U.VerificiarSintaxisSelect();
+            }
+
+            //DELETE
+            if (comando == comandolst[2])
+            {
+                return U.VerificiarSintaxisDelete();
+            }
+
+            //CREATE TABLE
+            if (comando == comandolst[4])
+            {
+                return U.VerificarSintaxisCrearTabla(datos);
+            }
+
+            //DROP TABLE
+            if (comando == comandolst[5])
+            {
+                return U.VerificarSintaxisDropTable();
+            }
+
+            //INSERT TO
+            if (comando == comandolst[6])
+            {
+                return U.VerificarSintaxisInsertTo();
+            }
+
+            //En caso que no cumpla ningun comando anterior, retorna el numero del error correspondiente
+            return 6;
         }
 
         #region Numero de Linea
