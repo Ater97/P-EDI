@@ -27,16 +27,16 @@ namespace Proyecto_microSQL.Utilidades
         public void crearFolder()
         {
             Directory.CreateDirectory(path);
-          
+
             Directory.CreateDirectory(path + "\\microSQL");
             Directory.CreateDirectory(path + "\\tablas");
         }
         //string path = @"Archivo\microSQL.ini";
-       
+
         public bool CrearDefault()
         {
-        //  path = Path.Combine(path, "microSQL\\microSQL.ini"); 
-           try
+            //  path = Path.Combine(path, "microSQL\\microSQL.ini"); 
+            try
             {
                 FileStream fs = File.Create(path + "microSQL\\microSQL.ini");
                 fs.Close();
@@ -64,11 +64,15 @@ namespace Proyecto_microSQL.Utilidades
         {
             try
             {
-                string[]line;
+
+                string[] line;
+                List<string> comandolst = new List<string>();
+
                 palabrasReservadas = new List<string>();
                 palabrasReemplazo = new List<string>();
+
                 string[] lines = File.ReadAllLines(path + "microSQL\\microSQL.ini");
-                for (int i = 0; i < lines.Length; i ++)
+                for (int i = 0; i < lines.Length; i++)
                 {
                     line = lines[i].Split(',');
                     palabrasReservadas.Add(line[1]);
@@ -125,11 +129,13 @@ namespace Proyecto_microSQL.Utilidades
             }
         }
 
-        public bool CrearArbol(string treeName, string id ,List<string> types)
+        public bool CrearArbol(string treeName, string id, List<string> types)
         {
             try
             {
-                BTree<int, standardObject> a = new BTree<int, standardObject>(treeName, 5);
+
+                //****Moficar Dato[0].ToString en fabrica****
+                BTree<int, standardObject> tree = new BTree<int, standardObject>(treeName, 5);
                 return true;
             }
             catch
@@ -324,7 +330,7 @@ namespace Proyecto_microSQL.Utilidades
 
         #endregion
 
-        public Tuple< List<string>, bool> splitArray(string[] complete, int index)
+        public Tuple<List<string>, bool> splitArray(string[] complete, int index)
         {
             bool fg = false;
             List<string> newLines = new List<string>();
@@ -337,9 +343,9 @@ namespace Proyecto_microSQL.Utilidades
                 }
                 newLines.Add(complete[i]);
             }
-            return Tuple.Create( newLines,fg);
+            return Tuple.Create(newLines, fg);
         }
-       
+
         public int getSplitIndex(string[] completelns, int startindex, string comando)
         {
             for (int i = startindex; i < completelns.Count(); i++)
@@ -369,7 +375,7 @@ namespace Proyecto_microSQL.Utilidades
         #region Insert
         public bool insertarArchivoTabla(string tableName, List<string> values)
         {
-           try
+            try
             {
                 using (StreamWriter file = new StreamWriter(path + "tablas\\" + tableName + ".tabla", true))
                 {
@@ -393,7 +399,7 @@ namespace Proyecto_microSQL.Utilidades
                     ID = int.Parse(values[0]),
                 });
 
-                var charsToRemove = new string[] {"'"};
+                var charsToRemove = new string[] { "'" };
                 for (int i = 0; i < values.Count; i++)
                 {
                     foreach (var ch in charsToRemove)
@@ -469,7 +475,10 @@ namespace Proyecto_microSQL.Utilidades
                     }
                 }
 
-                BTree<int, standardObject> tree = new BTree<int, standardObject>(tableName,5);
+                //****Encontrar como cargar arbol desde archivo****
+                BTree<int, standardObject> tree = new BTree<int, standardObject>(tableName, 5);
+                // BTree<int, standardObject> tree = new BTree<int, standardObject>(tableName);
+
                 tree.Insertar(int.Parse(values[0]), newobj);
                 return true;
             }
@@ -508,16 +517,53 @@ namespace Proyecto_microSQL.Utilidades
                 listDataTable = new List<string>();
                 string data = File.ReadAllText(path + "tablas\\" + tableName + ".tabla").Replace("\r\n", "$"); //cargar tabla
                 // BTree<int, standardObject> tree = new BTree<int, standardObject>(tableName, 5); // cargar arbol
-                string[] Table = data.Split('$'); 
+                string[] Table = data.Split('$');
 
-                if(columns[1].Trim() == "*") //mostrar tabla completa
+                #region special case --> filtro llave primaria y mostar todo "*"
+                bool fkey = false;
+                if (Array.Exists(columns, element => element.StartsWith("WHERE")) &&
+                    Array.Exists(columns, element => element.StartsWith("ID =")))
+                {
+                    fkey = true;
+                }
+                
+                if (fkey) //Filtro a la llave primaria
+                {
+                    string[] keyRow = new string[2];
+                    string key = "";
+
+                    for (int k = 0; k < columns.Count(); k++)
+                    {
+                        if (columns[k].Trim() == "WHERE")
+                        {
+                            key = columns[k + 1].Replace("ID =", string.Empty);
+                            break;
+                        }
+                    }
+
+                    for (int k = 0; k < Table.Count(); k++)
+                    {
+                        string[] row = Table[k].Split(',');
+                        if (row[0].Trim() == key.Trim())
+                        {
+                            keyRow[0] = Table[0];
+                            keyRow[1] = Table[k];
+                            break;
+                        }
+                    }
+                    Table = keyRow;
+                }
+
+
+                if (columns[1].Trim() == "*") //Mostrar tabla completa
                 {
                     if (Mostattod(columns, Table))
                         return true;
                     return false;
                 }
+                #endregion 
 
-                List<string> showlst = new List<string>(); //tabla para mostrar
+                List<string> showlst = new List<string>(); //Tabla para mostrar
                 string[] strCol = Table[0].Split(','); //etiquetas columnas
                 bool[] flags = new bool[9]; //banderas por columnas
                 int[] orden = new int[9]; //Orden deseado de columnas
@@ -529,7 +575,7 @@ namespace Proyecto_microSQL.Utilidades
                 for (int i = 1; i < strCol.Count(); i++)
                 {
                     for (int j = 0; j < strCol.Count(); j++)
-                    {   
+                    {
                         if (columns[i].Trim() == strCol[j].Trim())
                         {
                             flags[i - 1] = true;
@@ -554,10 +600,14 @@ namespace Proyecto_microSQL.Utilidades
                     }
                     return false;
                 }
-               
+                int tablelenght = Table.Count() - 1;
+                if(fkey)
+                {
+                    tablelenght = Table.Count();
+                }
                 #endregion
-
-                for (int i = 1; i < Table.Count() - 1; i++)
+                
+                for (int i = 1; i < tablelenght; i++)
                 {
                     temp = "";
                     string[] row = Table[i].Split(',');
@@ -626,7 +676,7 @@ namespace Proyecto_microSQL.Utilidades
         #endregion
 
         #region DELETE
-        public bool Delete()
+        public bool Delete(string[] Lines)
         {
             try
             {

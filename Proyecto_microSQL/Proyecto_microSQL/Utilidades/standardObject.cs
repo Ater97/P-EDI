@@ -26,5 +26,7 @@ namespace Proyecto_microSQL.Utilidades
         {
             return ID.CompareTo(other.ID);
         }
+
+        
     }
 }
