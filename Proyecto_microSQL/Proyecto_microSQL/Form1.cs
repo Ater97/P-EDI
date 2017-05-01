@@ -77,13 +77,21 @@ namespace Proyecto_microSQL
         string str;
         private void richTextBox1_TextChanged(object sender, EventArgs e)
         {
+            int i = 0;
             int position = richTextBox1.SelectionStart;
             richTextBox1.Text = richTextBox1.Text.ToUpper();
 
-            for (int i = 0; i < comandolst.Count(); i++)
+            for (i = 0; i < comandolst.Count(); i++)
             {
                 CheckKeywordColor(comandolst[i], Color.Blue);
             }
+
+            for(i = 0; i < tiposDeDato.Count(); i++)
+            {
+                CheckKeywordColor(tiposDeDato[i], Color.Blue);
+            }
+
+            CheckVarcharColor();
 
             #region bug
             if (fg)
@@ -116,6 +124,24 @@ namespace Proyecto_microSQL
                 }
                 //richTextBox1.Text += Environment.NewLine;
             }
+        }
+
+        private void CheckVarcharColor()
+        {
+            int index = -1;
+            int start = 0;
+            int finish = 0;
+            int selectStart = richTextBox1.SelectionStart;
+
+            while((index = richTextBox1.Text.IndexOf("'", index + 1)) != -1 && (finish = richTextBox1.Text.IndexOf("'", index + 1)) != -1 )
+            {
+                start = index;
+                index = finish;               
+                richTextBox1.Select(start, finish - start + 1);
+                richTextBox1.SelectionColor = Color.DarkOrange;
+                richTextBox1.Select(selectStart, 0);
+                richTextBox1.SelectionColor = Color.Black;
+            }         
         }
 
         string[] charsToRemove = new string[] { "@", ",", ".", ";" };

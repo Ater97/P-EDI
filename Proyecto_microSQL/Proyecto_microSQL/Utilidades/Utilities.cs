@@ -300,6 +300,8 @@ namespace Proyecto_microSQL.Utilidades
 
         public int VerificiarSintaxisSelect()
         {
+
+
             return 0;
         }
 
@@ -315,6 +317,7 @@ namespace Proyecto_microSQL.Utilidades
 
         public int VerificarSintaxisInsertTo()
         {
+
             return 0;
         }
 
