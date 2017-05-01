@@ -116,6 +116,11 @@ namespace Proyecto_microSQL.Utilidades
             {
                 FileStream fs = File.Create(path + "tablas\\" + tablename + ".tabla");
                 fs.Close();
+                for (int i = 0; i < columns.Count(); i++)
+                {
+                    var splitted = columns[i].Split(new[] { ' ' }, 2);
+                    columns[i] = splitted[0] + " (" + splitted[1] + ")";
+                }
                 using (StreamWriter file = new StreamWriter(path + "tablas\\" + tablename + ".tabla", true))
                 {
                     file.WriteLine(id + "," + string.Join(",", columns));
@@ -697,7 +702,6 @@ namespace Proyecto_microSQL.Utilidades
                 #region Delete key
                 if (fkey)
                 {
-                    string[] keyRow = new string[2];
                     string key = "";
 
                     for (int k = 0; k < Lines.Count(); k++) //obtener llave a eliminar
@@ -718,16 +722,26 @@ namespace Proyecto_microSQL.Utilidades
                             break;
                         }
                     }
+                    tree.Eliminar(int.Parse(key));
                 }
                 #endregion
                 #region Delete everything
                 else
                 {
-
+                    string[] headers = new string[1];
+                    headers[0] = Table[0];
+                    Table = headers;
                 }
                 #endregion
                 //sobreescribir el archivo
-
+                File.WriteAllText(path + "tablas\\" + tableName + ".tabla", "");
+                using (StreamWriter file = new StreamWriter(path + "tablas\\" + tableName + ".tabla", true))
+                {
+                    for (int i = 0; i < Table.Count(); i++)
+                    {
+                        file.WriteLine(Table[i]);
+                    }
+                }
 
                 return true;
             }

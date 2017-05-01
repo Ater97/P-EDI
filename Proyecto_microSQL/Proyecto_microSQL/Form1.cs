@@ -280,7 +280,7 @@ namespace Proyecto_microSQL
                 }
 
                 MessageBox.Show("Se han ejecutado las acciones correctamente.", "Completado", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                richTextBox1.Clear();
+               // richTextBox1.Clear();
             }
 
 
