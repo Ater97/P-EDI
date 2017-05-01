@@ -607,20 +607,20 @@ namespace Proyecto_microSQL.Utilidades
                 }
                 #endregion
                 
-                for (int i = 1; i < tablelenght; i++)
+                for (int i = 1; i < tablelenght; i++) //almacenar en temp los datos en orden
                 {
                     temp = "";
                     string[] row = Table[i].Split(',');
 
                     for (int j = 0; j < orden.Count(); j++)
                     {
-                        int ix = orden[j] - 1;
+                        int ix = orden[j] - 1; //provee el orden de inserción
                         if (ix >= 0)
                             temp = temp + row[ix] + ",";
                     }
                     temp = temp.TrimEnd(',');
-                    showlst.Add(temp);
-                }
+                    showlst.Add(temp); //agrega el string nuevo con los parametros deseados y en orden 
+                }                      //a la lista para mostar
                 listDataTable = showlst;
                 return true;
             }
@@ -676,10 +676,58 @@ namespace Proyecto_microSQL.Utilidades
         #endregion
 
         #region DELETE
-        public bool Delete(string[] Lines)
+        public bool DeleteFrom(string[] Lines)
         {
             try
             {
+                string tableName = Lines[Array.IndexOf(Lines, "DELETE FROM") + 1]; //obtener nombre de la tabla
+                listDataTable = new List<string>();
+                string data = File.ReadAllText(path + "tablas\\" + tableName + ".tabla").Replace("\r\n", "$"); //cargar tabla
+
+                //****Arreglar asunto con el arbol primero*****
+                BTree<int, standardObject> tree = new BTree<int, standardObject>(tableName, 5); // cargar arbol
+                string[] Table = data.Split('$');
+                bool fkey = false;
+
+                if (Array.Exists(Lines, element => element.StartsWith("WHERE")) && //Eliminar por llave fkey true
+                    Array.Exists(Lines, element => element.StartsWith("ID =")))    //Eliminar todos los datos fkey false
+                {
+                    fkey = true;
+                }
+                #region Delete key
+                if (fkey)
+                {
+                    string[] keyRow = new string[2];
+                    string key = "";
+
+                    for (int k = 0; k < Lines.Count(); k++) //obtener llave a eliminar
+                    {
+                        if (Lines[k].Trim() == "WHERE")
+                        {
+                            key = Lines[k + 1].Replace("ID =", string.Empty);
+                            break;
+                        }
+                    }
+
+                    for (int i = 0; i < Table.Count(); i++) //buscar la llave a eliminar
+                    {
+                        string[] row = Table[i].Split(',');
+                        if (row[0].Trim() == key.Trim()) //eliminarla de la tabla
+                        {
+                            Table = Table.Where(w => w != Table[i]).ToArray();
+                            break;
+                        }
+                    }
+                }
+                #endregion
+                #region Delete everything
+                else
+                {
+
+                }
+                #endregion
+                //sobreescribir el archivo
+
 
                 return true;
             }

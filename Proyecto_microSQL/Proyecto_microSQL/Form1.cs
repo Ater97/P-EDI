@@ -292,19 +292,19 @@ namespace Proyecto_microSQL
 
             for (int ij = 0; ij < Lines.Count(); ij++)
             {
-                //CREATE TABLE
-                if (Lines[ij].Contains(comandolst[4]))
-                { //crear archivo tabla y arbol
-                    if (!U.crearTabla(U.splitArray(Lines, ij + 4).Item1, Lines[ij + 1], Lines[ij + 3]) || !U.splitArray(Lines, ij + 4).Item2)
-                    {
-                        MessageBox.Show("Por favor revise la sintaxis");
-                        break;
-                    }
-                    richTextBox1.Clear();
-                    dataGridView1.DataSource = D.NewDataTable(Lines[ij + 1].Trim());
-                    fg = true;
-                    break;
-                }
+                ////CREATE TABLE
+                //if (Lines[ij].Contains(comandolst[4]))
+                //{ //crear archivo tabla y arbol
+                //    if (!U.crearTabla(U.splitArray(Lines, ij + 4).Item1, Lines[ij + 1], Lines[ij + 3]) || !U.splitArray(Lines, ij + 4).Item2)
+                //    {
+                //        MessageBox.Show("Por favor revise la sintaxis");
+                //        break;
+                //    }
+                //    richTextBox1.Clear();
+                //    dataGridView1.DataSource = D.NewDataTable(Lines[ij + 1].Trim());
+                //    fg = true;
+                //    break;
+                //}
                 //INSERT INTO
                 if (Lines[ij].Contains(comandolst[6]))
                 {
@@ -342,7 +342,7 @@ namespace Proyecto_microSQL
                 //DELETE FROM 
                 if(Lines[ij].Contains(comandolst[2]))
                 {
-                    if(!U.Delete(Lines))
+                    if(!U.DeleteFrom(Lines))
                     {
                         MessageBox.Show("Por favor revise la sintaxis");
                         break;
@@ -352,10 +352,7 @@ namespace Proyecto_microSQL
                     fg = true;
                     break;
                 }
-                else
-                {
-                    MessageBox.Show("Por favor revise la sintaxis");
-                }
+             
             }
 
             
