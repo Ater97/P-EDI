@@ -280,7 +280,7 @@ namespace Proyecto_microSQL
                 }
 
                 MessageBox.Show("Se han ejecutado las acciones correctamente.", "Completado", MessageBoxButtons.OK, MessageBoxIcon.Information);
-               // richTextBox1.Clear();
+                richTextBox1.Clear();
             }
 
 
@@ -340,22 +340,47 @@ namespace Proyecto_microSQL
                     break;
                 }
                 //DELETE FROM 
-                if(Lines[ij].Contains(comandolst[2]))
+                if (Lines[ij].Contains(comandolst[2]))
                 {
-                    if(!U.DeleteFrom(Lines))
+                    if (!U.DeleteFrom(Lines))
                     {
                         MessageBox.Show("Por favor revise la sintaxis");
                         break;
                     }
                     richTextBox1.Clear();
-                   // dataGridView1.DataSource = D.NewDataTable(Lines[i + 1].Trim());
+                    dataGridView1.DataSource = D.NewDataTable(Lines[i + 1].Trim());
                     fg = true;
                     break;
                 }
-             
+                //DROP TABLE 
+                if(Lines[ij].Contains(comandolst[5]))
+                {
+                    if(!U.DropTable(Lines))
+                    {
+                        MessageBox.Show("Por favor revise la sintaxis");
+                        break;
+                    }
+                    richTextBox1.Clear();
+                    fg = true;
+                    break;
+                }
+                //UPDATE
+                if(Lines[ij].Contains("UPDATE"))  //****Sustituir la palabara "UPDATE" por su comando****
+                {
+                    if(!U.Update(Lines))
+                    {
+                        MessageBox.Show("Por favor revise la sintaxis");
+                        break;
+                    }
+                    richTextBox1.Clear();
+                    dataGridView1.DataSource = D.NewDataTable(Lines[i + 1].Trim());
+                    fg = true;
+                    break;
+                }
+
             }
 
-            
+
         }
 
         private void EjecutarAcciones(string comando)
