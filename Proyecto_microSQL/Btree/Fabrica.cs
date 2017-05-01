@@ -42,7 +42,7 @@ namespace Btree
         /// </summary>
         public void crearFolder()
         {
-            direccion = @"C:\Users\sebas\Desktop\microSQL\arbolesb\";
+            direccion = @"C:\Users\bryan\Desktop\microSQL\arbolesb\";
             // direccion = @"C:\Users\bryan\Desktop\microSQL\ arbolesb\";
             // direccion = @"Archivo\";
             Directory.CreateDirectory(direccion);

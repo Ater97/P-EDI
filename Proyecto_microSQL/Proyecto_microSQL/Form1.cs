@@ -117,6 +117,7 @@ namespace Proyecto_microSQL
                 //richTextBox1.Text += Environment.NewLine;
             }
         }
+
         string[] charsToRemove = new string[] { "@", ",", ".", ";" };
 
         private void Enter_Click_1(object sender, EventArgs e)
@@ -128,13 +129,27 @@ namespace Proyecto_microSQL
             string comando = string.Empty;
             List<string> linea;
             List<string> funcion;
+            List<string> comandosRemplazos = U.ObtenerReemplazo();
+            List<string> acciones = new List<string>();
+            Queue<string> nombres = new Queue<string>();
 
-            for (i = 0; i < richTextBox1.Lines.Length; i++)
+            //Une todo el texto en un solo string.
+            texto = string.Join(" ", richTextBox1.Lines);
+
+            //Reemplaza los comandos separados por los comandos en una sola palabra..
+            for(i = 0; i < comandolst.Count; i++)
             {
-                texto += " " + richTextBox1.Lines[i];
+                texto = texto.Replace(comandolst[i], comandosRemplazos[i]);
             }
+            
+            //Cambia el INT PRIMARY KEY por INTPRIMARYKEY
+            texto = texto.Replace(tiposDeDato[0], string.Join("", tiposDeDato[0].Split(' ')));
 
+            //Convierte todo a una lista..
             linea = texto.Split(' ').ToList();
+            linea = U.LimiarArray(linea.ToArray(), charsToRemove).ToList();
+
+            //Remueve los elementos que esten vacios.
             linea.RemoveAll((y) => y == "");
 
             //No se puede procesar porque no hay mas datos.
@@ -150,12 +165,13 @@ namespace Proyecto_microSQL
                 funcion = new List<string>();
 
                 flag = true;
-                for (int j = 0; j < comandolst.Count; j++)
+                for (int j = 0; j < comandosRemplazos.Count; j++)
                 {
-                    if (linea[i] == comandolst[j] || linea[i] + " " + linea[i + 1] == comandolst[j])
+                    if (linea[i] == comandosRemplazos[j])
                     {
                         flag = false;
                         comando = comandolst[j];
+                        i++;
                         break;
                     }
                 }
@@ -176,9 +192,9 @@ namespace Proyecto_microSQL
                     }
 
                     //Buscar el GO correspondiente a la funcion
-                    while (numeroError == 0 && i < linea.Count && linea[i] != comandolst[comandolst.Count - 1])
+                    while (numeroError == 0 && i < linea.Count && linea[i] != comandosRemplazos[comandosRemplazos.Count - 1])
                     {
-                        if (linea[i] != comandolst[0] && linea[i] != comandolst[2] && linea[i] != comandolst[4] && linea[i] != comandolst[5] && linea[i] != comandolst[6])
+                        if (linea[i] != comandosRemplazos[0] && linea[i] != comandosRemplazos[2] && linea[i] != comandosRemplazos[4] && linea[i] != comandosRemplazos[5] && linea[i] != comandosRemplazos[6])
                         {
                             //Va insertando la informacion de la funcion encontrada
                             funcion.Add(linea[i]);
@@ -204,6 +220,17 @@ namespace Proyecto_microSQL
                     if (numeroError == 0)
                     {
                         numeroError = AnalizarCodigo(comando, funcion);
+
+                        if(numeroError == 0)
+                        {
+                            acciones.Add(comando);
+                            
+                            //Cuando tenga que crear una tabla, almacena el nombre de la tabla
+                            if(comando == comandolst[4])
+                            {
+                                nombres.Enqueue(funcion[0].Trim());
+                            }                        
+                        }
                     }
                 }
             }
@@ -212,6 +239,24 @@ namespace Proyecto_microSQL
             {
                 MessageBox.Show(system.Errores(numeroError), "ERROR", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
+            else
+            {
+                //Si no hay errores realiza todos las acciones almacenadas.
+
+                for(i = 0; i < acciones.Count; i++)
+                {
+                    EjecutarAcciones(acciones[i]);
+
+                    if (acciones[i] == comandolst[4])
+                    {
+                        dataGridView1.DataSource = D.NewDataTable(nombres.Dequeue());
+                    }
+                }
+
+                MessageBox.Show("Se han ejecutado las acciones correctamente.", "Completado", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                richTextBox1.Clear();
+            }
+
 
 
             
@@ -288,6 +333,39 @@ namespace Proyecto_microSQL
             }
 
             
+        }
+
+        private void EjecutarAcciones(string comando)
+        {
+            //SELECT
+            if (comando == comandolst[0])
+            {
+               
+            }
+
+            //DELETE
+            if (comando == comandolst[2])
+            {
+                
+            }
+
+            //CREATE TABLE
+            if (comando == comandolst[4])
+            {
+                U.crearTabla(U.TablasPorCrear.Dequeue());
+            }
+
+            //DROP TABLE
+            if (comando == comandolst[5])
+            {
+                
+            }
+
+            //INSERT TO
+            if (comando == comandolst[6])
+            {
+                
+            }
         }
 
         private int AnalizarCodigo(string comando, List<string> datos)
