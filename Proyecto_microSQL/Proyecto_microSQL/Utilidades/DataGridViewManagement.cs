@@ -108,7 +108,7 @@ namespace Proyecto_microSQL.Utilidades
         public DataTable ToDataTable(List<string> list)
         {
             DataTable dataTable = new DataTable();
-            //try
+            try
             {
 
                // csvReader.SetDelimiters(new string[] { "," });
@@ -141,10 +141,10 @@ namespace Proyecto_microSQL.Utilidades
 
                 return dataTable;
             }
-            //catch
-            //{
-            //    return null;
-            //}
+            catch
+            {
+                return null;
+            }
         }
     }
 }
