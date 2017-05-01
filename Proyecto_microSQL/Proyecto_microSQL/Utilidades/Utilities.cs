@@ -12,6 +12,11 @@ namespace Proyecto_microSQL.Utilidades
     class Utilities
     {
         string path;
+        List<string> palabrasReservadas;
+        List<string> palabrasReemplazo;
+        List<string> tiposReservados;
+        List<string> tiposReemplazo;
+        Queue<CrearTabla> tablasPorCrear = new Queue<CrearTabla>();
 
         public void setPath(string p)
         {
@@ -60,15 +65,17 @@ namespace Proyecto_microSQL.Utilidades
             try
             {
                 string[]line;
-                List<string> comandolst = new List<string>();
+                palabrasReservadas = new List<string>();
+                palabrasReemplazo = new List<string>();
                 string[] lines = File.ReadAllLines(path + "microSQL\\microSQL.ini");
                 for (int i = 0; i < lines.Length; i ++)
                 {
                     line = lines[i].Split(',');
-                    comandolst.Add(line[0]);
+                    palabrasReservadas.Add(line[1]);
+                    palabrasReemplazo.Add(string.Join("", line[1].Split(' ')));
                 }
 
-                return comandolst;
+                return palabrasReservadas;
             }
             catch
             {
@@ -78,28 +85,38 @@ namespace Proyecto_microSQL.Utilidades
 
         public List<string> CargarTiposDefault()
         {
-            List<string> tipos = new List<string>();
-            tipos.Add("INT PRIMARY KEY");
-            tipos.Add("VARCHAR(100)");
-            tipos.Add("DATETIME");
-            tipos.Add("INT");
-            return tipos;
+            tiposReservados = new List<string>();
+            tiposReemplazo = new List<string>();
+
+            tiposReservados.Add("INT PRIMARY KEY");
+            tiposReservados.Add("VARCHAR(100)");
+            tiposReservados.Add("DATETIME");
+            tiposReservados.Add("INT");
+
+            tiposReemplazo.Add("INTPRIMARYKEY");
+            tiposReemplazo.Add("VARCHAR(100)");
+            tiposReemplazo.Add("DATETIME");
+            tiposReemplazo.Add("INT");
+
+            return tiposReservados;
+        }
+
+        public List<string> ObtenerReemplazo()
+        {
+            return palabrasReemplazo;
         }
 
         public bool CrearArchivoTabla(string id, List<string> columns, string tablename)
         {
             try
             {
-                string[] name = id.Split(new string[] { "INT" }, StringSplitOptions.None);
-                if (name[1].Contains("PRIMARY KEY"))
+                FileStream fs = File.Create(path + "tablas\\" + tablename + ".tabla");
+                fs.Close();
+                using (StreamWriter file = new StreamWriter(path + "tablas\\" + tablename + ".tabla", true))
                 {
-                    FileStream fs = File.Create(path + "tablas\\" + tablename + ".tabla");
-                    fs.Close();
-                    using (StreamWriter file = new StreamWriter(path + "tablas\\" + tablename + ".tabla", true))
-                    {
-                        file.WriteLine(name[0] + "," + string.Join(",", columns));
-                    }
+                    file.WriteLine(id + "," + string.Join(",", columns));
                 }
+
                 return true;
             }
             catch
@@ -113,7 +130,6 @@ namespace Proyecto_microSQL.Utilidades
             try
             {
                 BTree<int, standardObject> a = new BTree<int, standardObject>(treeName, 5);
-
                 return true;
             }
             catch
@@ -122,61 +138,163 @@ namespace Proyecto_microSQL.Utilidades
             }
         }
 
-        public bool crearTabla(List<string> lineas, string tableName, string id)
+        public void crearTabla(CrearTabla tabla)
         {
-            List<string> columnas = new List<string>();
-            List<string> type = new List<string>();
-            int[] count = new int[3]; //conteo tipo de dato
-            for (int i = 0; i < lineas.Count(); i++) //verificar formato
-            {
-                if (count[0] > 3 || count[1] > 3 || count[2] > 3)
-                {
-                    return false;
-                }
+            CrearArchivoTabla(tabla.Id, tabla.Names, tabla.TableName.Trim());
+            CrearArbol(tabla.TableName.Trim(), tabla.Id, tabla.Types);
+        }
 
-                string[] temp = lineas[i].Split(new string[] { " " }, StringSplitOptions.None);
-                var charsToRemove = new string[] { "@", ",", ".", ";" };
-                temp = LimiarArray(temp, charsToRemove);
-                if (temp[1].Contains("INT"))
-                {
-                    columnas.Add(temp[0].Trim() + " (" + temp[1].Trim() + ")");
-                    type.Add(temp[1]);
-                    count[0]++;
-                }
-                else if (temp[1].Contains("VARCHAR(100)"))
-                {
-                    columnas.Add(temp[0].Trim() + " (" + temp[1].Trim() + ")");
-                    type.Add(temp[1]);
-                    count[1]++;
-                }
-                else if (temp[1].Contains("DATETIME"))
-                {
-                    columnas.Add(temp[0].Trim() + " (" + temp[1].Trim() + ")");
-                    type.Add(temp[1]);
-                    count[2]++;
-                }
-                else
-                {
-                    return false;
-                }
+        public Queue<CrearTabla> TablasPorCrear
+        {
+            get
+            {
+                return tablasPorCrear;
             }
 
-            if (!CrearArchivoTabla(id, columnas, tableName.Trim()))
-                return false;
-            if (!CrearArbol(tableName.Trim(), id, type))
-                return false;
-            return true;
+            set
+            {
+                tablasPorCrear = value;
+            }
         }
+
         #endregion
 
         #region Errores De Sintaxis
 
         public int VerificarSintaxisCrearTabla(List<string> datos)
         {
-            for (int i = 0; i < datos.Count; i++)
+            
+            if(!datos.Contains(string.Join("", tiposReservados[0].Split(' '))))
             {
-
+                return 8;
             }
+
+            //Verificar la existencia de la llave de apertura.
+            if( datos[1] != "{" && !datos.Contains("{"))
+            {
+                //Error de llave de apertura no encontrado
+                return 3;
+            }
+
+            //En caso que exista algo que no es el operador {
+            if(datos[1] != "{")
+            {
+                //Error de espacios de los nombres de las variables
+                return 9;
+            }
+
+            //En caso el ultimo elemento no es la llave de cierre
+            if(datos[datos.Count - 1] != "}" && !datos.Contains("}"))
+            {
+                return 4;
+            }
+
+            //En caso que exista la llave de cierre pero hay mas elementos despues de esto.
+            if(datos[datos.Count - 1] != "}")
+            {
+                return 1;
+            }
+
+            CrearTabla nuevaTabla = new CrearTabla();
+            int[] counts = new int[3];
+            nuevaTabla.TableName = datos[0];
+
+            bool flag = false;
+
+            for(int i = 2; i < datos.Count - 2; i++)
+            {
+                flag = false;
+
+                //Omitiendo el nombre y la llave de apertura
+                for(int j = 0; j < tiposReemplazo.Count; j++)
+                {
+                    if (datos[i] == tiposReemplazo[j])
+                    {
+                        return 10;
+                    }
+
+                    if(datos[i + 1] == tiposReemplazo[j])
+                    {
+                        flag = true;
+                    }
+                }
+
+                if(flag)
+                {
+                    if(datos[i + 1] == tiposReemplazo[0])
+                    {
+                        if(nuevaTabla.Id == string.Empty)
+                        {
+                            nuevaTabla.Id = datos[i];                           
+                        }
+                        else
+                        {
+                            //Sobrepaso la cantidad de elementos admitidos del tipo de dato
+                            nuevaTabla = null;
+                            return 12;
+                        }                      
+                    }
+
+                    if(datos[i + 1] == tiposReemplazo[1])
+                    {
+                        if(counts[0] < 3)
+                        {
+                            counts[0]++;
+                            nuevaTabla.Names.Add(datos[i] + " " + tiposReservados[1]);
+                            nuevaTabla.Types.Add(tiposReservados[1]);
+                        }
+                        else
+                        {
+                            //Sobrepaso la cantidad de elementos admitidos del tipo de dato
+                            nuevaTabla = null;
+                            return 13;
+                        }
+  
+                    }
+
+                    if (datos[i + 1] == tiposReemplazo[2])
+                    {
+                        if(counts[1] < 3)
+                        {
+                            counts[1]++;
+                            nuevaTabla.Names.Add(datos[i] + " " + tiposReservados[2]);
+                            nuevaTabla.Types.Add(tiposReservados[2]);
+                        }
+                        else
+                        {
+                            //Sobrepaso la cantidad de elementos admitidos del tipo de dato
+                            nuevaTabla = null;
+                            return 13;
+                        }                      
+                    }
+
+                    if(datos[i +1] == tiposReemplazo[3] && counts[2] < 3)
+                    {
+                        if(counts[2] < 3)
+                        {
+                            counts[2]++;
+                            nuevaTabla.Names.Add(datos[i] + " " + tiposReservados[3]);
+                            nuevaTabla.Types.Add(tiposReservados[3]);
+                        }
+                        else
+                        {
+                            //Sobrepaso la cantidad de elementos admitidos del tipo de dato
+                            nuevaTabla = null;
+                            return 13;
+                        }                    
+                    }                   
+                }
+                else
+                {
+                    //Error de tipo de dato
+                    return 11;
+                }
+
+                i++;
+            }
+
+            TablasPorCrear.Enqueue(nuevaTabla);
+
             return 0;
         }
 
@@ -379,6 +497,7 @@ namespace Proyecto_microSQL.Utilidades
         #region SELECT
         public List<string> listDataTable = new List<string>();
         public List<string> Missing = new List<string>();
+
         public bool Select(string[] columns, string tableName, int index)
         {
             try
