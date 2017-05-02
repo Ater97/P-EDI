@@ -51,8 +51,6 @@ namespace Proyecto_microSQL.Utilidades
                         }
                         roots.Add(tree.Nodes.Add(fileNames[i]));
                         foreach (TreeItem item in items)
-                        {
-                            if (fg)
                             {
                                 if (item.Level == roots.Count)
                                 {
@@ -60,17 +58,8 @@ namespace Proyecto_microSQL.Utilidades
                                 }
                                 roots[item.Level].Nodes.Add(item.Name);
                             }
-                            else
-                            {
-                                TreeNode t = new TreeNode();
-                                t.Nodes.Add(item.Name);
-                                roots.Add(t.Nodes.Add(item.Name));
-                                fg = true;
-                            }
-
-                        }
                        
-                        
+                        fg = true;
                         items = new List<TreeItem>();
                         roots = new List<TreeNode>();
 

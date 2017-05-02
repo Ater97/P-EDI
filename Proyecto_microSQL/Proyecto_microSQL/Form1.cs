@@ -451,7 +451,7 @@ namespace Proyecto_microSQL
             //INSERT TO
             if (comando == comandolst[6])
             {
-                return U.VerificarSintaxisInsertTo();
+                return U.VerificarSintaxisInsertTo(datos);
             }
 
             //En caso que no cumpla ningun comando anterior, retorna el numero del error correspondiente
@@ -516,6 +516,10 @@ namespace Proyecto_microSQL
             if (!D.Exporcsv(dataGridView1.Rows))
                 MessageBox.Show("Ocurrio un error, intente de nuevo");
         }
-        
+
+        private void treeView1_AfterSelect(object sender, TreeViewEventArgs e)
+        {
+            dataGridView1.DataSource = D.NewDataTable(e.Node.Text);
+        }
     }
 }
