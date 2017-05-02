@@ -17,6 +17,7 @@ namespace Proyecto_microSQL.Utilidades
         List<string> tiposReservados;
         List<string> tiposReemplazo;
         Queue<CrearTabla> tablasPorCrear = new Queue<CrearTabla>();
+        Queue<InsertInto> insercionesPorHacer = new Queue<InsertInto>();
 
         public void setPath(string p)
         {
@@ -172,6 +173,7 @@ namespace Proyecto_microSQL.Utilidades
             
             if(!datos.Contains(string.Join("", tiposReservados[0].Split(' '))))
             {
+                //No hay existencia de un INT PRIMARY KEY
                 return 8;
             }
 
@@ -321,12 +323,238 @@ namespace Proyecto_microSQL.Utilidades
             return 0;
         }
 
-        public int VerificarSintaxisInsertTo()
+        public int VerificarSintaxisInsertTo(List<string> datos)
         {
+            int i = 0;
+            int aux = 0;
+            int aux2 = 0;
+            List<string> data = new List<string>();
+            List<string> valores = new List<string>();
+            
+            if(!datos.Contains(palabrasReemplazo[7]))
+            {
+                //No contiene el comando values
+                return 14;
+            }
+
+            //Busca algun elemento 'VALUES' repetido
+            //tambien verifica que no se esten usando comandos que no corresponden a la funcion
+            for(i = 0; i < datos.Count; i++)
+            {
+                if(datos[i] == palabrasReemplazo[1] || datos[i] == palabrasReemplazo[3])
+                {
+                    //Error de comandos que no corresponden a la funcion.
+                    return 16;
+                }
+                else 
+                {
+                    if (aux > 1)
+                    {
+                        return 15;
+                    }
+                    else
+                    {
+                        if (datos[i] == palabrasReemplazo[7])
+                        {
+                            aux2 = i;
+                            aux++;
+                        }
+                    }
+                }                
+            }
+
+            //Se divide en 2 partes mi algoritmo
+
+            for(i = 0; i < aux2; i++)
+            {
+                data.Add(datos[i]);
+            }
+
+            for(i = aux2 + 1; i < datos.Count; i++)
+            {
+                valores.Add(datos[i]);
+            }
+
+            /*  VERIFICACION EN LA PARTE DE DATA    */
+
+            //Verificar la existencia de la llave de apertura.
+            if (data[1] != "{" && !data.Contains("{"))
+            {
+                //Error de llave de apertura no encontrado
+                return 3;
+            }
+
+            //En caso que exista algo que no es el operador {
+            if (data[1] != "{")
+            {
+                //Error de espacios de los nombres de las variables
+                return 9;
+            }
+
+            //En caso el ultimo elemento no es la llave de cierre
+            if (data[data.Count - 1] != "}" && !data.Contains("}"))
+            {
+                return 4;
+            }
+
+            //En caso que exista la llave de cierre pero hay mas elementos despues de esto.
+            if (data[data.Count - 1] != "}")
+            {
+                return 1;
+            }
+
+            InsertInto nuevaInsercion = new InsertInto();
+
+            nuevaInsercion.TableName = data[0];
+            for(i = 2; i < data.Count; i++)
+            {
+                //Empieza sin tomar en cuenta el nombre y la llave de apertura
+                nuevaInsercion.Columns.Add(data[i]);
+            }
+
+            /*  VERIFICACIÓN DE LA PARTE VALUES */
+
+            //Verificar la existencia de la llave de apertura.
+            if (valores[0] != "{" && !valores.Contains("{"))
+            {
+                //Error de llave de apertura no encontrado
+                return 3;
+            }
+
+            //En caso que exista algo que no es el operador {
+            if (valores[0] != "{")
+            {
+                //Error de espacios de los nombres de las variables
+                return 9;
+            }
+
+            //En caso el ultimo elemento no es la llave de cierre
+            if (valores[valores.Count - 1] != "}" && !valores.Contains("}"))
+            {
+                return 4;
+            }
+
+            //En caso que exista la llave de cierre pero hay mas elementos despues de esto.
+            if (valores[valores.Count - 1] != "}")
+            {
+                return 1;
+            }
+
+            for(i = 1; i < valores.Count - 1; i++)
+            {
+                //Omite el operador de apertura y el de cierre
+                nuevaInsercion.Values.Add(valores[i]);
+            }
+
+            //En caso no concuerden la cantidad de columnas con los valores ingresados.
+            if(nuevaInsercion.Values.Count != nuevaInsercion.Columns.Count)
+            {
+                return 17;
+            }
+
+            if(!ExisteTabla(nuevaInsercion.TableName))
+            {
+                //La tabla que se busca no existe..
+                return 18;
+            }
+
+            InsertInto infoObtenidaTabla = TraerInformacion(nuevaInsercion.TableName);
+
+            if(nuevaInsercion.Columns != infoObtenidaTabla.Columns)
+            {
+                return 19;
+            }
+
+            for(i = 0; i < infoObtenidaTabla.Types.Count; i++)
+            {
+                if(infoObtenidaTabla.Types[i] == tiposReservados[1])
+                {
+                    //Debe ser del tipo Varchar
+                    if(!(nuevaInsercion.Columns[i][0].ToString() == "'") && !(nuevaInsercion.Columns[i][nuevaInsercion.Columns[i].Length - 1].ToString() == "'"))
+                    {
+                        return 20;
+                    }
+
+                    nuevaInsercion.Columns[i] = nuevaInsercion.Columns[i].Replace("'", string.Empty);
+                }
+
+                if(infoObtenidaTabla.Types[i] == tiposReservados[2])
+                {
+                    //Cuando el tipo de dato es DATETIME
+                    if (!(nuevaInsercion.Columns[i][0].ToString() == "'") && !(nuevaInsercion.Columns[i][nuevaInsercion.Columns[i].Length - 1].ToString() == "'"))
+                    {
+                        return 21;
+                    }
+                    nuevaInsercion.Columns[i] = nuevaInsercion.Columns[i].Replace("'", string.Empty);
+
+                    string[] probar = nuevaInsercion.Columns[i].Split('/');
+
+                    if(probar.Length != 3 || nuevaInsercion.Columns[i].Length != 11)
+                    {
+                        return 23;
+                    }
+
+                    for(int x = 0; x < probar.Length; x++)
+                    {
+                        try
+                        {
+                            aux = int.Parse(probar[x]);
+
+                            //Verifica el dia 
+                            if(x == 0)
+                            {
+                                if(aux > 31 || aux < 1)
+                                {
+                                    return 24;
+                                }
+                            }
+
+                            //Verifica el mes
+                            if(x == 1)
+                            {
+                                if(aux > 12 || aux < 1)
+                                {
+                                    return 25;
+                                }
+                            }
+
+                            //Verifica el año
+                            if(x == 2)
+                            {
+                                if(aux < 1)
+                                {
+                                    return 26;
+                                }
+                            }
+
+                        }
+                        catch
+                        {
+                            return 22;
+                        }
+                    }
+                }
+
+                if(infoObtenidaTabla.Types[i] == tiposReservados[3])
+                {
+                    //Cuando el tipo de dato es INT 
+
+                    try
+                    {
+                        int.Parse(nuevaInsercion.Columns[i]);
+                    }
+                    catch
+                    {
+                        return 22;
+                    }
+                }
+            }
+
+            //Cuando paso todas las verificaciones
+            insercionesPorHacer.Enqueue(nuevaInsercion);
 
             return 0;
         }
-
 
         #endregion
 
@@ -373,6 +601,38 @@ namespace Proyecto_microSQL.Utilidades
         }
 
         #region Insert
+
+        private bool ExisteTabla(string nombre)
+        {
+            return File.Exists(path + "tablas\\" + nombre + ".tabla");
+        }
+
+        private InsertInto TraerInformacion(string nombre)
+        {
+            StreamReader file = new StreamReader(path + "tablas\\" + nombre + ".tabla");
+            InsertInto info = new InsertInto();
+            file.Close();
+
+            string linea = file.ReadLine();
+            string[] elementos = linea.Split(',');
+            string[] datos;
+
+            info.TableName = nombre;
+            info.Columns.Add(elementos[0]);
+            info.Types.Add(tiposReservados[3]);
+
+            for(int i = 1; i < elementos.Length; i++)
+            {
+                datos = elementos[i].Split(' ');
+
+                info.Columns.Add(datos[0]);
+                info.Types.Add(datos[1]);
+            }
+
+            return info;
+        }
+
+
         public bool insertarArchivoTabla(string tableName, List<string> values)
         {
             try
@@ -504,6 +764,21 @@ namespace Proyecto_microSQL.Utilidades
                 return false;
             return true;
         }
+
+        public Queue<InsertInto> InsercionesPorHacer
+        {
+            get
+            {
+                return insercionesPorHacer;
+            }
+
+            set
+            {
+                insercionesPorHacer = value;
+            }
+        }
+
+
         #endregion
 
         #region SELECT

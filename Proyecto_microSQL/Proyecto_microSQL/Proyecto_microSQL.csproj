@@ -64,6 +64,7 @@
     <Compile Include="Utilidades\CrearTabla.cs" />
     <Compile Include="Utilidades\DataGridViewManagement.cs" />
     <Compile Include="Utilidades\Errors.cs" />
+    <Compile Include="Utilidades\InsertInto.cs" />
     <Compile Include="Utilidades\standardObject.cs" />
     <Compile Include="Utilidades\Utilities.cs" />
     <EmbeddedResource Include="Form1.resx">
