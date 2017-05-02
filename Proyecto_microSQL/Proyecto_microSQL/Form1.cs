@@ -24,6 +24,7 @@ namespace Proyecto_microSQL
         List<string> tiposDeDato = new List<string>(); //lista de los tipos de datos reservados.
         Utilities U = new Utilities();
         DataGridViewManagement D = new DataGridViewManagement();
+        TreeViewManagement T = new TreeViewManagement();
         Errors system = new Errors();
 
         string path = @"C:\Users\sebas\Desktop\microSQL\"; //direccion principal de los archivos
@@ -37,6 +38,7 @@ namespace Proyecto_microSQL
             timer1.Start();
             U.setPath(path);
             D.setPath(path);
+            T.setPath(path);
         }
 
         private void Enter_Click(object sender, EventArgs e)
@@ -86,7 +88,7 @@ namespace Proyecto_microSQL
                 CheckKeywordColor(comandolst[i], Color.Blue);
             }
 
-            for(i = 0; i < tiposDeDato.Count(); i++)
+            for (i = 0; i < tiposDeDato.Count(); i++)
             {
                 CheckKeywordColor(tiposDeDato[i], Color.Blue);
             }
@@ -133,15 +135,15 @@ namespace Proyecto_microSQL
             int finish = 0;
             int selectStart = richTextBox1.SelectionStart;
 
-            while((index = richTextBox1.Text.IndexOf("'", index + 1)) != -1 && (finish = richTextBox1.Text.IndexOf("'", index + 1)) != -1 )
+            while ((index = richTextBox1.Text.IndexOf("'", index + 1)) != -1 && (finish = richTextBox1.Text.IndexOf("'", index + 1)) != -1)
             {
                 start = index;
-                index = finish;               
+                index = finish;
                 richTextBox1.Select(start, finish - start + 1);
                 richTextBox1.SelectionColor = Color.DarkOrange;
                 richTextBox1.Select(selectStart, 0);
                 richTextBox1.SelectionColor = Color.Black;
-            }         
+            }
         }
 
         string[] charsToRemove = new string[] { "@", ",", ".", ";" };
@@ -163,11 +165,11 @@ namespace Proyecto_microSQL
             texto = string.Join(" ", richTextBox1.Lines);
 
             //Reemplaza los comandos separados por los comandos en una sola palabra..
-            for(i = 0; i < comandolst.Count; i++)
+            for (i = 0; i < comandolst.Count; i++)
             {
                 texto = texto.Replace(comandolst[i], comandosRemplazos[i]);
             }
-            
+
             //Cambia el INT PRIMARY KEY por INTPRIMARYKEY
             texto = texto.Replace(tiposDeDato[0], string.Join("", tiposDeDato[0].Split(' ')));
 
@@ -247,15 +249,15 @@ namespace Proyecto_microSQL
                     {
                         numeroError = AnalizarCodigo(comando, funcion);
 
-                        if(numeroError == 0)
+                        if (numeroError == 0)
                         {
                             acciones.Add(comando);
-                            
+
                             //Cuando tenga que crear una tabla, almacena el nombre de la tabla
-                            if(comando == comandolst[4])
+                            if (comando == comandolst[4])
                             {
                                 nombres.Enqueue(funcion[0].Trim());
-                            }                        
+                            }
                         }
                     }
                 }
@@ -269,7 +271,7 @@ namespace Proyecto_microSQL
             {
                 //Si no hay errores realiza todos las acciones almacenadas.
 
-                for(i = 0; i < acciones.Count; i++)
+                for (i = 0; i < acciones.Count; i++)
                 {
                     EjecutarAcciones(acciones[i]);
 
@@ -283,9 +285,11 @@ namespace Proyecto_microSQL
                 richTextBox1.Clear();
             }
 
+            treeView1.Nodes.Clear();
+            T.PopulateTree(treeView1);
 
+            #region The Old Code
 
-            
             richTextBox1.Text += Environment.NewLine;
             string[] Lines = richTextBox1.Lines;
             Lines = U.LimiarArray(Lines, charsToRemove); //eliminar espacios en blanco, enters y caracteres extra
@@ -329,7 +333,7 @@ namespace Proyecto_microSQL
                         string tem = "Por favor revise la sintaxis. Los siguientes campos son inexistentes:";
                         for (int j = 0; j < U.Missing.Count(); j++)
                         {
-                            tem = tem + " " + U.Missing[j]; 
+                            tem = tem + " " + U.Missing[j];
                         }
                         MessageBox.Show(tem);
                         break;
@@ -353,9 +357,9 @@ namespace Proyecto_microSQL
                     break;
                 }
                 //DROP TABLE 
-                if(Lines[ij].Contains(comandolst[5]))
+                if (Lines[ij].Contains(comandolst[5]))
                 {
-                    if(!U.DropTable(Lines))
+                    if (!U.DropTable(Lines))
                     {
                         MessageBox.Show("Por favor revise la sintaxis");
                         break;
@@ -365,9 +369,9 @@ namespace Proyecto_microSQL
                     break;
                 }
                 //UPDATE
-                if(Lines[ij].Contains("UPDATE"))  //****Sustituir la palabara "UPDATE" por su comando****
+                if (Lines[ij].Contains("UPDATE"))  //****Sustituir la palabara "UPDATE" por su comando****
                 {
-                    if(!U.Update(Lines))
+                    if (!U.Update(Lines))
                     {
                         MessageBox.Show("Por favor revise la sintaxis");
                         break;
@@ -379,8 +383,7 @@ namespace Proyecto_microSQL
                 }
 
             }
-
-
+            #endregion
         }
 
         private void EjecutarAcciones(string comando)
@@ -388,13 +391,13 @@ namespace Proyecto_microSQL
             //SELECT
             if (comando == comandolst[0])
             {
-               
+
             }
 
             //DELETE
             if (comando == comandolst[2])
             {
-                
+
             }
 
             //CREATE TABLE
@@ -406,13 +409,13 @@ namespace Proyecto_microSQL
             //DROP TABLE
             if (comando == comandolst[5])
             {
-                
+
             }
 
             //INSERT TO
             if (comando == comandolst[6])
             {
-                
+
             }
         }
 
@@ -513,5 +516,6 @@ namespace Proyecto_microSQL
             if (!D.Exporcsv(dataGridView1.Rows))
                 MessageBox.Show("Ocurrio un error, intente de nuevo");
         }
+        
     }
 }

@@ -25,18 +25,16 @@ namespace Proyecto_microSQL.Utilidades
         }
 
         #region CreateStuff
-        public void crearFolder()
+        public void crearFolder() //crear todas las carpetas
         {
             Directory.CreateDirectory(path);
             Directory.CreateDirectory(path + "\\arboles");
             Directory.CreateDirectory(path + "\\microSQL");
             Directory.CreateDirectory(path + "\\tablas");
         }
-        //string path = @"Archivo\microSQL.ini";
 
         public bool CrearDefault()
         {
-            //  path = Path.Combine(path, "microSQL\\microSQL.ini"); 
             try
             {
                 FileStream fs = File.Create(path + "microSQL\\microSQL.ini");
@@ -175,35 +173,35 @@ namespace Proyecto_microSQL.Utilidades
 
         public int VerificarSintaxisCrearTabla(List<string> datos)
         {
-            
-            if(!datos.Contains(string.Join("", tiposReservados[0].Split(' '))))
+
+            if (!datos.Contains(string.Join("", tiposReservados[0].Split(' '))))
             {
                 //No hay existencia de un INT PRIMARY KEY
                 return 8;
             }
 
             //Verificar la existencia de la llave de apertura.
-            if( datos[1] != "{" && !datos.Contains("{"))
+            if (datos[1] != "{" && !datos.Contains("{"))
             {
                 //Error de llave de apertura no encontrado
                 return 3;
             }
 
             //En caso que exista algo que no es el operador {
-            if(datos[1] != "{")
+            if (datos[1] != "{")
             {
                 //Error de espacios de los nombres de las variables
                 return 9;
             }
 
             //En caso el ultimo elemento no es la llave de cierre
-            if(datos[datos.Count - 1] != "}" && !datos.Contains("}"))
+            if (datos[datos.Count - 1] != "}" && !datos.Contains("}"))
             {
                 return 4;
             }
 
             //En caso que exista la llave de cierre pero hay mas elementos despues de esto.
-            if(datos[datos.Count - 1] != "}")
+            if (datos[datos.Count - 1] != "}")
             {
                 return 1;
             }
@@ -214,43 +212,43 @@ namespace Proyecto_microSQL.Utilidades
 
             bool flag = false;
 
-            for(int i = 2; i < datos.Count - 2; i++)
+            for (int i = 2; i < datos.Count - 2; i++)
             {
                 flag = false;
 
                 //Omitiendo el nombre y la llave de apertura
-                for(int j = 0; j < tiposReemplazo.Count; j++)
+                for (int j = 0; j < tiposReemplazo.Count; j++)
                 {
                     if (datos[i] == tiposReemplazo[j])
                     {
                         return 10;
                     }
 
-                    if(datos[i + 1] == tiposReemplazo[j])
+                    if (datos[i + 1] == tiposReemplazo[j])
                     {
                         flag = true;
                     }
                 }
 
-                if(flag)
+                if (flag)
                 {
-                    if(datos[i + 1] == tiposReemplazo[0])
+                    if (datos[i + 1] == tiposReemplazo[0])
                     {
-                        if(nuevaTabla.Id == string.Empty)
+                        if (nuevaTabla.Id == string.Empty)
                         {
-                            nuevaTabla.Id = datos[i];                           
+                            nuevaTabla.Id = datos[i];
                         }
                         else
                         {
                             //Sobrepaso la cantidad de elementos admitidos del tipo de dato
                             nuevaTabla = null;
                             return 12;
-                        }                      
+                        }
                     }
 
-                    if(datos[i + 1] == tiposReemplazo[1])
+                    if (datos[i + 1] == tiposReemplazo[1])
                     {
-                        if(counts[0] < 3)
+                        if (counts[0] < 3)
                         {
                             counts[0]++;
                             nuevaTabla.Names.Add(datos[i] + " " + tiposReservados[1]);
@@ -262,12 +260,12 @@ namespace Proyecto_microSQL.Utilidades
                             nuevaTabla = null;
                             return 13;
                         }
-  
+
                     }
 
                     if (datos[i + 1] == tiposReemplazo[2])
                     {
-                        if(counts[1] < 3)
+                        if (counts[1] < 3)
                         {
                             counts[1]++;
                             nuevaTabla.Names.Add(datos[i] + " " + tiposReservados[2]);
@@ -278,12 +276,12 @@ namespace Proyecto_microSQL.Utilidades
                             //Sobrepaso la cantidad de elementos admitidos del tipo de dato
                             nuevaTabla = null;
                             return 13;
-                        }                      
+                        }
                     }
 
-                    if(datos[i +1] == tiposReemplazo[3] && counts[2] < 3)
+                    if (datos[i + 1] == tiposReemplazo[3] && counts[2] < 3)
                     {
-                        if(counts[2] < 3)
+                        if (counts[2] < 3)
                         {
                             counts[2]++;
                             nuevaTabla.Names.Add(datos[i] + " " + tiposReservados[3]);
@@ -294,8 +292,8 @@ namespace Proyecto_microSQL.Utilidades
                             //Sobrepaso la cantidad de elementos admitidos del tipo de dato
                             nuevaTabla = null;
                             return 13;
-                        }                    
-                    }                   
+                        }
+                    }
                 }
                 else
                 {
@@ -741,10 +739,10 @@ namespace Proyecto_microSQL.Utilidades
                 }
 
                 //****Encontrar como cargar arbol desde archivo****
-              //  BTree<int, standardObject> tree = new BTree<int, standardObject>(tableName, 5);
+                //  BTree<int, standardObject> tree = new BTree<int, standardObject>(tableName, 5);
                 // BTree<int, standardObject> tree = new BTree<int, standardObject>(tableName);
 
-              //  tree.Insertar(int.Parse(values[0]), newobj);
+                //  tree.Insertar(int.Parse(values[0]), newobj);
                 return true;
             }
             catch
@@ -802,7 +800,7 @@ namespace Proyecto_microSQL.Utilidades
                 {
                     fkey = true;
                 }
-                
+
                 if (fkey) //Filtro a la llave primaria
                 {
                     string[] keyRow = new string[2];
@@ -877,12 +875,12 @@ namespace Proyecto_microSQL.Utilidades
                     return false;
                 }
                 int tablelenght = Table.Count() - 1;
-                if(fkey)
+                if (fkey)
                 {
                     tablelenght = Table.Count();
                 }
                 #endregion
-                
+
                 for (int i = 1; i < tablelenght; i++) //almacenar en temp los datos en orden
                 {
                     temp = "";
@@ -1064,7 +1062,7 @@ namespace Proyecto_microSQL.Utilidades
                 bool[] fgcolumns = new bool[9]; //campos a modificar
                 string key = "";
 
-           
+
                 for (int k = 0; k < Lines.Count(); k++) //obtener llave para modificar
                 {
                     if (Lines[k].Trim() == "WHERE")
@@ -1079,7 +1077,7 @@ namespace Proyecto_microSQL.Utilidades
                     string[] row = Table[i].Split(',');
                     if (row[0].Trim() == key.Trim()) //modificar
                     {
-                      
+
                         break;
                     }
                 }

@@ -34,13 +34,13 @@
             this.CargaComandos_form2 = new System.Windows.Forms.Button();
             this.label1 = new System.Windows.Forms.Label();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.exportcsv = new System.Windows.Forms.Button();
             this.pBLineas = new System.Windows.Forms.PictureBox();
             this.Enter = new System.Windows.Forms.Button();
             this.richTextBox1 = new System.Windows.Forms.RichTextBox();
             this.treeView1 = new System.Windows.Forms.TreeView();
             this.dataGridView1 = new System.Windows.Forms.DataGridView();
             this.timer1 = new System.Windows.Forms.Timer(this.components);
-            this.exportcsv = new System.Windows.Forms.Button();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pBLineas)).BeginInit();
@@ -107,6 +107,16 @@
             this.groupBox2.Visible = false;
             this.groupBox2.Enter += new System.EventHandler(this.groupBox2_Enter);
             // 
+            // exportcsv
+            // 
+            this.exportcsv.Location = new System.Drawing.Point(586, 239);
+            this.exportcsv.Name = "exportcsv";
+            this.exportcsv.Size = new System.Drawing.Size(75, 23);
+            this.exportcsv.TabIndex = 7;
+            this.exportcsv.Text = " Export";
+            this.exportcsv.UseVisualStyleBackColor = true;
+            this.exportcsv.Click += new System.EventHandler(this.exportcsv_Click);
+            // 
             // pBLineas
             // 
             this.pBLineas.BackColor = System.Drawing.SystemColors.Info;
@@ -156,16 +166,6 @@
             // timer1
             // 
             this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
-            // 
-            // exportcsv
-            // 
-            this.exportcsv.Location = new System.Drawing.Point(586, 239);
-            this.exportcsv.Name = "exportcsv";
-            this.exportcsv.Size = new System.Drawing.Size(75, 23);
-            this.exportcsv.TabIndex = 7;
-            this.exportcsv.Text = " Export";
-            this.exportcsv.UseVisualStyleBackColor = true;
-            this.exportcsv.Click += new System.EventHandler(this.exportcsv_Click);
             // 
             // Form1
             // 
