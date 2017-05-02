@@ -285,7 +285,7 @@ namespace Proyecto_microSQL
                 richTextBox1.Clear();
             }
 
-            treeView1.Nodes.Clear();
+            
             T.PopulateTree(treeView1);
 
             #region The Old Code

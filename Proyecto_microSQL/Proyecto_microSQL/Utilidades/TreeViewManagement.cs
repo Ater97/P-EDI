@@ -21,6 +21,7 @@ namespace Proyecto_microSQL.Utilidades
         {
             try
             {
+                tree.Nodes.Clear();
                 List<TreeNode> roots = new List<TreeNode>();
                // roots.Add(tree.Nodes.Add("Tablas"));
                 List<TreeNode> temp = new List<TreeNode>();
