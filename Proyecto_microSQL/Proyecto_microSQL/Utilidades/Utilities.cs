@@ -120,7 +120,7 @@ namespace Proyecto_microSQL.Utilidades
                 for (int i = 0; i < columns.Count(); i++)
                 {
                     var splitted = columns[i].Split(new[] { ' ' }, 2);
-                    columns[i] = splitted[0] + " (" + splitted[1] + ")";
+                    columns[i] = splitted[0] + " " + splitted[1];
                 }
                 using (StreamWriter file = new StreamWriter(path + "tablas\\" + tablename + ".tabla", true))
                 {
@@ -411,7 +411,7 @@ namespace Proyecto_microSQL.Utilidades
             InsertInto nuevaInsercion = new InsertInto();
 
             nuevaInsercion.TableName = data[0];
-            for(i = 2; i < data.Count; i++)
+            for(i = 2; i < data.Count - 1; i++)
             {
                 //Empieza sin tomar en cuenta el nombre y la llave de apertura
                 nuevaInsercion.Columns.Add(data[i]);
@@ -465,9 +465,12 @@ namespace Proyecto_microSQL.Utilidades
 
             InsertInto infoObtenidaTabla = TraerInformacion(nuevaInsercion.TableName);
 
-            if(nuevaInsercion.Columns != infoObtenidaTabla.Columns)
+            for(i = 0; i < nuevaInsercion.Columns.Count; i++)
             {
-                return 19;
+                if(nuevaInsercion.Columns[i] != infoObtenidaTabla.Columns[i])
+                {
+                    return 19;
+                }
             }
 
             for(i = 0; i < infoObtenidaTabla.Types.Count; i++)
@@ -475,30 +478,31 @@ namespace Proyecto_microSQL.Utilidades
                 if(infoObtenidaTabla.Types[i] == tiposReservados[1])
                 {
                     //Debe ser del tipo Varchar
-                    if(!(nuevaInsercion.Columns[i][0].ToString() == "'") && !(nuevaInsercion.Columns[i][nuevaInsercion.Columns[i].Length - 1].ToString() == "'"))
+                    if(!(nuevaInsercion.Values[i][0].ToString() == "'") && !(nuevaInsercion.Values[i][nuevaInsercion.Values[i].Length - 1].ToString() == "'"))
                     {
                         return 20;
                     }
 
-                    nuevaInsercion.Columns[i] = nuevaInsercion.Columns[i].Replace("'", string.Empty);
+                    nuevaInsercion.Values[i] = nuevaInsercion.Values[i].Replace("'", string.Empty);
                 }
 
                 if(infoObtenidaTabla.Types[i] == tiposReservados[2])
                 {
                     //Cuando el tipo de dato es DATETIME
-                    if (!(nuevaInsercion.Columns[i][0].ToString() == "'") && !(nuevaInsercion.Columns[i][nuevaInsercion.Columns[i].Length - 1].ToString() == "'"))
+                    if (!(nuevaInsercion.Values[i][0].ToString() == "'") && !(nuevaInsercion.Values[i][nuevaInsercion.Values[i].Length - 1].ToString() == "'"))
                     {
                         return 21;
                     }
-                    nuevaInsercion.Columns[i] = nuevaInsercion.Columns[i].Replace("'", string.Empty);
+                    nuevaInsercion.Values[i] = nuevaInsercion.Values[i].Replace("'", string.Empty);
 
-                    string[] probar = nuevaInsercion.Columns[i].Split('/');
+                    string[] probar = nuevaInsercion.Values[i].Split('/');
 
-                    if(probar.Length != 3 || nuevaInsercion.Columns[i].Length != 11)
+                    if(probar.Length != 3 || nuevaInsercion.Values[i].Length != 10)
                     {
                         return 23;
                     }
 
+                    aux = 0;
                     for(int x = 0; x < probar.Length; x++)
                     {
                         try
@@ -546,7 +550,7 @@ namespace Proyecto_microSQL.Utilidades
 
                     try
                     {
-                        int.Parse(nuevaInsercion.Columns[i]);
+                        int.Parse(nuevaInsercion.Values[i]);
                     }
                     catch
                     {
@@ -616,7 +620,6 @@ namespace Proyecto_microSQL.Utilidades
         {
             StreamReader file = new StreamReader(path + "tablas\\" + nombre + ".tabla");
             InsertInto info = new InsertInto();
-            file.Close();
 
             string linea = file.ReadLine();
             string[] elementos = linea.Split(',');
@@ -634,9 +637,9 @@ namespace Proyecto_microSQL.Utilidades
                 info.Types.Add(datos[1]);
             }
 
+            file.Close();
             return info;
         }
-
 
         public bool insertarArchivoTabla(string tableName, List<string> values)
         {
@@ -664,21 +667,12 @@ namespace Proyecto_microSQL.Utilidades
                     ID = int.Parse(values[0]),
                 });
 
-                var charsToRemove = new string[] { "'" };
-                for (int i = 0; i < values.Count; i++)
-                {
-                    foreach (var ch in charsToRemove)
-                    {
-                        values[i] = values[i].Replace(ch, string.Empty);
-                    }
-                }
-
                 string data = File.ReadLines(path + "tablas\\" + tableName + ".tabla").First();
                 string[] strDataType = data.Split(',');
 
                 for (int i = 0; i < columns.Count(); i++)
                 {
-                    if (strDataType[i].Contains("(INT)"))
+                    if (strDataType[i].Contains("INT"))
                     {
                         if (!c[0, 0])
                         {
@@ -698,7 +692,7 @@ namespace Proyecto_microSQL.Utilidades
                         else
                             return false;
                     }
-                    else if (strDataType[i].Contains("(VARCHAR(100))"))
+                    else if (strDataType[i].Contains("VARCHAR(100)"))
                     {
                         if (!c[1, 0])
                         {
@@ -718,7 +712,7 @@ namespace Proyecto_microSQL.Utilidades
                         else
                             return false;
                     }
-                    else if (strDataType[i].Contains("(DATETIME)"))
+                    else if (strDataType[i].Contains("DATETIME"))
                     {
                         if (!c[2, 0])
                         {
@@ -753,16 +747,10 @@ namespace Proyecto_microSQL.Utilidades
             }
         }
 
-        public bool Insertar(string tableName, List<string> columns, List<string> values)
+        public void Insertar(InsertInto insercion)
         {
-            //****Verificar Formato****
-
-
-            if (!insertarArbol(tableName.Trim(), values, columns))
-                return false;
-            if (!insertarArchivoTabla(tableName.Trim(), values))
-                return false;
-            return true;
+            insertarArbol(insercion.TableName.Trim(), insercion.Values, insercion.Columns);
+            insertarArchivoTabla(insercion.TableName.Trim(), insercion.Values);
         }
 
         public Queue<InsertInto> InsercionesPorHacer

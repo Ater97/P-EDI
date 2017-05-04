@@ -26,7 +26,7 @@ namespace Proyecto_microSQL
         DataGridViewManagement D = new DataGridViewManagement();
         Errors system = new Errors();
 
-        string path = @"C:\Users\sebas\Desktop\microSQL\"; //direccion principal de los archivos
+        string path = @"C:\Users\bryan\Desktop\microSQL\"; //direccion principal de los archivos
 
         private void Form1_Load(object sender, EventArgs e)
         {
@@ -110,7 +110,8 @@ namespace Proyecto_microSQL
 
         private void CheckKeywordColor(string word, Color color)
         {
-            if (richTextBox1.Text.Trim() == word.Trim())
+            //if (richTextBox1.Text.Trim() == word.Trim())
+            if (richTextBox1.Text.Contains(word))
             {
                 int index = -1;
                 int selectStart = richTextBox1.SelectionStart;
@@ -252,7 +253,7 @@ namespace Proyecto_microSQL
                             acciones.Add(comando);
                             
                             //Cuando tenga que crear una tabla, almacena el nombre de la tabla
-                            if(comando == comandolst[4])
+                            if(comando == comandolst[4] || comando == comandolst[6])
                             {
                                 nombres.Enqueue(funcion[0].Trim());
                             }                        
@@ -277,6 +278,11 @@ namespace Proyecto_microSQL
                     {
                         dataGridView1.DataSource = D.NewDataTable(nombres.Dequeue());
                     }
+
+                    if(acciones[i] == comandolst[6])
+                    {
+                        dataGridView1.DataSource = D.NewDataTable(nombres.Dequeue());
+                    }
                 }
 
                 MessageBox.Show("Se han ejecutado las acciones correctamente.", "Completado", MessageBoxButtons.OK, MessageBoxIcon.Information);
@@ -286,99 +292,99 @@ namespace Proyecto_microSQL
 
 
             
-            richTextBox1.Text += Environment.NewLine;
-            string[] Lines = richTextBox1.Lines;
-            Lines = U.LimiarArray(Lines, charsToRemove); //eliminar espacios en blanco, enters y caracteres extra
+            //richTextBox1.Text += Environment.NewLine;
+            //string[] Lines = richTextBox1.Lines;
+            //Lines = U.LimiarArray(Lines, charsToRemove); //eliminar espacios en blanco, enters y caracteres extra
 
-            for (int ij = 0; ij < Lines.Count(); ij++)
-            {
-                ////CREATE TABLE
-                //if (Lines[ij].Contains(comandolst[4]))
-                //{ //crear archivo tabla y arbol
-                //    if (!U.crearTabla(U.splitArray(Lines, ij + 4).Item1, Lines[ij + 1], Lines[ij + 3]) || !U.splitArray(Lines, ij + 4).Item2)
-                //    {
-                //        MessageBox.Show("Por favor revise la sintaxis");
-                //        break;
-                //    }
-                //    richTextBox1.Clear();
-                //    dataGridView1.DataSource = D.NewDataTable(Lines[ij + 1].Trim());
-                //    fg = true;
-                //    break;
-                //}
-                //INSERT INTO
-                if (Lines[ij].Contains(comandolst[6]))
-                {
-                    int indexValues = U.getSplitIndex(Lines, ij + 3, comandolst[7]);
-                    if (!U.Insertar(Lines[ij + 1], U.splitArray(Lines, ij + 3).Item1, U.splitArray(Lines, indexValues).Item1)
-                        || !U.splitArray(Lines, ij + 3).Item2 || !U.splitArray(Lines, indexValues).Item2) //Insertar datos
-                    {
-                        MessageBox.Show("Por favor revise la sintaxis");
-                        break;
-                    }
-                    richTextBox1.Clear();
-                    dataGridView1.DataSource = D.NewDataTable(Lines[ij + 1].Trim());
-                    fg = true;
-                    break;
-                }
-                //SELECT 
-                if (Lines[ij].Contains(comandolst[0]))
-                {
-                    int index = U.getSplitIndex(Lines, ij + 1, comandolst[1]);
-                    if (!U.Select(Lines, Lines[index - 1].Trim(), index))
-                    {
-                        string tem = "Por favor revise la sintaxis. Los siguientes campos son inexistentes:";
-                        for (int j = 0; j < U.Missing.Count(); j++)
-                        {
-                            tem = tem + " " + U.Missing[j]; 
-                        }
-                        MessageBox.Show(tem);
-                        break;
-                    }
-                    richTextBox1.Clear();
-                    dataGridView1.DataSource = D.ToDataTable(U.listDataTable);
-                    fg = true;
-                    break;
-                }
-                //DELETE FROM 
-                if (Lines[ij].Contains(comandolst[2]))
-                {
-                    if (!U.DeleteFrom(Lines))
-                    {
-                        MessageBox.Show("Por favor revise la sintaxis");
-                        break;
-                    }
-                    richTextBox1.Clear();
-                    dataGridView1.DataSource = D.NewDataTable(Lines[i + 1].Trim());
-                    fg = true;
-                    break;
-                }
-                //DROP TABLE 
-                if(Lines[ij].Contains(comandolst[5]))
-                {
-                    if(!U.DropTable(Lines))
-                    {
-                        MessageBox.Show("Por favor revise la sintaxis");
-                        break;
-                    }
-                    richTextBox1.Clear();
-                    fg = true;
-                    break;
-                }
-                //UPDATE
-                if(Lines[ij].Contains("UPDATE"))  //****Sustituir la palabara "UPDATE" por su comando****
-                {
-                    if(!U.Update(Lines))
-                    {
-                        MessageBox.Show("Por favor revise la sintaxis");
-                        break;
-                    }
-                    richTextBox1.Clear();
-                    dataGridView1.DataSource = D.NewDataTable(Lines[i + 1].Trim());
-                    fg = true;
-                    break;
-                }
+            //for (int ij = 0; ij < Lines.Count(); ij++)
+            //{
+            //    ////CREATE TABLE
+            //    //if (Lines[ij].Contains(comandolst[4]))
+            //    //{ //crear archivo tabla y arbol
+            //    //    if (!U.crearTabla(U.splitArray(Lines, ij + 4).Item1, Lines[ij + 1], Lines[ij + 3]) || !U.splitArray(Lines, ij + 4).Item2)
+            //    //    {
+            //    //        MessageBox.Show("Por favor revise la sintaxis");
+            //    //        break;
+            //    //    }
+            //    //    richTextBox1.Clear();
+            //    //    dataGridView1.DataSource = D.NewDataTable(Lines[ij + 1].Trim());
+            //    //    fg = true;
+            //    //    break;
+            //    //}
+            //    //INSERT INTO
+            //    if (Lines[ij].Contains(comandolst[6]))
+            //    {
+            //        int indexValues = U.getSplitIndex(Lines, ij + 3, comandolst[7]);
+            //        if (!U.Insertar(Lines[ij + 1], U.splitArray(Lines, ij + 3).Item1, U.splitArray(Lines, indexValues).Item1)
+            //            || !U.splitArray(Lines, ij + 3).Item2 || !U.splitArray(Lines, indexValues).Item2) //Insertar datos
+            //        {
+            //            MessageBox.Show("Por favor revise la sintaxis");
+            //            break;
+            //        }
+            //        richTextBox1.Clear();
+            //        dataGridView1.DataSource = D.NewDataTable(Lines[ij + 1].Trim());
+            //        fg = true;
+            //        break;
+            //    }
+            //    //SELECT 
+            //    if (Lines[ij].Contains(comandolst[0]))
+            //    {
+            //        int index = U.getSplitIndex(Lines, ij + 1, comandolst[1]);
+            //        if (!U.Select(Lines, Lines[index - 1].Trim(), index))
+            //        {
+            //            string tem = "Por favor revise la sintaxis. Los siguientes campos son inexistentes:";
+            //            for (int j = 0; j < U.Missing.Count(); j++)
+            //            {
+            //                tem = tem + " " + U.Missing[j]; 
+            //            }
+            //            MessageBox.Show(tem);
+            //            break;
+            //        }
+            //        richTextBox1.Clear();
+            //        dataGridView1.DataSource = D.ToDataTable(U.listDataTable);
+            //        fg = true;
+            //        break;
+            //    }
+            //    //DELETE FROM 
+            //    if (Lines[ij].Contains(comandolst[2]))
+            //    {
+            //        if (!U.DeleteFrom(Lines))
+            //        {
+            //            MessageBox.Show("Por favor revise la sintaxis");
+            //            break;
+            //        }
+            //        richTextBox1.Clear();
+            //        dataGridView1.DataSource = D.NewDataTable(Lines[i + 1].Trim());
+            //        fg = true;
+            //        break;
+            //    }
+            //    //DROP TABLE 
+            //    if(Lines[ij].Contains(comandolst[5]))
+            //    {
+            //        if(!U.DropTable(Lines))
+            //        {
+            //            MessageBox.Show("Por favor revise la sintaxis");
+            //            break;
+            //        }
+            //        richTextBox1.Clear();
+            //        fg = true;
+            //        break;
+            //    }
+            //    //UPDATE
+            //    if(Lines[ij].Contains("UPDATE"))  //****Sustituir la palabara "UPDATE" por su comando****
+            //    {
+            //        if(!U.Update(Lines))
+            //        {
+            //            MessageBox.Show("Por favor revise la sintaxis");
+            //            break;
+            //        }
+            //        richTextBox1.Clear();
+            //        dataGridView1.DataSource = D.NewDataTable(Lines[i + 1].Trim());
+            //        fg = true;
+            //        break;
+            //    }
 
-            }
+            //}
 
 
         }
@@ -412,7 +418,7 @@ namespace Proyecto_microSQL
             //INSERT TO
             if (comando == comandolst[6])
             {
-                
+                U.Insertar(U.InsercionesPorHacer.Dequeue());
             }
         }
 
@@ -448,7 +454,7 @@ namespace Proyecto_microSQL
             //INSERT TO
             if (comando == comandolst[6])
             {
-                return U.VerificarSintaxisInsertTo();
+                return U.VerificarSintaxisInsertTo(datos);
             }
 
             //En caso que no cumpla ningun comando anterior, retorna el numero del error correspondiente
