@@ -265,6 +265,10 @@ namespace Proyecto_microSQL
             {
                 MessageBox.Show("Se han ejecutado las acciones correctamente.", "Completado", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 T.PopulateTree(treeView1);
+<<<<<<< HEAD
+                richTextBox1.Clear();
+=======
+>>>>>>> origin/master
             }
             
             #region The Old Code
