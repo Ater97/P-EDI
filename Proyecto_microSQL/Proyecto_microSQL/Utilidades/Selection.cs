@@ -19,6 +19,18 @@ namespace Proyecto_microSQL.Utilidades
             filtro = string.Empty;
         }
 
+        public string Filtro
+        {
+            get
+            {
+                return filtro;
+            }
+            set
+            {
+                filtro = value;
+            }
+        }
+
         public string TableName
         {
             get
