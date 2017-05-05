@@ -79,18 +79,17 @@ namespace Proyecto_microSQL
         string str;
         private void richTextBox1_TextChanged(object sender, EventArgs e)
         {
-            int i = 0;
             int position = richTextBox1.SelectionStart;
             richTextBox1.Text = richTextBox1.Text.ToUpper();
 
-            for (i = 0; i < comandolst.Count(); i++)
+            for (int i = 0; i < comandolst.Count(); i++)
             {
-                CheckKeywordColor(comandolst[i], Color.Blue);
+                CheckKeyword(comandolst[i], Color.Blue, 1);
             }
 
-            for (i = 0; i < tiposDeDato.Count(); i++)
+            for (int i = 0; i < tiposDeDato.Count(); i++)
             {
-                CheckKeywordColor(tiposDeDato[i], Color.Blue);
+                CheckKeyword(tiposDeDato[i], Color.Green, 0);
             }
 
             CheckVarcharColor();
@@ -110,21 +109,20 @@ namespace Proyecto_microSQL
             #endregion
         }
 
-        private void CheckKeywordColor(string word, Color color)
+        private void CheckKeyword(string word, Color color, int startIndex)
         {
-            if (richTextBox1.Text.Trim() == word.Trim())
+            if (richTextBox1.Text.Contains(word))
             {
                 int index = -1;
                 int selectStart = richTextBox1.SelectionStart;
 
                 while ((index = richTextBox1.Text.IndexOf(word, (index + 1))) != -1)
                 {
-                    richTextBox1.Select(index, word.Length);
+                    richTextBox1.Select((index + startIndex), word.Length);
                     richTextBox1.SelectionColor = color;
                     richTextBox1.Select(selectStart, 0);
                     richTextBox1.SelectionColor = Color.Black;
                 }
-                //richTextBox1.Text += Environment.NewLine;
             }
         }
 
@@ -310,20 +308,20 @@ namespace Proyecto_microSQL
                 //    break;
                 //}
                 //INSERT INTO
-                if (Lines[ij].Contains(comandolst[6]))
-                {
-                    int indexValues = U.getSplitIndex(Lines, ij + 3, comandolst[7]);
-                    if (!U.Insertar(Lines[ij + 1], U.splitArray(Lines, ij + 3).Item1, U.splitArray(Lines, indexValues).Item1)
-                        || !U.splitArray(Lines, ij + 3).Item2 || !U.splitArray(Lines, indexValues).Item2) //Insertar datos
-                    {
-                        MessageBox.Show("Por favor revise la sintaxis");
-                        break;
-                    }
-                    richTextBox1.Clear();
-                    dataGridView1.DataSource = D.NewDataTable(Lines[ij + 1].Trim());
-                    fg = true;
-                    break;
-                }
+                //if (Lines[ij].Contains(comandolst[6]))
+                //{
+                //    int indexValues = U.getSplitIndex(Lines, ij + 3, comandolst[7]);
+                //    if (!U.Insertar(Lines[ij + 1], U.splitArray(Lines, ij + 3).Item1, U.splitArray(Lines, indexValues).Item1)
+                //        || !U.splitArray(Lines, ij + 3).Item2 || !U.splitArray(Lines, indexValues).Item2) //Insertar datos
+                //    {
+                //        MessageBox.Show("Por favor revise la sintaxis");
+                //        break;
+                //    }
+                //    richTextBox1.Clear();
+                //    dataGridView1.DataSource = D.NewDataTable(Lines[ij + 1].Trim());
+                //    fg = true;
+                //    break;
+                //}
                 //SELECT 
                 if (Lines[ij].Contains(comandolst[0]))
                 {
