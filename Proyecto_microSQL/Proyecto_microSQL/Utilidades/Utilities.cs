@@ -18,12 +18,52 @@ namespace Proyecto_microSQL.Utilidades
         List<string> tiposReemplazo;
         CrearTabla tabla = new CrearTabla();
         InsertInto insertar = new InsertInto();
+        Selection seleccion = new Selection();
         //Queue<CrearTabla> tablasPorCrear = new Queue<CrearTabla>();
         //Queue<InsertInto> insercionesPorHacer = new Queue<InsertInto>();
 
         public void setPath(string p)
         {
             path = p;
+        }
+
+        public CrearTabla Tabla
+        {
+            get
+            {
+                return tabla;
+            }
+
+            set
+            {
+                tabla = value;
+            }
+        }
+
+        public InsertInto Insertar1
+        {
+            get
+            {
+                return insertar;
+            }
+
+            set
+            {
+                insertar = value;
+            }
+        }
+
+        public Selection Seleccion
+        {
+            get
+            {
+                return seleccion;
+            }
+
+            set
+            {
+                seleccion = value;
+            }
         }
 
         #region CreateStuff
@@ -184,6 +224,12 @@ namespace Proyecto_microSQL.Utilidades
                 return 9;
             }
 
+            //INT PRIMARY KEY distinto de ID
+            if(datos[2] != "ID" || datos[3] != tiposReemplazo[0])
+            {
+                return 28;
+            }
+
             //En caso el ultimo elemento no es la llave de cierre
             if (datos[datos.Count - 1] != ")" && !datos.Contains(")"))
             {
@@ -306,9 +352,144 @@ namespace Proyecto_microSQL.Utilidades
             return 0;
         }
 
-        public int VerificiarSintaxisSelect()
+        public int VerificiarSintaxisSelect(List<string> datos)
         {
+            int i = 0;
+            int aux = 0;
+            int aux2 = 0;
+            int aux3 = 0;
+            int aux4 = 0;
+            Selection nuevaSeleccion = new Selection();
+            List<string> columnas = new List<string>();
+            List<string> filtro = new List<string>();
+            string nombreTabla = string.Empty;
+          
+            if (!datos.Contains(palabrasReemplazo[1]))
+            {
+                //No contiene el comando from
+                return 30;
+            }
 
+            //Busca algun elemento 'WHERE O FROM' repetido
+            //tambien verifica que no se esten usando comandos que no corresponden a la funcion
+            for (i = 0; i < datos.Count; i++)
+            {
+                if (datos[i] == palabrasReemplazo[7])
+                {
+                    //Error de comandos que no corresponden a la funcion.
+                    return 16;
+                }
+                else
+                {
+                    if (aux > 1 || aux2 > 1)
+                    {
+                        return 33;
+                    }
+                    else
+                    {
+                        if (datos[i] == palabrasReemplazo[1])
+                        {
+                            aux3 = i;
+                            aux++;
+                        }
+
+                        if(datos[i] == palabrasReemplazo[3])
+                        {
+                            aux4 = i;
+                            aux2++;
+                        }
+                    }
+                }
+            }
+
+            if (datos.Contains(palabrasReemplazo[3]))
+            {
+                /*  ANALIZAR COMO SI EXISTIERA EL WHERE*/
+
+                for(i =0; i < aux3; i++)
+                {
+                    columnas.Add(datos[i]);
+                }
+
+                //Verifica que solo exista un campo despues del from
+                if(aux3 - aux2 != 2)
+                {
+                    return 31;
+                }
+                
+                //Obtiene el nombre de la tabla buscada
+                nombreTabla = datos[aux3 + 1];
+                
+                //Obtiene el filtro
+                for(i = aux4 + 1; i < datos.Count; i++)
+                {
+                    filtro.Add(datos[i]);
+                }
+
+                //Verifica la existencia de la tabla
+                if (!ExisteTabla(nombreTabla))
+                {
+                    return 18;
+                }
+
+
+
+
+
+            }
+            else
+            {
+                /*  ANALIZAR SIN WHERE */
+
+                //Obtiene las columnas
+                for(i = 0; i < aux3; i++)
+                {
+                    columnas.Add(datos[i]);
+                }
+
+                //Obtiene el nombre 
+                if(datos[datos.Count - 2] != palabrasReemplazo[1])
+                {
+                    return 31;
+                }
+
+                nombreTabla = datos[aux3 + 1];
+
+                //Verifica la existencia de la tabla.
+                if(!ExisteTabla(nombreTabla))
+                {
+                    return 18;
+                }
+
+                InsertInto infoObtenida = TraerInformacion(nombreTabla);
+
+                if(columnas.Count == 1 && columnas[0] == "*")
+                {
+                    nuevaSeleccion.TableName = infoObtenida.TableName;
+                    nuevaSeleccion.Columns = infoObtenida.Columns;
+                }
+                else
+                {
+                    if (columnas.Count > infoObtenida.Columns.Count)
+                    {
+                        return 35;
+                    }
+
+                    //Verica que las columnas concuerden con el formato de tabla almacenado
+                    for (i = 0; i < columnas.Count; i++)
+                    {
+                        if (!infoObtenida.Columns.Contains(columnas[i]))
+                        {
+                            return 34;
+                        }
+                    }
+
+                    nuevaSeleccion.TableName = nombreTabla;
+                    nuevaSeleccion.Columns = columnas;
+                }               
+            }
+
+            seleccion = nuevaSeleccion;
 
             return 0;
         }
@@ -460,7 +641,12 @@ namespace Proyecto_microSQL.Utilidades
 
             InsertInto infoObtenidaTabla = TraerInformacion(nuevaInsercion.TableName);
 
+<<<<<<< HEAD
             for (i = 0; i < nuevaInsercion.Columns.Count; i++)
+=======
+            //Verica que las columnas concuerden con el formato de tabla almacenado
+            for(i = 0; i < nuevaInsercion.Columns.Count; i++)
+>>>>>>> origin/master
             {
                 if (nuevaInsercion.Columns[i] != infoObtenidaTabla.Columns[i])
                 {
@@ -541,10 +727,18 @@ namespace Proyecto_microSQL.Utilidades
 
                 if (infoObtenidaTabla.Types[i] == tiposReservados[3])
                 {
-                    //Cuando el tipo de dato es INT 
 
                     try
                     {
+                        //Cuando el tipo de dato es INT 
+                        if (infoObtenidaTabla.Columns[i] == "ID")
+                        {
+                            if(int.Parse(nuevaInsercion.Values[i]) < 1)
+                            {
+                                return 29;
+                            }
+                        }
+     
                         int.Parse(nuevaInsercion.Values[i]);
                     }
                     catch
@@ -681,31 +875,6 @@ namespace Proyecto_microSQL.Utilidades
         public List<string> listDataTable = new List<string>();
         public List<string> Missing = new List<string>();
 
-        public CrearTabla Tabla
-        {
-            get
-            {
-                return tabla;
-            }
-
-            set
-            {
-                tabla = value;
-            }
-        }
-
-        public InsertInto Insertar1
-        {
-            get
-            {
-                return insertar;
-            }
-
-            set
-            {
-                insertar = value;
-            }
-        }
 
         public bool Select(string[] columns, string tableName)
         {

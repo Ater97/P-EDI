@@ -69,6 +69,7 @@
     <Compile Include="Utilidades\Errors.cs" />
     <Compile Include="Utilidades\Fila.cs" />
     <Compile Include="Utilidades\InsertInto.cs" />
+    <Compile Include="Utilidades\Selection.cs" />
     <Compile Include="Utilidades\standardObject.cs" />
     <Compile Include="Utilidades\TreeViewManagement.cs" />
     <Compile Include="Utilidades\Utilities.cs" />

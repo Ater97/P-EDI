@@ -12,7 +12,7 @@ namespace Proyecto_microSQL.Utilidades
 
         public Errors()
         {
-            errores = new string[30];
+            errores = new string[40];
             errores[1] = "Error[1]: El texto ingresado es incoherente. \nPor favor reviselo y haga las correcciones correspondientes.";
             errores[2] = "Error[2]: No se encontro el comando 'GO' para la función.\nRecuerde que no pueden ir funciones dentro de otras funciones, sin antes haberlas finalizados con el comando GO. \nPor favor revise la sintaxis.";
             errores[3] = "Error[3]: No se encontro el simbolo '(' de apertura. \nPor favor verifique su codigo";
@@ -28,7 +28,7 @@ namespace Proyecto_microSQL.Utilidades
             errores[13] = "Error[13]: Se han sobrepasado la cantidad maxima {3} de variables con el mismo tipo de dato. \nPor favor verifique su codigo.";
             errores[14] = "Error[14]: No se encuentra el comando 'VALUES'. \nPor favor verifique su codigo";
             errores[15] = "Error[15]: Se encontraron mas de dos comandos del tipo 'VALUES'. \nPor favor verifique su codigo.";
-            errores[16] = "Error[16]: Las comandos WHERE/FROM no corresponden a la funcion INSERT INTO. \nPor favor verifique su codigo.";
+            errores[16] = "Error[16]: Los comandos WHERE/FROM no corresponden a la funcion INSERT INTO. \nPor favor verifique su codigo.";
             errores[17] = "Error[17]: Los valores insertados son menores o han sobrepasado la cantidad de columnas que posee la tabla. \nRecuerde que no debe dejar campos nullos. \nPor favor verifique su codigo";
             errores[18] = "Error[18]: La tabla buscada no existe. \nPor favor verifique el nombre de la tabla, de no existir cree una nueva tabla.";
             errores[19] = "Error[19]: Verifique los nombres de las columnas ingresadas, no concuerdan con los de la tabla.";
@@ -40,6 +40,16 @@ namespace Proyecto_microSQL.Utilidades
             errores[25] = "Error[25]: [DATETIME] Recuerde que el número máximo de meses de un año es de 12 y no puede ser 0 ni negativo. \nPor favor verifique su codigo.";
             errores[26] = "Error[26]: [DATETIME] Recuerde que un año no puede ser cero o negativo. \nPor favor verifique su codigo.";
             errores[27] = "Error[27]: La tabla que desea crear ya existe. \nPor favor verifique su codigo.";
+            errores[28] = "Error[28]: No se ha encontrado la INT PRIMARY KEY, recuerde que es necesario este tipo de dato como primer variable en la creación de tablas, tambien recuerde que el nombre de la INT PRIMARY KEY debe ser ID. \nPor favor verifique su codigo.";
+            errores[29] = "Error[29]: La INT PRIMARY KEY 'ID' no puede ser negativa, ni cero. \nPor favor verifique su codigo.";
+            errores[30] = "Error[30]: No se ha encontrado el comando 'FROM', este indica donde debe realizarse la seleccion, por lo que es de suma importancia. \nPor favor verifique su codigo.";
+            errores[31] = "Error[31]: Texto incoherente. Recuerde que los nombres de la tabla no poseen espacios. \nPor favor verifique su codigo";
+            errores[32] = "Error[32]: El comando VALUES no corresponde a la función SELECT. \nPor favor verifique su codigo";
+            errores[33] = "Error[33]: Se encontraron mas de dos comandos de los tipos 'WHERE'/'FROM'. \nPor favor verifique su codigo.";
+            errores[34] = "Error[34]: Nombre de columnas invalidos o no existen en la tabla indicada. \nPor favor verifique su codigo.";
+            errores[35] = "Error[35]: Se sobrepaso la cantidad de columnas que posee la tabla. \nPor favor verifique su codigo";
+
+
         }
 
         public string Errores(int numeroDeError)
