@@ -33,6 +33,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="EstructurasDeDatos">
+      <HintPath>..\EstructurasDeDatos.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.VisualBasic" />
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -64,6 +67,7 @@
     <Compile Include="Utilidades\CrearTabla.cs" />
     <Compile Include="Utilidades\DataGridViewManagement.cs" />
     <Compile Include="Utilidades\Errors.cs" />
+    <Compile Include="Utilidades\Fila.cs" />
     <Compile Include="Utilidades\InsertInto.cs" />
     <Compile Include="Utilidades\standardObject.cs" />
     <Compile Include="Utilidades\TreeViewManagement.cs" />
@@ -95,12 +99,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\Btree\Btree.csproj">
-      <Project>{44D94039-CA85-4EB6-BB0F-A267E6DBC364}</Project>
-      <Name>Btree</Name>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

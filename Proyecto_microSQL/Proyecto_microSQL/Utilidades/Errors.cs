@@ -15,8 +15,8 @@ namespace Proyecto_microSQL.Utilidades
             errores = new string[30];
             errores[1] = "Error[1]: El texto ingresado es incoherente. \nPor favor reviselo y haga las correcciones correspondientes.";
             errores[2] = "Error[2]: No se encontro el comando 'GO' para la función.\nRecuerde que no pueden ir funciones dentro de otras funciones, sin antes haberlas finalizados con el comando GO. \nPor favor revise la sintaxis.";
-            errores[3] = "Error[3]: No se encontro el simbolo '{' de apertura. \nPor favor verifique su codigo";
-            errores[4] = "Error[4]: No se encontro el simbolo '}' de cierre. \nPor favor verifique su codigo.";
+            errores[3] = "Error[3]: No se encontro el simbolo '(' de apertura. \nPor favor verifique su codigo";
+            errores[4] = "Error[4]: No se encontro el simbolo ')' de cierre. \nPor favor verifique su codigo.";
             errores[5] = "Error[5]: No se encontro ningun comando de alguna función, verifique su codigo.";
             errores[6] = "Error[6]: No se pueden procesar las funciones WHERE/FROM/VALUES sin antes tener una funcion donde aplicarlo.\nEjemplo: \nSELECT \n <NombreColumna> \nFROM \n. . . \nPor favor verifique su codigo.";
             errores[7] = "Error[7]: No se encuentran datos requeridos para funcionar. \nVerifique su codigo.";
@@ -39,6 +39,7 @@ namespace Proyecto_microSQL.Utilidades
             errores[24] = "Error[24]: [DATETIME] Recuerde que el número máximo de dias de un mes es de 31 y no puede ser 0 ni negativo. \nPor favor verifique su codigo.";
             errores[25] = "Error[25]: [DATETIME] Recuerde que el número máximo de meses de un año es de 12 y no puede ser 0 ni negativo. \nPor favor verifique su codigo.";
             errores[26] = "Error[26]: [DATETIME] Recuerde que un año no puede ser cero o negativo. \nPor favor verifique su codigo.";
+            errores[27] = "Error[27]: La tabla que desea crear ya existe. \nPor favor verifique su codigo.";
         }
 
         public string Errores(int numeroDeError)

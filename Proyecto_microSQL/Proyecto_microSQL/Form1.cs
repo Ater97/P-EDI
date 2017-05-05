@@ -27,7 +27,7 @@ namespace Proyecto_microSQL
         TreeViewManagement T = new TreeViewManagement();
         Errors system = new Errors();
 
-        string path = @"C:\Users\sebas\Desktop\microSQL\"; //direccion principal de los archivos
+        string path = @"C:\Users\bryan\Desktop\microSQL\"; //direccion principal de los archivos
 
         private void Form1_Load(object sender, EventArgs e)
         {
@@ -59,6 +59,7 @@ namespace Proyecto_microSQL
             U.CrearDefault();
             comandolst = U.CargarComando();
             tiposDeDato = U.CargarTiposDefault();
+            T.PopulateTree(treeView1);
         }
 
         public void gbOn()
@@ -248,17 +249,14 @@ namespace Proyecto_microSQL
                     if (numeroError == 0)
                     {
                         numeroError = AnalizarCodigo(comando, funcion);
+                    }
 
-                        if (numeroError == 0)
-                        {
-                            acciones.Add(comando);
-
-                            //Cuando tenga que crear una tabla, almacena el nombre de la tabla
-                            if (comando == comandolst[4])
-                            {
-                                nombres.Enqueue(funcion[0].Trim());
-                            }
-                        }
+                    /* AHORA VERIFICA Y EJECUTA LA ACCION SIN IMPORTAR QUE HAY DESPUES*/
+                    if (numeroError == 0)
+                    {
+                        EjecutarAcciones(comando);
+                        MessageBox.Show("Se han ejecutado las acciones correctamente.", "Completado", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        richTextBox1.Clear();
                     }
                 }
             }
@@ -269,27 +267,12 @@ namespace Proyecto_microSQL
             }
             else
             {
-                //Si no hay errores realiza todos las acciones almacenadas.
-
-                for (i = 0; i < acciones.Count; i++)
-                {
-                    EjecutarAcciones(acciones[i]);
-
-                    if (acciones[i] == comandolst[4])
-                    {
-                        dataGridView1.DataSource = D.NewDataTable(nombres.Dequeue());
-                    }
-                }
-
-                MessageBox.Show("Se han ejecutado las acciones correctamente.", "Completado", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                richTextBox1.Clear();
+                T.PopulateTree(treeView1);
             }
-
             
-            T.PopulateTree(treeView1);
-
             #region The Old Code
 
+            /*
             richTextBox1.Text += Environment.NewLine;
             string[] Lines = richTextBox1.Lines;
             Lines = U.LimiarArray(Lines, charsToRemove); //eliminar espacios en blanco, enters y caracteres extra
@@ -383,7 +366,9 @@ namespace Proyecto_microSQL
                 }
 
             }
+            */
             #endregion
+
         }
 
         private void EjecutarAcciones(string comando)
@@ -403,7 +388,8 @@ namespace Proyecto_microSQL
             //CREATE TABLE
             if (comando == comandolst[4])
             {
-                U.crearTabla(U.TablasPorCrear.Dequeue());
+                U.crearTabla(U.Tabla);
+                dataGridView1.DataSource = D.NewDataTable(U.Tabla.TableName);
             }
 
             //DROP TABLE
@@ -412,10 +398,11 @@ namespace Proyecto_microSQL
 
             }
 
-            //INSERT TO
+            //INSERT INTO
             if (comando == comandolst[6])
             {
-
+                U.Insertar(U.Insertar1);
+                dataGridView1.DataSource = D.NewDataTable(U.Insertar1.TableName);
             }
         }
 

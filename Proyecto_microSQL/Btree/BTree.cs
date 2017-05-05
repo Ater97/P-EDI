@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using EstructurasDeDatos;
 
 namespace Btree
 {
@@ -10,7 +11,8 @@ namespace Btree
     {
         Fabrica<TLlave, T> fabricar;
         BNode<TLlave, T> root;
-        string llaveNull = "####################################";
+        string llaveNull = string.Empty;
+        string dataNull = string.Empty;
         int grado;
 
         public BTree(string FileName, int Grado)
@@ -18,6 +20,8 @@ namespace Btree
             fabricar = new Fabrica<TLlave, T>(FileName, Grado);
             root = null;
             grado = Grado;
+            llaveNull = fabricar.LlaveNull;
+            dataNull = fabricar.DataNull;
         }
 
         public BTree(string FileName)
@@ -25,37 +29,56 @@ namespace Btree
             fabricar = new Fabrica<TLlave, T>(FileName);
             root = fabricar.TraerNodo(fabricar.ObtenerRaiz());
             grado = fabricar.ObtenerGrado();
+            llaveNull = fabricar.LlaveNull;
+            dataNull = fabricar.DataNull;
         }
-        #region Insertar
-        //Metodos Insertar
-        public void Insertar(TLlave key, T dato)
-        {
-            if (fabricar.Empty())
-            {
-                //Cuando lo que este insertando sea la raiz
-                int raiz = fabricar.ObtenerPosicionLibre();
-                fabricar.CambiarRaiz(raiz);
-                fabricar.NodoDeFabrica();
-                BNode<TLlave, T> nodo = fabricar.TraerNodo(raiz);
-                nodo.Llaves[0] = key.ToString();
-                nodo.Datos[0] = dato.ToString();
-                fabricar.GuardarNodo(nodo.Informacion());
 
-                //Modificar tamaño
-                int tamanio = fabricar.ObtenerTamaño();
-                tamanio++;
-                fabricar.CambiarTamaño(tamanio);
+        public void Cerrar()
+        {
+            fabricar.CerrarArchivo();
+        }
+
+        #region Insertar
+
+        //Metodos Insertar
+        public bool Insertar(TLlave key, T dato)
+        {
+            if(Buscar(key) == int.MinValue)
+            {
+                if (fabricar.Empty())
+                {
+                    //Cuando lo que este insertando sea la raiz
+                    int raiz = fabricar.ObtenerPosicionLibre();
+                    fabricar.CambiarRaiz(raiz);
+                    fabricar.NodoDeFabrica();
+                    BNode<TLlave, T> nodo = fabricar.TraerNodo(raiz);
+                    nodo.Llaves[0] = key.ToString();
+                    nodo.Datos[0] = dato.ToString();
+                    fabricar.GuardarNodo(nodo.Informacion());
+
+                    //Modificar tamaño
+                    int tamanio = fabricar.ObtenerTamaño();
+                    tamanio++;
+                    fabricar.CambiarTamaño(tamanio);
+                }
+                else
+                {
+                    //Cuando no se incerta en la raiz   
+                    Insertando(key, dato);
+
+                    //Modificar tamaño
+                    int tamanio = fabricar.ObtenerTamaño();
+                    tamanio++;
+                    fabricar.CambiarTamaño(tamanio);
+                }
+
+                return true;
             }
             else
             {
-                //Cuando no se incerta en la raiz   
-                Insertando(key, dato);
-
-                //Modificar tamaño
-                int tamanio = fabricar.ObtenerTamaño();
-                tamanio++;
-                fabricar.CambiarTamaño(tamanio);
+                return false;
             }
+            
         }
 
         private void Insertando(TLlave key, T dato)
@@ -242,7 +265,7 @@ namespace Btree
                         else
                         {
                             nodo.Llaves[j] = llaveNull;
-                            nodo.Datos[j] = llaveNull;
+                            nodo.Datos[j] = dataNull;
                             nodo.Hijos[j] = int.MinValue.ToString();
                         }
                     }
@@ -384,16 +407,11 @@ namespace Btree
         #endregion
 
         //Metodos de Busqueda
-
-        public int Buscar(TLlave key, T dato)
+        public int Buscar(TLlave key)
         {
             BNode<TLlave, T> nodo;
 
             if (fabricar.Empty())
-            {
-                return int.MinValue;
-            }
-            else if (fabricar.buscar(key, dato))
             {
                 return int.MinValue;
             }
@@ -405,9 +423,9 @@ namespace Btree
                 //Inicia la busqueda desde la raiz.
                 while (nodo != null)
                 {
-                    for (int i = 0; i < nodo.Datos.Count; i++)
+                    for (int i = 0; i < nodo.Llaves.Count; i++)
                     {
-                        if (nodo.Datos[i] == dato.ToString())
+                        if (int.Parse(nodo.Llaves[i]).ToString() == key.ToString())
                         {
                             return nodo.Posicion;
                         }
@@ -421,12 +439,21 @@ namespace Btree
             }
         }
 
-
+        /// <summary>
+        /// Determina si es posible seguir ingresando llaves en un nodo.
+        /// </summary>
+        /// <param name="llaves"></param>
+        /// <returns></returns>
         private bool HayEspacio(List<string> llaves)
         {
             return llaves.Contains(llaveNull);
         }
 
+        /// <summary>
+        /// Determina la cantidad de espacios(llaves) que se han usado en nodo.
+        /// </summary>
+        /// <param name="llaves"></param>
+        /// <returns></returns>
         private int EspaciosUsados(List<string> llaves)
         {
             int espacios = 0;
@@ -460,6 +487,11 @@ namespace Btree
             return 0;
         }
 
+        /// <summary>
+        /// Determina si un nodo es Hoja o no.
+        /// </summary>
+        /// <param name="hijos"></param>
+        /// <returns></returns>
         private bool EsHoja(List<string> hijos)
         {
             for (int x = 0; x < hijos.Count; x++)
@@ -472,6 +504,12 @@ namespace Btree
             return true;
         }
 
+        /// <summary>
+        /// Determina la posicion en archivo a la que debe dirigirse.
+        /// </summary>
+        /// <param name="llaves"></param>
+        /// <param name="key"></param>
+        /// <returns></returns>
         private int ADondeIr(List<string> llaves, TLlave key)
         {
             //El arreglo que se recibe es el arreglo de llaves.

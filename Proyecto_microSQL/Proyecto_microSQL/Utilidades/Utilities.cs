@@ -1,11 +1,11 @@
-﻿using Btree;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Reflection;
+using EstructurasDeDatos;
 
 namespace Proyecto_microSQL.Utilidades
 {
@@ -16,8 +16,10 @@ namespace Proyecto_microSQL.Utilidades
         List<string> palabrasReemplazo;
         List<string> tiposReservados;
         List<string> tiposReemplazo;
-        Queue<CrearTabla> tablasPorCrear = new Queue<CrearTabla>();
-        Queue<InsertInto> insercionesPorHacer = new Queue<InsertInto>();
+        CrearTabla tabla = new CrearTabla();
+        InsertInto insertar = new InsertInto();
+        //Queue<CrearTabla> tablasPorCrear = new Queue<CrearTabla>();
+        //Queue<InsertInto> insercionesPorHacer = new Queue<InsertInto>();
 
         public void setPath(string p)
         {
@@ -154,19 +156,6 @@ namespace Proyecto_microSQL.Utilidades
             CrearArbol(tabla.TableName.Trim(), tabla.Id, tabla.Types);
         }
 
-        public Queue<CrearTabla> TablasPorCrear
-        {
-            get
-            {
-                return tablasPorCrear;
-            }
-
-            set
-            {
-                tablasPorCrear = value;
-            }
-        }
-
         #endregion
 
         #region Errores De Sintaxis
@@ -181,31 +170,37 @@ namespace Proyecto_microSQL.Utilidades
             }
 
             //Verificar la existencia de la llave de apertura.
-            if (datos[1] != "{" && !datos.Contains("{"))
+            if (datos[1] != "(" && !datos.Contains(")"))
             {
                 //Error de llave de apertura no encontrado
                 return 3;
             }
 
             //En caso que exista algo que no es el operador {
-            if (datos[1] != "{")
+            if (datos[1] != "(")
             {
                 //Error de espacios de los nombres de las variables
                 return 9;
             }
 
             //En caso el ultimo elemento no es la llave de cierre
-            if (datos[datos.Count - 1] != "}" && !datos.Contains("}"))
+            if (datos[datos.Count - 1] != ")" && !datos.Contains(")"))
             {
                 return 4;
             }
 
             //En caso que exista la llave de cierre pero hay mas elementos despues de esto.
-            if (datos[datos.Count - 1] != "}")
+            if (datos[datos.Count - 1] != ")")
             {
                 return 1;
             }
 
+            //No se crea la tabla debido a que ya existe en el contexto.
+            if(ExisteTabla(datos[0]))
+            {
+                return 27;
+            }
+                
             CrearTabla nuevaTabla = new CrearTabla();
             int[] counts = new int[3];
             nuevaTabla.TableName = datos[0];
@@ -304,7 +299,8 @@ namespace Proyecto_microSQL.Utilidades
                 i++;
             }
 
-            TablasPorCrear.Enqueue(nuevaTabla);
+            tabla = nuevaTabla;
+            //TablasPorCrear.Enqueue(nuevaTabla);
 
             return 0;
         }
@@ -381,27 +377,27 @@ namespace Proyecto_microSQL.Utilidades
             /*  VERIFICACION EN LA PARTE DE DATA    */
 
             //Verificar la existencia de la llave de apertura.
-            if (data[1] != "{" && !data.Contains("{"))
+            if (data[1] != "(" && !data.Contains("("))
             {
                 //Error de llave de apertura no encontrado
                 return 3;
             }
 
             //En caso que exista algo que no es el operador {
-            if (data[1] != "{")
+            if (data[1] != "(")
             {
                 //Error de espacios de los nombres de las variables
                 return 9;
             }
 
             //En caso el ultimo elemento no es la llave de cierre
-            if (data[data.Count - 1] != "}" && !data.Contains("}"))
+            if (data[data.Count - 1] != ")" && !data.Contains(")"))
             {
                 return 4;
             }
 
             //En caso que exista la llave de cierre pero hay mas elementos despues de esto.
-            if (data[data.Count - 1] != "}")
+            if (data[data.Count - 1] != ")")
             {
                 return 1;
             }
@@ -418,27 +414,27 @@ namespace Proyecto_microSQL.Utilidades
             /*  VERIFICACIÓN DE LA PARTE VALUES */
 
             //Verificar la existencia de la llave de apertura.
-            if (valores[0] != "{" && !valores.Contains("{"))
+            if (valores[0] != "(" && !valores.Contains(")"))
             {
                 //Error de llave de apertura no encontrado
                 return 3;
             }
 
             //En caso que exista algo que no es el operador {
-            if (valores[0] != "{")
+            if (valores[0] != "(")
             {
                 //Error de espacios de los nombres de las variables
                 return 9;
             }
 
             //En caso el ultimo elemento no es la llave de cierre
-            if (valores[valores.Count - 1] != "}" && !valores.Contains("}"))
+            if (valores[valores.Count - 1] != ")" && !valores.Contains(")"))
             {
                 return 4;
             }
 
             //En caso que exista la llave de cierre pero hay mas elementos despues de esto.
-            if (valores[valores.Count - 1] != "}")
+            if (valores[valores.Count - 1] != ")")
             {
                 return 1;
             }
@@ -481,7 +477,7 @@ namespace Proyecto_microSQL.Utilidades
                         return 20;
                     }
 
-                    nuevaInsercion.Values[i] = nuevaInsercion.Values[i].Replace("'", string.Empty);
+                    //nuevaInsercion.Values[i] = nuevaInsercion.Values[i].Replace("'", string.Empty);
                 }
 
                 if(infoObtenidaTabla.Types[i] == tiposReservados[2])
@@ -491,7 +487,7 @@ namespace Proyecto_microSQL.Utilidades
                     {
                         return 21;
                     }
-                    nuevaInsercion.Values[i] = nuevaInsercion.Values[i].Replace("'", string.Empty);
+                    //nuevaInsercion.Values[i] = nuevaInsercion.Values[i].Replace("'", string.Empty);
 
                     string[] probar = nuevaInsercion.Values[i].Split('/');
 
@@ -557,8 +553,7 @@ namespace Proyecto_microSQL.Utilidades
                 }
             }
 
-            //Cuando paso todas las verificaciones
-            insercionesPorHacer.Enqueue(nuevaInsercion);
+            insertar = nuevaInsercion;
 
             return 0;
         }
@@ -659,84 +654,11 @@ namespace Proyecto_microSQL.Utilidades
         {
             try
             {
-                bool[,] c = new bool[3, 3];
-                standardObject newobj = (new standardObject
-                {
-                    ID = int.Parse(values[0]),
-                });
+                Fila nuevaFila = new Fila(values);
+                BTree<int, Fila> tree = new BTree<int, Fila>(tableName);
+                tree.Insertar(nuevaFila.Id, nuevaFila);
+                tree.Cerrar();
 
-                string data = File.ReadLines(path + "tablas\\" + tableName + ".tabla").First();
-                string[] strDataType = data.Split(',');
-
-                for (int i = 0; i < columns.Count(); i++)
-                {
-                    if (strDataType[i].Contains("INT"))
-                    {
-                        if (!c[0, 0])
-                        {
-                            newobj.MyProperty_int1 = int.Parse(values[i]);
-                            c[0, 0] = true;
-                        }
-                        else if (!c[0, 1])
-                        {
-                            newobj.MyProperty_int2 = int.Parse(values[i]);
-                            c[0, 1] = true;
-                        }
-                        else if (!c[0, 2])
-                        {
-                            newobj.MyProperty_int3 = int.Parse(values[i]);
-                            c[0, 2] = true;
-                        }
-                        else
-                            return false;
-                    }
-                    else if (strDataType[i].Contains("VARCHAR(100)"))
-                    {
-                        if (!c[1, 0])
-                        {
-                            newobj.MyProperty_vchar1 = values[i];
-                            c[1, 0] = true;
-                        }
-                        else if (!c[1, 1])
-                        {
-                            newobj.MyProperty_vchar2 = values[i];
-                            c[1, 1] = true;
-                        }
-                        else if (!c[1, 2])
-                        {
-                            newobj.MyProperty_vchar3 = values[i];
-                            c[1, 2] = true;
-                        }
-                        else
-                            return false;
-                    }
-                    else if (strDataType[i].Contains("DATETIME"))
-                    {
-                        if (!c[2, 0])
-                        {
-                            newobj.MyProperty_dt1 = DateTime.Parse(values[i]);
-                            c[2, 0] = true;
-                        }
-                        else if (!c[2, 1])
-                        {
-                            newobj.MyProperty_dt2 = DateTime.Parse(values[i]);
-                            c[2, 1] = true;
-                        }
-                        else if (!c[2, 2])
-                        {
-                            newobj.MyProperty_dt3 = DateTime.Parse(values[i]);
-                            c[2, 2] = true;
-                        }
-                        else
-                            return false;
-                    }
-                }
-
-                //****Encontrar como cargar arbol desde archivo****
-                //  BTree<int, standardObject> tree = new BTree<int, standardObject>(tableName, 5);
-                // BTree<int, standardObject> tree = new BTree<int, standardObject>(tableName);
-
-                //  tree.Insertar(int.Parse(values[0]), newobj);
                 return true;
             }
             catch
@@ -751,26 +673,38 @@ namespace Proyecto_microSQL.Utilidades
             insertarArchivoTabla(insercion.TableName.Trim(), insercion.Values);
         }
 
-        public Queue<InsertInto> InsercionesPorHacer
-        {
-            get
-            {
-                return insercionesPorHacer;
-            }
-
-            set
-            {
-                insercionesPorHacer = value;
-            }
-        }
-
-
         #endregion
 
         //****Sustituir "WHERE" por su comando****
         #region SELECT
         public List<string> listDataTable = new List<string>();
         public List<string> Missing = new List<string>();
+
+        public CrearTabla Tabla
+        {
+            get
+            {
+                return tabla;
+            }
+
+            set
+            {
+                tabla = value;
+            }
+        }
+
+        public InsertInto Insertar1
+        {
+            get
+            {
+                return insertar;
+            }
+
+            set
+            {
+                insertar = value;
+            }
+        }
 
         public bool Select(string[] columns, string tableName, int index)
         {

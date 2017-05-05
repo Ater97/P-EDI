@@ -159,7 +159,15 @@ namespace Btree
             //Almacenar las llaves del nodo
             for (i = 0; i < Llaves.Count; i++)
             {
-                nodo.Add(Llaves[i]);
+                if(llaves[i] == int.MinValue.ToString())
+                {
+                    nodo.Add(Llaves[i]);                   
+                }
+                else
+                {
+                    nodo.Add(int.Parse(Llaves[i]).ToString("D11"));
+                }
+                
             }
 
             //Son necesarios para identificar los separadores
@@ -169,7 +177,23 @@ namespace Btree
             //Almacenar la data del nodo
             for (i = 0; i < Datos.Count; i++)
             {
-                nodo.Add(Datos[i]);
+                if(Datos[i].Length == 377)
+                {
+                    nodo.Add(Datos[i]);
+                }
+                else
+                {
+                    string temp = Datos[i];
+                    temp += "_";
+
+                    while(temp.Length < 377)
+                    {
+                        temp += "#";
+                    }
+
+                    nodo.Add(temp);                   
+                }
+                
             }
 
             return nodo.ToArray();
