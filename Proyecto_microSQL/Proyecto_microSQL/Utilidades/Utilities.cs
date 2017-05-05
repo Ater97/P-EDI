@@ -716,8 +716,8 @@ namespace Proyecto_microSQL.Utilidades
                 string[] Table = data.Split('$');
 
                 #region special case --> filtro llave primaria y mostar todo "*"
-                bool fkey = false;
-                if (Array.Exists(columns, element => element.StartsWith("WHERE")) &&
+                bool fkey = false;                                      // "WHERE"
+                if (Array.Exists(columns, element => element.StartsWith(palabrasReemplazo[3])) &&
                     Array.Exists(columns, element => element.StartsWith("ID =")))
                 {
                     fkey = true;
@@ -886,8 +886,8 @@ namespace Proyecto_microSQL.Utilidades
                 BTree<int, standardObject> tree = new BTree<int, standardObject>(tableName, 5); // cargar arbol
                 string[] Table = data.Split('$');
                 bool fkey = false;
-
-                if (Array.Exists(Lines, element => element.StartsWith("WHERE")) && //Eliminar por llave fkey true
+                                                                       // "WHERE"
+                if (Array.Exists(Lines, element => element.StartsWith(palabrasReemplazo[0])) && //Eliminar por llave fkey true
                     Array.Exists(Lines, element => element.StartsWith("ID =")))    //Eliminar todos los datos fkey false
                 {
                     fkey = true;
@@ -987,7 +987,7 @@ namespace Proyecto_microSQL.Utilidades
 
                 for (int k = 0; k < Lines.Count(); k++) //obtener llave para modificar
                 {
-                    if (Lines[k].Trim() == "WHERE")
+                    if (Lines[k].Trim() == palabrasReemplazo[0])
                     {
                         key = Lines[k + 1].Replace("ID =", string.Empty);
                         break;
@@ -999,6 +999,8 @@ namespace Proyecto_microSQL.Utilidades
                     string[] row = Table[i].Split(',');
                     if (row[0].Trim() == key.Trim()) //modificar
                     {
+
+
 
                         break;
                     }
