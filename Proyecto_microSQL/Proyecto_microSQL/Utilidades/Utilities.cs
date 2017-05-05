@@ -142,6 +142,7 @@ namespace Proyecto_microSQL.Utilidades
 
                 //****Moficar Dato[0].ToString en fabrica****
                 BTree<int, standardObject> tree = new BTree<int, standardObject>(treeName, 5);
+                BTree<int, Fila> a = new BTree<int, Fila>(treeName,5);
                 return true;
             }
             catch
@@ -196,11 +197,11 @@ namespace Proyecto_microSQL.Utilidades
             }
 
             //No se crea la tabla debido a que ya existe en el contexto.
-            if(ExisteTabla(datos[0]))
+            if (ExisteTabla(datos[0]))
             {
                 return 27;
             }
-                
+
             CrearTabla nuevaTabla = new CrearTabla();
             int[] counts = new int[3];
             nuevaTabla.TableName = datos[0];
@@ -329,8 +330,8 @@ namespace Proyecto_microSQL.Utilidades
             int aux2 = 0;
             List<string> data = new List<string>();
             List<string> valores = new List<string>();
-            
-            if(!datos.Contains(palabrasReemplazo[7]))
+
+            if (!datos.Contains(palabrasReemplazo[7]))
             {
                 //No contiene el comando values
                 return 14;
@@ -338,14 +339,14 @@ namespace Proyecto_microSQL.Utilidades
 
             //Busca algun elemento 'VALUES' repetido
             //tambien verifica que no se esten usando comandos que no corresponden a la funcion
-            for(i = 0; i < datos.Count; i++)
+            for (i = 0; i < datos.Count; i++)
             {
-                if(datos[i] == palabrasReemplazo[1] || datos[i] == palabrasReemplazo[3])
+                if (datos[i] == palabrasReemplazo[1] || datos[i] == palabrasReemplazo[3])
                 {
                     //Error de comandos que no corresponden a la funcion.
                     return 16;
                 }
-                else 
+                else
                 {
                     if (aux > 1)
                     {
@@ -359,17 +360,17 @@ namespace Proyecto_microSQL.Utilidades
                             aux++;
                         }
                     }
-                }                
+                }
             }
 
             //Se divide en 2 partes mi algoritmo
 
-            for(i = 0; i < aux2; i++)
+            for (i = 0; i < aux2; i++)
             {
                 data.Add(datos[i]);
             }
 
-            for(i = aux2 + 1; i < datos.Count; i++)
+            for (i = aux2 + 1; i < datos.Count; i++)
             {
                 valores.Add(datos[i]);
             }
@@ -405,7 +406,7 @@ namespace Proyecto_microSQL.Utilidades
             InsertInto nuevaInsercion = new InsertInto();
 
             nuevaInsercion.TableName = data[0];
-            for(i = 2; i < data.Count - 1; i++)
+            for (i = 2; i < data.Count - 1; i++)
             {
                 //Empieza sin tomar en cuenta el nombre y la llave de apertura
                 nuevaInsercion.Columns.Add(data[i]);
@@ -439,19 +440,19 @@ namespace Proyecto_microSQL.Utilidades
                 return 1;
             }
 
-            for(i = 1; i < valores.Count - 1; i++)
+            for (i = 1; i < valores.Count - 1; i++)
             {
                 //Omite el operador de apertura y el de cierre
                 nuevaInsercion.Values.Add(valores[i]);
             }
 
             //En caso no concuerden la cantidad de columnas con los valores ingresados.
-            if(nuevaInsercion.Values.Count != nuevaInsercion.Columns.Count)
+            if (nuevaInsercion.Values.Count != nuevaInsercion.Columns.Count)
             {
                 return 17;
             }
 
-            if(!ExisteTabla(nuevaInsercion.TableName))
+            if (!ExisteTabla(nuevaInsercion.TableName))
             {
                 //La tabla que se busca no existe..
                 return 18;
@@ -459,20 +460,20 @@ namespace Proyecto_microSQL.Utilidades
 
             InsertInto infoObtenidaTabla = TraerInformacion(nuevaInsercion.TableName);
 
-            for(i = 0; i < nuevaInsercion.Columns.Count; i++)
+            for (i = 0; i < nuevaInsercion.Columns.Count; i++)
             {
-                if(nuevaInsercion.Columns[i] != infoObtenidaTabla.Columns[i])
+                if (nuevaInsercion.Columns[i] != infoObtenidaTabla.Columns[i])
                 {
                     return 19;
                 }
             }
 
-            for(i = 0; i < infoObtenidaTabla.Types.Count; i++)
+            for (i = 0; i < infoObtenidaTabla.Types.Count; i++)
             {
-                if(infoObtenidaTabla.Types[i] == tiposReservados[1])
+                if (infoObtenidaTabla.Types[i] == tiposReservados[1])
                 {
                     //Debe ser del tipo Varchar
-                    if(!(nuevaInsercion.Values[i][0].ToString() == "'") && !(nuevaInsercion.Values[i][nuevaInsercion.Values[i].Length - 1].ToString() == "'"))
+                    if (!(nuevaInsercion.Values[i][0].ToString() == "'") && !(nuevaInsercion.Values[i][nuevaInsercion.Values[i].Length - 1].ToString() == "'"))
                     {
                         return 20;
                     }
@@ -480,7 +481,7 @@ namespace Proyecto_microSQL.Utilidades
                     //nuevaInsercion.Values[i] = nuevaInsercion.Values[i].Replace("'", string.Empty);
                 }
 
-                if(infoObtenidaTabla.Types[i] == tiposReservados[2])
+                if (infoObtenidaTabla.Types[i] == tiposReservados[2])
                 {
                     //Cuando el tipo de dato es DATETIME
                     if (!(nuevaInsercion.Values[i][0].ToString() == "'") && !(nuevaInsercion.Values[i][nuevaInsercion.Values[i].Length - 1].ToString() == "'"))
@@ -491,40 +492,40 @@ namespace Proyecto_microSQL.Utilidades
 
                     string[] probar = nuevaInsercion.Values[i].Split('/');
 
-                    if(probar.Length != 3 || nuevaInsercion.Values[i].Length != 10)
+                    if (probar.Length != 3 || nuevaInsercion.Values[i].Length != 10)
                     {
                         return 23;
                     }
 
                     aux = 0;
-                    for(int x = 0; x < probar.Length; x++)
+                    for (int x = 0; x < probar.Length; x++)
                     {
                         try
                         {
                             aux = int.Parse(probar[x]);
 
                             //Verifica el dia 
-                            if(x == 0)
+                            if (x == 0)
                             {
-                                if(aux > 31 || aux < 1)
+                                if (aux > 31 || aux < 1)
                                 {
                                     return 24;
                                 }
                             }
 
                             //Verifica el mes
-                            if(x == 1)
+                            if (x == 1)
                             {
-                                if(aux > 12 || aux < 1)
+                                if (aux > 12 || aux < 1)
                                 {
                                     return 25;
                                 }
                             }
 
                             //Verifica el año
-                            if(x == 2)
+                            if (x == 2)
                             {
-                                if(aux < 1)
+                                if (aux < 1)
                                 {
                                     return 26;
                                 }
@@ -538,7 +539,7 @@ namespace Proyecto_microSQL.Utilidades
                     }
                 }
 
-                if(infoObtenidaTabla.Types[i] == tiposReservados[3])
+                if (infoObtenidaTabla.Types[i] == tiposReservados[3])
                 {
                     //Cuando el tipo de dato es INT 
 
@@ -622,7 +623,7 @@ namespace Proyecto_microSQL.Utilidades
             info.Columns.Add(elementos[0]);
             info.Types.Add(tiposReservados[3]);
 
-            for(int i = 1; i < elementos.Length; i++)
+            for (int i = 1; i < elementos.Length; i++)
             {
                 datos = elementos[i].Split(' ');
 
@@ -706,13 +707,13 @@ namespace Proyecto_microSQL.Utilidades
             }
         }
 
-        public bool Select(string[] columns, string tableName, int index)
+        public bool Select(string[] columns, string tableName)
         {
             try
             {
                 listDataTable = new List<string>();
                 string data = File.ReadAllText(path + "tablas\\" + tableName + ".tabla").Replace("\r\n", "$"); //cargar tabla
-                // BTree<int, standardObject> tree = new BTree<int, standardObject>(tableName, 5); // cargar arbol
+                BTree<int, Fila> tree = new BTree<int, Fila>(tableName); // cargar arbol
                 string[] Table = data.Split('$');
 
                 #region special case --> filtro llave primaria y mostar todo "*"
@@ -729,8 +730,8 @@ namespace Proyecto_microSQL.Utilidades
                     string key = "";
 
                     for (int k = 0; k < columns.Count(); k++)
-                    {
-                        if (columns[k].Trim() == "WHERE")
+                    {                               // "WHERE"
+                        if (columns[k].Trim() == palabrasReemplazo[3])
                         {
                             key = columns[k + 1].Replace("ID =", string.Empty);
                             break;
@@ -825,6 +826,53 @@ namespace Proyecto_microSQL.Utilidades
                 return false;
             }
         }
+
+        public bool Select(string[]Lines)
+        {
+            try
+            {
+                var space = new string[] { " ", "," };
+                Lines = LimiarArray(Lines, space);
+                string tableName = Lines[Array.IndexOf(Lines, palabrasReemplazo[1]) + 1]; //obtener nombre de la tabla
+                BTree<int, Fila> tree = new BTree<int, Fila>(tableName); ; // cargar arbol
+                BTree<int, standardObject> t = new BTree<int, standardObject>(tableName);
+                #region special case --> filtro llave primaria y mostar todo "*"
+                bool fkey = false;                                      // "WHERE"
+                if (Array.Exists(Lines, element => element.StartsWith(palabrasReemplazo[3])) &&
+                    Array.Exists(Lines, element => element.StartsWith("ID =")))
+                {
+                    fkey = true;
+                }
+
+                if (fkey) //Filtro a la llave primaria
+                {
+                    string[] keyRow = new string[2];
+                    string key = "";
+
+                    for (int k = 0; k < Lines.Count(); k++)
+                    {                               // "WHERE"
+                        if (Lines[k].Trim() == palabrasReemplazo[3])
+                        {
+                            key = Lines[k + 1].Replace("ID =", string.Empty);
+                            break;
+                        }
+                    }
+                    tree.Buscar(int.Parse(key));
+                }
+                #endregion 
+
+                List<string> showlst = new List<string>(); //Tabla para mostrar
+                bool[] flags = new bool[9]; //banderas por columnas
+                int[] orden = new int[9]; //Orden deseado de columnas
+                string temp = "";
+
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+        }
         public Tuple<bool, List<int>> check(bool[] flags, string[] lines)
         {
             int index = 0;
@@ -834,7 +882,8 @@ namespace Proyecto_microSQL.Utilidades
             {
                 if (!fg)
                     break;
-                if ("FROM" == lines[i].Trim())
+                //   "FROM"
+                if (palabrasReemplazo[1] == lines[i].Trim())
                 {
                     fg = false;
                 }
@@ -878,6 +927,8 @@ namespace Proyecto_microSQL.Utilidades
         {
             try
             {
+                var space = new string[] { " ", "," };
+                Lines = LimiarArray(Lines, space);
                 string tableName = Lines[Array.IndexOf(Lines, "DELETE FROM") + 1]; //obtener nombre de la tabla
                 listDataTable = new List<string>();
                 string data = File.ReadAllText(path + "tablas\\" + tableName + ".tabla").Replace("\r\n", "$"); //cargar tabla
@@ -886,7 +937,7 @@ namespace Proyecto_microSQL.Utilidades
                 BTree<int, standardObject> tree = new BTree<int, standardObject>(tableName, 5); // cargar arbol
                 string[] Table = data.Split('$');
                 bool fkey = false;
-                                                                       // "WHERE"
+                // "WHERE"
                 if (Array.Exists(Lines, element => element.StartsWith(palabrasReemplazo[0])) && //Eliminar por llave fkey true
                     Array.Exists(Lines, element => element.StartsWith("ID =")))    //Eliminar todos los datos fkey false
                 {
@@ -898,8 +949,8 @@ namespace Proyecto_microSQL.Utilidades
                     string key = "";
 
                     for (int k = 0; k < Lines.Count(); k++) //obtener llave a eliminar
-                    {
-                        if (Lines[k].Trim() == "WHERE")
+                    {                           // "WHERE"
+                        if (Lines[k].Trim() == palabrasReemplazo[3])
                         {
                             key = Lines[k + 1].Replace("ID =", string.Empty);
                             break;
@@ -915,7 +966,7 @@ namespace Proyecto_microSQL.Utilidades
                             break;
                         }
                     }
-                    tree.Eliminar(int.Parse(key));
+                    tree.Eliminar(int.Parse(key)); //eliminar del arbol
                 }
                 #endregion
                 #region Delete everything
@@ -952,6 +1003,8 @@ namespace Proyecto_microSQL.Utilidades
         {
             try
             {
+                var space = new string[] { " ", "," };
+                Lines = LimiarArray(Lines, space);
                 string tableName = Lines[Array.IndexOf(Lines, "DROP TABLE") + 1]; //obtener nombre de la tabla
 
                 File.Delete(path + "tablas\\" + tableName + ".tabla");
@@ -973,6 +1026,8 @@ namespace Proyecto_microSQL.Utilidades
         {
             try
             {
+                var space = new string[] { " ", "," };
+                Lines = LimiarArray(Lines, space);
                 string tableName = Lines[Array.IndexOf(Lines, "UPDATE") + 1]; //obtener nombre de la tabla
                 listDataTable = new List<string>();
                 string data = File.ReadAllText(path + "tablas\\" + tableName + ".tabla").Replace("\r\n", "$"); //cargar tabla
