@@ -36,6 +36,8 @@ namespace Proyecto_microSQL
                 Inicia el Timer */
             timer1.Interval = 10;
             timer1.Start();
+            tabControl1.Enabled = false;
+            tabControl1.Visible = false;
             U.setPath(path);
             D.setPath(path);
             T.setPath(path);
@@ -67,15 +69,11 @@ namespace Proyecto_microSQL
             U.crearFolder();
             groupBox1.Enabled = false;
             groupBox1.Visible = false;
-            groupBox2.Enabled = true;
-            groupBox2.Visible = true;
+            tabControl1.Enabled = true;
+            tabControl1.Visible = true;
 
         }
 
-        private void groupBox2_Enter(object sender, EventArgs e)
-        {
-
-        }
         bool fg = true;
         string str;
         private void richTextBox1_TextChanged(object sender, EventArgs e)

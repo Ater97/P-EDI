@@ -21,8 +21,6 @@ namespace Proyecto_microSQL.Utilidades
         Selection seleccion = new Selection();
         string nombreTabla = string.Empty;
         string[] deleteTabla = new string[2];
-        //Queue<CrearTabla> tablasPorCrear = new Queue<CrearTabla>();
-        //Queue<InsertInto> insercionesPorHacer = new Queue<InsertInto>();
 
         public void setPath(string p)
         {
@@ -449,7 +447,7 @@ namespace Proyecto_microSQL.Utilidades
                 }
 
                 //Verifica que solo exista un campo despues del from
-                if(aux3 - aux2 != 2)
+                if(aux4 - aux3 != 2)
                 {
                     return 31;
                 }
