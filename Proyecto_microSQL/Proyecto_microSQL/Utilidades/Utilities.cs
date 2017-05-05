@@ -1121,10 +1121,16 @@ namespace Proyecto_microSQL.Utilidades
             {
                 listDataTable = new List<string>();
                 string data = File.ReadAllText(path + "tablas\\" + seleccion.TableName + ".tabla").Replace("\r\n", "$"); //cargar tabla
-                //****Areglar carga de arbol****
-                BTree<int, Fila> tree = new BTree<int, Fila>(seleccion.TableName); ; // cargar arbol
+                string[] strCol = File.ReadAllText(path + "tablas\\" + seleccion.TableName + ".tabla").Replace("\r\n", "$").Split('$')[0].Split(',');
+                BTree<int, Fila> tree = new BTree<int, Fila>(seleccion.TableName);  // cargar arbol
+
+                List<string> showlst = new List<string>(); //Tabla para mostrar
+             // string[] strCol = Table[0].Split(','); //etiquetas columnas
+                bool[] flags = new bool[9]; //banderas por columnas
+                int[] orden = new int[9]; //Orden deseado de columnas
+                string temp = "";
+
                 string[] Table = data.Split('$');
-                List<string> headers = seleccion.Columns;
                 string[] columns = seleccion.Columns.ToArray<string>(); //sdfsd
 
                 #region special case --> filtro llave primaria y mostar todo "*"
@@ -1170,11 +1176,7 @@ namespace Proyecto_microSQL.Utilidades
                 }
                 #endregion 
 
-                List<string> showlst = new List<string>(); //Tabla para mostrar
-                string[] strCol = Table[0].Split(','); //etiquetas columnas
-                bool[] flags = new bool[9]; //banderas por columnas
-                int[] orden = new int[9]; //Orden deseado de columnas
-                string temp = "";
+                
 
                 #region preparations
                 var Remove = new string[] { "(INT)", "(VARCHAR(100))", "(DATETIME)" };
