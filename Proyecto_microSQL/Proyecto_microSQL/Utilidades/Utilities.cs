@@ -20,6 +20,7 @@ namespace Proyecto_microSQL.Utilidades
         InsertInto insertar = new InsertInto();
         Selection seleccion = new Selection();
         string nombreTabla = string.Empty;
+        string[] deleteTabla = new string[2];
         //Queue<CrearTabla> tablasPorCrear = new Queue<CrearTabla>();
         //Queue<InsertInto> insercionesPorHacer = new Queue<InsertInto>();
 
@@ -77,6 +78,19 @@ namespace Proyecto_microSQL.Utilidades
             set
             {
                 nombreTabla = value;
+            }
+        }
+
+        public string[] DeleteTabla
+        {
+            get
+            {
+                return deleteTabla;
+            }
+
+            set
+            {
+                deleteTabla = value;
             }
         }
 
@@ -214,6 +228,11 @@ namespace Proyecto_microSQL.Utilidades
 
         #region Errores De Sintaxis
 
+        /// <summary>
+        /// Verifica la sintaxis cuando se ejecuta el comando Create Table.
+        /// </summary>
+        /// <param name="datos"></param>
+        /// <returns>Retorna el numero de error. (0 significa que no hay errores) </returns>
         public int VerificarSintaxisCrearTabla(List<string> datos)
         {
 
@@ -365,6 +384,11 @@ namespace Proyecto_microSQL.Utilidades
             return 0;
         }
 
+        /// <summary>
+        /// Verifica la sintaxis cuando se ejecuta el comando Select.
+        /// </summary>
+        /// <param name="datos"></param>
+        /// <returns>Retorna el numero de error. (0 significa que no hay errores) </returns>
         public int VerificiarSintaxisSelect(List<string> datos)
         {
             int i = 0;
@@ -446,9 +470,9 @@ namespace Proyecto_microSQL.Utilidades
                 }
 
                 //Analisis del filtro
-                if(filtro.Count > 3)
+                if(filtro.Count > 3 || filtro.Count < 3)
                 {
-                    return 37;
+                    return 38;
                 }
 
                 if(filtro[0] != "ID")
@@ -562,11 +586,137 @@ namespace Proyecto_microSQL.Utilidades
             return 0;
         }
 
-        public int VerificiarSintaxisDelete()
+        /// <summary>
+        /// Verifica la sintaxis cuando se ejecuta el comando Delete
+        /// </summary>
+        /// <returns>Retorna el numero de error (0 significa que no hay errores) </returns>
+        public int VerificiarSintaxisDelete(List<string> datos)
         {
+            int i = 0;
+            int aux = 1; //Auxiliar para el comando from
+            int aux2 = 0;
+            int aux3 = 0;
+
+            if(datos[0] != palabrasReemplazo[1])
+            {
+                return 42;
+            }
+
+            datos.RemoveAt(0);
+
+            //Busca algun elemento 'WHERE O FROM' repetido
+            //tambien verifica que no se esten usando comandos que no corresponden a la funcion
+            for (i = 0; i < datos.Count; i++)
+            {
+                //Comando Values no debe existir
+                if (datos[i] == palabrasReemplazo[7])
+                {
+                    //Error de comandos que no corresponden a la funcion.
+                    return 16;
+                }
+                else
+                {
+                    if (aux > 1 || aux2 > 1)
+                    {
+                        return 33;
+                    }
+                    else
+                    {
+                        //From Repetidos
+                        if (datos[i] == palabrasReemplazo[1])
+                        {
+                            aux++;
+                        }
+
+                        //Where repetidos
+                        if (datos[i] == palabrasReemplazo[3])
+                        {
+                            aux3 = i;
+                            aux2++;
+                        }
+                    }
+                }
+            }
+
+            //Dividir los datos
+            if(datos.Contains(palabrasReemplazo[3]))
+            {
+                /*  Existe WHERE    */
+                if (aux3 == 1)
+                {
+                    /*  Verificacion de que exista el archivo    */
+                    if(!ExisteTabla(datos[0]))
+                    {
+                        return 18;
+                    }
+
+                    deleteTabla[0] = datos[0];
+
+                    datos.RemoveAt(0); //Quita el nombre
+                    datos.RemoveAt(0); //Quita el Where
+
+                    if (datos.Count > 3 || datos.Count < 3)
+                    {
+                        return 38;
+                    }
+
+                    if (datos[0] != "ID")
+                    {
+                        return 36;
+                    }
+
+                    if (datos[1] != "=")
+                    {
+                        return 38;
+                    }
+
+                    try
+                    {
+                        if (int.Parse(datos[2]) < 0)
+                        {
+                            return 39;
+                        }
+                    }
+                    catch
+                    {
+                        return 39;
+                    }
+
+                    deleteTabla[1] = string.Join("", datos);
+                }
+                else
+                {
+                    return 1;
+                }
+            }
+            else
+            {
+                /*  NO EXISTE WHERE */
+                if(datos.Count != 1)
+                {
+                    return 1;
+                }
+                else
+                {
+                    /*  verificar si exsite el archivo */
+                    if(!ExisteTabla(datos[0]))
+                    {
+                        return 18;
+                    }
+
+                    deleteTabla[0] = datos[0];
+                    deleteTabla[1] = string.Empty;
+                }
+            }
+            
             return 0;
         }
 
+        /// <summary>
+        /// Verifica la sintaxis cuando se ejecuta el comando DropTable.
+        /// </summary>
+        /// <param name="datos"></param>
+        /// <returns>Retorna el numero de error. (0 significa que no hay errores) </returns>
         public int VerificarSintaxisDropTable(List<string> datos)
         {
             if(datos.Count > 1)
@@ -589,6 +739,11 @@ namespace Proyecto_microSQL.Utilidades
             return 0;
         }
 
+        /// <summary>
+        /// Verifica la sintaxis cuando se ejecuta el comando Insert Into.
+        /// </summary>
+        /// <param name="datos"></param>
+        /// <returns>Retorna el numero de error. (0 significa que no hay errores) </returns>
         public int VerificarSintaxisInsertTo(List<string> datos)
         {
             int i = 0;

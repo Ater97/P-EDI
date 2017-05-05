@@ -54,6 +54,7 @@ namespace Proyecto_microSQL.Utilidades
             errores[39] = "Error[39]: Error al ingresar el filtro, recuerde que debe asignarse un numero entero no negativo y diferente de cero. \nPor favor verifique su codigo";
             errores[40] = "Error[40]: Los nombre de tablas no contienen espacios. \n Verifique su codigo.";
             errores[41] = "Error[41]: Los comandos WHERE/FROM/VALUES no corresponden a la funcion DROP TABLE. \nPor favor verifique su codigo.";
+            errores[42] = "Error[42]: Codigo incoherente. No se encontro el comando FROM despues del comando DELETE. \nPor favor verifique su codigo.";
         }
 
         public string Errores(int numeroDeError)

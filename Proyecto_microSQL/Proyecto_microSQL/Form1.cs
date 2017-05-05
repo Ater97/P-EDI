@@ -265,10 +265,7 @@ namespace Proyecto_microSQL
             {
                 MessageBox.Show("Se han ejecutado las acciones correctamente.", "Completado", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 T.PopulateTree(treeView1);
-<<<<<<< HEAD
                 richTextBox1.Clear();
-=======
->>>>>>> origin/master
             }
             
             #region The Old Code
@@ -383,14 +380,15 @@ namespace Proyecto_microSQL
             //DELETE
             if (comando == comandolst[2])
             {
-
+                U.DeleteFrom(U.DeleteTabla);
+                dataGridView1.DataSource = D.NewDataTable(U.DeleteTabla[0]);
             }
 
             //CREATE TABLE
             if (comando == comandolst[4])
             {
                 U.crearTabla(U.Tabla);
-                dataGridView1.DataSource = D.NewDataTable(U.Tabla.TableName);
+                dataGridView1.DataSource = D.NewDataTable(U.Tabla.TableName);            
             }
 
             //DROP TABLE
@@ -421,7 +419,7 @@ namespace Proyecto_microSQL
             //DELETE
             if (comando == comandolst[2])
             {
-                return U.VerificiarSintaxisDelete();
+                return U.VerificiarSintaxisDelete(datos);
             }
 
             //CREATE TABLE
