@@ -12,7 +12,7 @@ namespace Proyecto_microSQL.Utilidades
 
         public Errors()
         {
-            errores = new string[40];
+            errores = new string[45];
             errores[1] = "Error[1]: El texto ingresado es incoherente. \nPor favor reviselo y haga las correcciones correspondientes.";
             errores[2] = "Error[2]: No se encontro el comando 'GO' para la función.\nRecuerde que no pueden ir funciones dentro de otras funciones, sin antes haberlas finalizados con el comando GO. \nPor favor revise la sintaxis.";
             errores[3] = "Error[3]: No se encontro el simbolo '(' de apertura. \nPor favor verifique su codigo";
@@ -48,8 +48,12 @@ namespace Proyecto_microSQL.Utilidades
             errores[33] = "Error[33]: Se encontraron mas de dos comandos de los tipos 'WHERE'/'FROM'. \nPor favor verifique su codigo.";
             errores[34] = "Error[34]: Nombre de columnas invalidos o no existen en la tabla indicada. \nPor favor verifique su codigo.";
             errores[35] = "Error[35]: Se sobrepaso la cantidad de columnas que posee la tabla. \nPor favor verifique su codigo";
-
-
+            errores[36] = "Error[36]: Actualmente solo se pueden hacer filtros en la ID, en futuras actualizaciones se implementaran mas filtros. \nPor favor verifique su codigo.";
+            errores[37] = "Error[37]: Error al ingresar el filtro, recuerde que solamente puede hacer esto con el ID, por lo que el valor ingresado debe ser un entero no negativo y diferente de cero. \nPor favor verifique su codigo.";
+            errores[38] = "Error[38]: Error al ingresar el filtro, texto incoherente verefique su codigo.";
+            errores[39] = "Error[39]: Error al ingresar el filtro, recuerde que debe asignarse un numero entero no negativo y diferente de cero. \nPor favor verifique su codigo";
+            errores[40] = "Error[40]: Los nombre de tablas no contienen espacios. \n Verifique su codigo.";
+            errores[41] = "Error[41]: Los comandos WHERE/FROM/VALUES no corresponden a la funcion DROP TABLE. \nPor favor verifique su codigo.";
         }
 
         public string Errores(int numeroDeError)

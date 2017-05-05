@@ -373,7 +373,7 @@ namespace Proyecto_microSQL
             //SELECT
             if (comando == comandolst[0])
             {
-
+                U.Select(U.Seleccion);
             }
 
             //DELETE
@@ -392,7 +392,7 @@ namespace Proyecto_microSQL
             //DROP TABLE
             if (comando == comandolst[5])
             {
-
+                U.DropTable(U.NombreTablaEliminar);
             }
 
             //INSERT INTO
@@ -411,7 +411,7 @@ namespace Proyecto_microSQL
             //SELECT
             if (comando == comandolst[0])
             {
-                return U.VerificiarSintaxisSelect();
+                return U.VerificiarSintaxisSelect(datos);
             }
 
             //DELETE
@@ -429,7 +429,7 @@ namespace Proyecto_microSQL
             //DROP TABLE
             if (comando == comandolst[5])
             {
-                return U.VerificarSintaxisDropTable();
+                return U.VerificarSintaxisDropTable(datos);
             }
 
             //INSERT TO
