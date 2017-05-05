@@ -145,7 +145,7 @@ namespace Proyecto_microSQL
             }
         }
 
-        string[] charsToRemove = new string[] { "@", ",", ".", ";" };
+        string[] charsToRemove = new string[] { "@", ",", ";" };
 
         private void Enter_Click_1(object sender, EventArgs e)
         {
@@ -252,9 +252,7 @@ namespace Proyecto_microSQL
                     /* AHORA VERIFICA Y EJECUTA LA ACCION SIN IMPORTAR QUE HAY DESPUES*/
                     if (numeroError == 0)
                     {
-                        EjecutarAcciones(comando);
-                        MessageBox.Show("Se han ejecutado las acciones correctamente.", "Completado", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                        richTextBox1.Clear();
+                        EjecutarAcciones(comando);                    
                     }
                 }
             }
@@ -265,6 +263,7 @@ namespace Proyecto_microSQL
             }
             else
             {
+                MessageBox.Show("Se han ejecutado las acciones correctamente.", "Completado", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 T.PopulateTree(treeView1);
             }
             
