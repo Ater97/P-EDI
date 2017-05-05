@@ -27,7 +27,7 @@ namespace Proyecto_microSQL
         TreeViewManagement T = new TreeViewManagement();
         Errors system = new Errors();
 
-        string path = @"C:\Users\bryan\Desktop\microSQL\"; //direccion principal de los archivos
+        string path = @"C:\Users\sebas\Desktop\microSQL\"; //direccion principal de los archivos
 
         private void Form1_Load(object sender, EventArgs e)
         {
@@ -85,7 +85,7 @@ namespace Proyecto_microSQL
 
             for (int i = 0; i < comandolst.Count(); i++)
             {
-                CheckKeyword(comandolst[i], Color.Blue, 1);
+                CheckKeyword(comandolst[i], Color.Blue, 0);
             }
 
             for (int i = 0; i < tiposDeDato.Count(); i++)
