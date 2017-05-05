@@ -264,7 +264,7 @@ namespace Proyecto_microSQL
             {
                 MessageBox.Show("Se han ejecutado las acciones correctamente.", "Completado", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 T.PopulateTree(treeView1);
-                
+                richTextBox1.Clear();
             }
 
             #region The Old Code
@@ -412,7 +412,7 @@ namespace Proyecto_microSQL
             //SELECT
             if (comando == comandolst[0])
             {
-                return U.VerificiarSintaxisSelect();
+                return U.VerificiarSintaxisSelect(datos);
             }
 
             //DELETE

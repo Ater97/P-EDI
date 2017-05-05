@@ -70,7 +70,7 @@ namespace Proyecto_microSQL.Utilidades
         public void crearFolder() //crear todas las carpetas
         {
             Directory.CreateDirectory(path);
-            Directory.CreateDirectory(path + "\\arboles");
+            Directory.CreateDirectory(path + "\\arbolesb");
             Directory.CreateDirectory(path + "\\microSQL");
             Directory.CreateDirectory(path + "\\tablas");
         }
@@ -641,12 +641,8 @@ namespace Proyecto_microSQL.Utilidades
 
             InsertInto infoObtenidaTabla = TraerInformacion(nuevaInsercion.TableName);
 
-<<<<<<< HEAD
-            for (i = 0; i < nuevaInsercion.Columns.Count; i++)
-=======
             //Verica que las columnas concuerden con el formato de tabla almacenado
             for(i = 0; i < nuevaInsercion.Columns.Count; i++)
->>>>>>> origin/master
             {
                 if (nuevaInsercion.Columns[i] != infoObtenidaTabla.Columns[i])
                 {
@@ -674,9 +670,10 @@ namespace Proyecto_microSQL.Utilidades
                     {
                         return 21;
                     }
-                    //nuevaInsercion.Values[i] = nuevaInsercion.Values[i].Replace("'", string.Empty);
+                    nuevaInsercion.Values[i] = nuevaInsercion.Values[i].Replace("'", string.Empty);
 
-                    string[] probar = nuevaInsercion.Values[i].Split('/');
+                    //string[] probar = nuevaInsercion.Values[i].Split('/');
+                    string[] probar = nuevaInsercion.Values[i].Replace("'", String.Empty).Split('/');
 
                     if (probar.Length != 3 || nuevaInsercion.Values[i].Length != 10)
                     {
@@ -1000,22 +997,23 @@ namespace Proyecto_microSQL.Utilidades
         {
             try
             {
-                var space = new string[] { " ", "," };
-                Lines = LimiarArray(Lines, space);
-                string tableName = Lines[Array.IndexOf(Lines, palabrasReemplazo[1]) + 1]; //obtener nombre de la tabla
-                BTree<int, Fila> tree = new BTree<int, Fila>(tableName); ; // cargar arbol
-                BTree<int, standardObject> t = new BTree<int, standardObject>(tableName);
+                //var space = new string[] { " ", "," };
+                //Lines = LimiarArray(Lines, space);
+                //string tableName = Lines[Array.IndexOf(Lines, palabrasReemplazo[1]) + 1]; //obtener nombre de la tabla
+                //string data = File.ReadAllText(path + "tablas\\" + tableName + ".tabla").Replace("\r\n", "$").Split('$')[0]; //cargar tabla
+                BTree<int, Fila> tree = new BTree<int, Fila>(seleccion.TableName); ; // cargar arbol
+                List<string> headers = seleccion.Columns;
+
                 #region special case --> filtro llave primaria y mostar todo "*"
                 bool fkey = false;                                      // "WHERE"
-                if (Array.Exists(Lines, element => element.StartsWith(palabrasReemplazo[3])) &&
-                    Array.Exists(Lines, element => element.StartsWith("ID =")))
+                if ((Array.Exists(Lines, element => element.StartsWith(palabrasReemplazo[3])) &&
+                    Array.Exists(Lines, element => element.StartsWith("ID ="))))
                 {
                     fkey = true;
                 }
 
                 if (fkey) //Filtro a la llave primaria
                 {
-                    string[] keyRow = new string[2];
                     string key = "";
 
                     for (int k = 0; k < Lines.Count(); k++)
@@ -1026,7 +1024,22 @@ namespace Proyecto_microSQL.Utilidades
                             break;
                         }
                     }
-                    tree.Buscar(int.Parse(key));
+                   string[] keyRow =  tree.TraerData(int.Parse(key)).Split('_');
+                   
+
+                    //for (int k = 0; k < Table.Count(); k++)
+                    //{
+                    //    string[] row = Table[k].Split(',');
+                    //    if (row[0].Trim() == key.Trim())
+                    //    {
+                    //        keyRow[0] = Table[0];
+                    //        keyRow[1] = Table[k];
+                    //        break;
+                    //    }
+                    //}
+                    //Table = keyRow.ToList<string>();
+
+
                 }
                 #endregion 
 
