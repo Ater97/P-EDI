@@ -27,7 +27,7 @@ namespace Proyecto_microSQL
         TreeViewManagement T = new TreeViewManagement();
         Errors system = new Errors();
 
-        string path = @"C:\Users\sebas\Desktop\microSQL\"; //direccion principal de los archivos
+        string path = string.Empty; //direccion principal de los archivos
 
         private void Form1_Load(object sender, EventArgs e)
         {
@@ -77,6 +77,7 @@ namespace Proyecto_microSQL
 
         bool fg = true;
         string str;
+
         private void richTextBox1_TextChanged(object sender, EventArgs e)
         {
             int position = richTextBox1.SelectionStart;
@@ -108,6 +109,7 @@ namespace Proyecto_microSQL
 
             #endregion
         }
+
         private bool checkright(string str, string word)
         {
             int lindex = str.LastIndexOf(word);
@@ -350,40 +352,7 @@ namespace Proyecto_microSQL
             #region The Old Code
 
             /*
-            richTextBox1.Text += Environment.NewLine;
-            string[] Lines = richTextBox1.Lines;
-            Lines = U.LimiarArray(Lines, charsToRemove); //eliminar espacios en blanco, enters y caracteres extra
-
-            for (int ij = 0; ij < Lines.Count(); ij++)
-            {
-                ////CREATE TABLE
-                //if (Lines[ij].Contains(comandolst[4]))
-                //{ //crear archivo tabla y arbol
-                //    if (!U.crearTabla(U.splitArray(Lines, ij + 4).Item1, Lines[ij + 1], Lines[ij + 3]) || !U.splitArray(Lines, ij + 4).Item2)
-                //    {
-                //        MessageBox.Show("Por favor revise la sintaxis");
-                //        break;
-                //    }
-                //    richTextBox1.Clear();
-                //    dataGridView1.DataSource = D.NewDataTable(Lines[ij + 1].Trim());
-                //    fg = true;
-                //    break;
-                //}
-                //INSERT INTO
-                //if (Lines[ij].Contains(comandolst[6]))
-                //{
-                //    int indexValues = U.getSplitIndex(Lines, ij + 3, comandolst[7]);
-                //    if (!U.Insertar(Lines[ij + 1], U.splitArray(Lines, ij + 3).Item1, U.splitArray(Lines, indexValues).Item1)
-                //        || !U.splitArray(Lines, ij + 3).Item2 || !U.splitArray(Lines, indexValues).Item2) //Insertar datos
-                //    {
-                //        MessageBox.Show("Por favor revise la sintaxis");
-                //        break;
-                //    }
-                //    richTextBox1.Clear();
-                //    dataGridView1.DataSource = D.NewDataTable(Lines[ij + 1].Trim());
-                //    fg = true;
-                //    break;
-                //}
+           
                 //SELECT 
                 if (Lines[ij].Contains(comandolst[0]))
                 {
@@ -416,18 +385,7 @@ namespace Proyecto_microSQL
                     fg = true;
                     break;
                 }
-                //DROP TABLE 
-                if (Lines[ij].Contains(comandolst[5]))
-                {
-                    if (!U.DropTable(Lines))
-                    {
-                        MessageBox.Show("Por favor revise la sintaxis");
-                        break;
-                    }
-                    richTextBox1.Clear();
-                    fg = true;
-                    break;
-                }
+
                 //UPDATE
                 if (Lines[ij].Contains("UPDATE"))  //****Sustituir la palabara "UPDATE" por su comando****
                 {

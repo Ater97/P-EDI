@@ -205,9 +205,8 @@ namespace Proyecto_microSQL.Utilidades
         {
             try
             {
-
                 //****Moficar Dato[0].ToString en fabrica****
-                BTree<int, standardObject> tree = new BTree<int, standardObject>(treeName, 5);
+                BTree<int, Fila> tree = new BTree<int, Fila>(treeName, 5, path + "\\arbolesb");
                 return true;
             }
             catch
@@ -1090,7 +1089,7 @@ namespace Proyecto_microSQL.Utilidades
             try
             {
                 Fila nuevaFila = new Fila(values);
-                BTree<int, Fila> tree = new BTree<int, Fila>(tableName);
+                BTree<int, Fila> tree = new BTree<int, Fila>(tableName, path + "\\arbolesb");
                 tree.Insertar(nuevaFila.Id, nuevaFila);
                 tree.Cerrar();
 
@@ -1125,7 +1124,7 @@ namespace Proyecto_microSQL.Utilidades
                 int x = 0;
 
                 listDataTable = new List<string>();
-                BTree<int, Fila> tree = new BTree<int, Fila>(seleccion.TableName);  // cargar arbol               
+                BTree<int, Fila> tree = new BTree<int, Fila>(seleccion.TableName, path + "\\arbolesb");  // cargar arbol               
                 List<string> showlst = new List<string>(); //Tabla para mostrar
                 string dataObtenida = string.Empty;
 
@@ -1444,7 +1443,7 @@ namespace Proyecto_microSQL.Utilidades
                 string data = File.ReadAllText(path + "tablas\\" + tableName + ".tabla").Replace("\r\n", "$"); //cargar tabla
 
                 //****Arreglar asunto con el arbol primero*****
-                BTree<int, standardObject> tree = new BTree<int, standardObject>(tableName, 5); // cargar arbol
+                /*BTree<int, standardObject> tree = new BTree<int, standardObject>(tableName, 5);*/ // cargar arbol
                 string[] Table = data.Split('$');
                 bool fkey = false;
                                                                        // "WHERE"
@@ -1476,7 +1475,7 @@ namespace Proyecto_microSQL.Utilidades
                             break;
                         }
                     }
-                    tree.Eliminar(int.Parse(key));
+                    //tree.Eliminar(int.Parse(key));
                 }
                 #endregion
                 #region Delete everything
@@ -1537,7 +1536,7 @@ namespace Proyecto_microSQL.Utilidades
                 string data = File.ReadAllText(path + "tablas\\" + tableName + ".tabla").Replace("\r\n", "$"); //cargar tabla
 
                 //****Arreglar asunto con el arbol primero*****
-                BTree<int, standardObject> tree = new BTree<int, standardObject>(tableName, 5); // cargar arbol
+               /* BTree<int, standardObject> tree = new BTree<int, standardObject>(tableName, 5); */// cargar arbol
 
                 string[] Table = data.Split('$');
                 bool[] fgcolumns = new bool[9]; //campos a modificar
