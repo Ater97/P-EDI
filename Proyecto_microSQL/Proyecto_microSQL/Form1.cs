@@ -27,7 +27,7 @@ namespace Proyecto_microSQL
         TreeViewManagement T = new TreeViewManagement();
         Errors system = new Errors();
 
-        string path = @"C:\Users\bryan\Desktop\microSQL\"; //direccion principal de los archivos
+        string path = @"C:\Users\sebas\Desktop\microSQL\"; //direccion principal de los archivos
 
         private void Form1_Load(object sender, EventArgs e)
         {
@@ -111,18 +111,19 @@ namespace Proyecto_microSQL
         {
             int lindex = str.LastIndexOf(word);
             int index = str.IndexOf(word, 0);
-            if (str.Length == lindex + 1)
+            if (str.Length > index + word.Length)
             {
-                return true;
-            }
-            if (str.Length > lindex + 2)
-            {
-                if (str[lindex + 2] == ' ')
+                if (str[index + word.Length] == ' ')
                     return true;
             }
             if (str.Trim() == word)
             {
                 return true;
+            }
+            if (str.Length == index + word.Length)
+            {
+                if (str[index - 1] == ' ')
+                    return true;
             }
             return false;
         }
@@ -151,10 +152,8 @@ namespace Proyecto_microSQL
                     int selectStart = richTextBox1.SelectionStart;
                     int wordcount = lines.Count(v => v.Contains(word));
 
-                    int a = Array.IndexOf(lines, word);
+                    
                     int[] indexs = getindexs(lines, wordcount, word);
-                    if (a < 0)
-                        a = 0;
                     if (wordcount > 1)
                     {
                         int k = 0;
@@ -179,7 +178,7 @@ namespace Proyecto_microSQL
                     }
                     else
                     {
-                        if (checkright(lines[a], word))
+                        if (checkright(lines[indexs[0]], word))
                         {
                             while ((index = richTextBox1.Text.IndexOf(word, (index + 1))) != -1)
                             {
