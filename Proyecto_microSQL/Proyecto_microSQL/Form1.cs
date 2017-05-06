@@ -111,16 +111,16 @@ namespace Proyecto_microSQL
         {
             int lindex = str.LastIndexOf(word);
             int index = str.IndexOf(word, 0);
-            if(str.Length==lindex+1)
+            if (str.Length == lindex + 1)
             {
                 return true;
             }
-            if(str.Length > lindex + 2)
+            if (str.Length > lindex + 2)
             {
                 if (str[lindex + 2] == ' ')
                     return true;
             }
-            if(str.Trim() == word)
+            if (str.Trim() == word)
             {
                 return true;
             }
@@ -331,7 +331,7 @@ namespace Proyecto_microSQL
                     /* AHORA VERIFICA Y EJECUTA LA ACCION SIN IMPORTAR QUE HAY DESPUES*/
                     if (numeroError == 0)
                     {
-                        EjecutarAcciones(comando);                    
+                        EjecutarAcciones(comando);
                     }
                 }
             }
@@ -346,7 +346,7 @@ namespace Proyecto_microSQL
                 T.PopulateTree(treeView1);
                 richTextBox1.Clear();
             }
-            
+
             #region The Old Code
 
             /*
@@ -468,7 +468,7 @@ namespace Proyecto_microSQL
             if (comando == comandolst[4])
             {
                 U.crearTabla(U.Tabla);
-                dataGridView1.DataSource = D.NewDataTable(U.Tabla.TableName);            
+                dataGridView1.DataSource = D.NewDataTable(U.Tabla.TableName);
             }
 
             //DROP TABLE
