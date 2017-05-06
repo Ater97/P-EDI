@@ -36,6 +36,7 @@ namespace Proyecto_microSQL.Utilidades
                 string[] fileNames = U.LimiarArray(Directory.GetFiles(path + "tablas\\"), Remove);//nombres de los archivos
 
                 bool fg = false;
+
                 for (int i = 0; i < filesCount; i++)
                 {
                     try

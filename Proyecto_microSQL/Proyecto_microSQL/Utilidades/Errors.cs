@@ -12,7 +12,7 @@ namespace Proyecto_microSQL.Utilidades
 
         public Errors()
         {
-            errores = new string[45];
+            errores = new string[50];
             errores[1] = "Error[1]: El texto ingresado es incoherente. \nPor favor reviselo y haga las correcciones correspondientes.";
             errores[2] = "Error[2]: No se encontro el comando 'GO' para la función.\nRecuerde que no pueden ir funciones dentro de otras funciones, sin antes haberlas finalizados con el comando GO. \nPor favor revise la sintaxis.";
             errores[3] = "Error[3]: No se encontro el simbolo '(' de apertura. \nPor favor verifique su codigo";
@@ -55,6 +55,10 @@ namespace Proyecto_microSQL.Utilidades
             errores[40] = "Error[40]: Los nombre de tablas no contienen espacios. \n Verifique su codigo.";
             errores[41] = "Error[41]: Los comandos WHERE/FROM/VALUES no corresponden a la funcion DROP TABLE. \nPor favor verifique su codigo.";
             errores[42] = "Error[42]: Codigo incoherente. No se encontro el comando FROM despues del comando DELETE. \nPor favor verifique su codigo.";
+            errores[43] = "Error[43]: Lo sentimos esta función aun no funciona del todo, por lo que puede generar errores. Disculpe las molestias";
+            errores[44] = "Error[44]: Ha ocurrido un error. Por favor verifique su codigo y vuelva a ejecutarlo.";
+            errores[45] = "Error[45]: La ID ingresada no existe dentro del contexto de la tabla. \nPor favor verifique su codigo.";
+            errores[46] = "Error[46]: La ID ingresada ya existe. \nPor favor cambie de ID.";
         }
 
         public string Errores(int numeroDeError)

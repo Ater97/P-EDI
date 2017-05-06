@@ -1084,38 +1084,43 @@ namespace Proyecto_microSQL.Utilidades
             }
         }
 
-        public bool insertarArbol(string tableName, List<string> values, List<string> columns)
+        public int insertarArbol(string tableName, List<string> values, List<string> columns)
         {
             try
             {
                 Fila nuevaFila = new Fila(values);
                 BTree<int, Fila> tree = new BTree<int, Fila>(tableName, path + "\\arbolesb");
-                tree.Insertar(nuevaFila.Id, nuevaFila);
-                tree.Cerrar();
 
-                return true;
+                if(tree.Buscar(nuevaFila.Id) == int.MinValue)
+                {
+                    tree.Insertar(nuevaFila.Id, nuevaFila);
+                }
+                else
+                {
+                    return 46;
+                }
+               
+                return 0;
             }
             catch
             {
-                return false;
+                return 44;
             }
         }
 
-        public void Insertar(InsertInto insercion)
+        public int Insertar(InsertInto insercion)
         {
-            insertarArbol(insercion.TableName.Trim(), insercion.Values, insercion.Columns);
-            insertarArchivoTabla(insercion.TableName.Trim(), insercion.Values);
+            return insertarArbol(insercion.TableName.Trim(), insercion.Values, insercion.Columns);           
         }
 
         #endregion
 
-        //****Sustituir "WHERE" por su comando****
         #region SELECT
         public List<string> listDataTable = new List<string>();
         public List<string> Missing = new List<string>();
 
         //public bool Select(string[] columns, string tableName, int index)
-        public bool Select(Selection seleccion)
+        public int Select(Selection seleccion)
         {
             try
             {
@@ -1139,6 +1144,13 @@ namespace Proyecto_microSQL.Utilidades
                     string[] filtro = seleccion.Filtro.Split('=');
 
                     dataObtenida = tree.TraerData(int.Parse(filtro[1]));
+
+                    if(dataObtenida == string.Empty)
+                    {
+                        return 45;
+                    }
+
+
                     dataObtenida = dataObtenida.Replace("#", "");
                     temp = dataObtenida.Split('_').ToList();
 
@@ -1181,6 +1193,7 @@ namespace Proyecto_microSQL.Utilidades
                 {
                     //Obtengo los id's del arbol 
                     List<string> IdLst = tree.RecorrerArbol();
+                    IdLst.Sort();
 
                     //Ingresar Cabecera
                     string auxiliar = string.Empty;
@@ -1229,135 +1242,11 @@ namespace Proyecto_microSQL.Utilidades
        
                 listDataTable = showlst;
 
-                return true;
+                return 0;
             }
             catch
             {
-                return false;
-            }
-        }
-
-        public bool Select(string[]Lines)
-        {
-            try
-            {
-                var space = new string[] { " ", "," };
-                Lines = LimiarArray(Lines, space);
-                string tableName = Lines[Array.IndexOf(Lines, palabrasReemplazo[1]) + 1]; //obtener nombre de la tabla
-                string data = File.ReadAllText(path + "tablas\\" + tableName + ".tabla").Replace("\r\n", "$").Split('$')[0]; //cargar tabla
-            //  BTree<int, Fila> tree = new BTree<int, Fila>(seleccion.TableName); ; // cargar arbol
-                List<string> headers = seleccion.Columns;
-                string[] Table = data.Split('$');
-                string[] columns = Table;//temp
-                #region special case --> filtro llave primaria y mostar todo "*"
-                bool fkey = false;                                      // "WHERE"
-                //if (Array.Exists(columns, element => element.StartsWith(palabrasReemplazo[3])) &&
-                //    Array.Exists(columns, element => element.StartsWith("ID =")))
-                if (seleccion.Filtro.Contains("ID ="))
-                {
-                    fkey = true;
-                }
-
-                if (fkey) //Filtro a la llave primaria
-                {
-                    string[] keyRow = new string[2];
-                    string key = "";
-
-                    for (int k = 0; k < columns.Count(); k++)
-                    {                               // "WHERE"
-                        if (columns[k].Trim() == palabrasReemplazo[3])
-                        {
-                            key = columns[k + 1].Replace("ID =", string.Empty);
-                            break;
-                        }
-                    }
-
-                    for (int k = 0; k < Table.Count(); k++)
-                    {
-                        string[] row = Table[k].Split(',');
-                        if (row[0].Trim() == key.Trim())
-                        {
-                            keyRow[0] = Table[0];
-                            keyRow[1] = Table[k];
-                            break;
-                        }
-                    }
-                    Table = keyRow;
-                }
-
-
-                if (columns[1].Trim() == "*") //Mostrar tabla completa
-                {
-                    if (Mostattod(columns, Table))
-                        return true;
-                    return false;
-                }
-                #endregion 
-
-                List<string> showlst = new List<string>(); //Tabla para mostrar
-                string[] strCol = Table[0].Split(','); //etiquetas columnas
-                bool[] flags = new bool[9]; //banderas por columnas
-                int[] orden = new int[9]; //Orden deseado de columnas
-                string temp = "";
-
-                #region preparations
-                var Remove = new string[] { "(INT)", "(VARCHAR(100))", "(DATETIME)" };
-                strCol = LimiarArray(strCol, Remove);
-                for (int i = 1; i < strCol.Count(); i++)
-                {
-                    for (int j = 0; j < strCol.Count(); j++)
-                    {
-                        if (columns[i].Trim() == strCol[j].Trim())
-                        {
-                            flags[i - 1] = true;
-                            temp = temp + columns[i] + ",";
-                            orden[j] = i;
-                            break;
-                        }
-                    }
-                }
-
-                temp = temp.TrimEnd(',');
-                showlst.Add(temp);
-                List<int> missing = new List<int>();
-                Missing = new List<string>();
-
-                if (!check(flags, columns).Item1)  //verificar la existencia de las columnas solicitadas
-                {
-                    missing = check(flags, columns).Item2;
-                    for (int i = 0; i < missing.Count(); i++)
-                    {
-                        Missing.Add(columns[missing[i] + 1]);
-                    }
-                    return false;
-                }
-                int tablelenght = Table.Count() - 1;
-                if (fkey)
-                {
-                    tablelenght = Table.Count();
-                }
-                #endregion
-
-                for (int i = 1; i < tablelenght; i++) //almacenar en temp los datos en orden
-                {
-                    temp = "";
-                    string[] row = Table[i].Split(',');
-
-                    for (int j = 0; j < orden.Count(); j++)
-                    {
-                        int ix = orden[j] - 1; //provee el orden de inserción
-                        if (ix >= 0)
-                            temp = temp + row[ix] + ",";
-                    }
-                    temp = temp.TrimEnd(',');
-                    showlst.Add(temp); //agrega el string nuevo con los parametros deseados y en orden 
-                }                      //a la lista para mostar
-                listDataTable = showlst;
-                return true;
-            }
-            catch
-            {
-                return false;
+                return 44;
             }
         }
 
@@ -1382,125 +1271,39 @@ namespace Proyecto_microSQL.Utilidades
             return columnas;
         }
 
-        public Tuple<bool, List<int>> check(bool[] flags, string[] lines)
-        {
-            int index = 0;
-            List<int> missing = new List<int>();
-            bool fg = true;
-            for (int i = 1; i < lines.Count(); i++)
-            {
-                if (!fg)
-                    break;
-                if ("FROM" == lines[i].Trim())
-                {
-                    fg = false;
-                }
-                index++;
-
-            }
-            fg = true;
-            for (int i = 0; i < index - 2; i++)
-            {
-                if (!flags[i])
-                {
-                    missing.Add(i);
-                    fg = false;
-                }
-            }
-
-            return Tuple.Create(fg, missing);
-        }
-
-        public bool Mostattod(string[] columns, string[] rows)
-        {
-            try
-            {
-                for (int i = 0; i < rows.Count(); i++)
-                {
-                    listDataTable.Add(rows[i]);
-                }
-
-                return true;
-            }
-            catch
-            {
-                return false;
-            }
-        }
-
-
         #endregion
 
         //****Sustituir "DELETE FROM" por su comando****
         //****Sustituir "WHERE" por su comando****
         #region DELETE
-        public bool DeleteFrom(string[] Lines)
+        public int DeleteFrom(string[] datos)
         {
             try
             {
-                string tableName = Lines[Array.IndexOf(Lines, "DELETE FROM") + 1]; //obtener nombre de la tabla
                 listDataTable = new List<string>();
-                string data = File.ReadAllText(path + "tablas\\" + tableName + ".tabla").Replace("\r\n", "$"); //cargar tabla
-
-                //****Arreglar asunto con el arbol primero*****
-                /*BTree<int, standardObject> tree = new BTree<int, standardObject>(tableName, 5);*/ // cargar arbol
-                string[] Table = data.Split('$');
-                bool fkey = false;
-                                                                       // "WHERE"
-                if (Array.Exists(Lines, element => element.StartsWith(palabrasReemplazo[0])) && //Eliminar por llave fkey true
-                    Array.Exists(Lines, element => element.StartsWith("ID =")))    //Eliminar todos los datos fkey false
+                //BTree<int, Fila> tree = new BTree<int, Fila>(seleccion.TableName, path + "\\arbolesb");  // cargar arbol               
+                //List<string> showlst = new List<string>(); //Tabla para mostrar
+                string dataObtenida = string.Empty;
+                
+                if(datos[1] != string.Empty)
                 {
-                    fkey = true;
+                    return 43;
                 }
-                #region Delete key
-                if (fkey)
-                {
-                    string key = "";
-
-                    for (int k = 0; k < Lines.Count(); k++) //obtener llave a eliminar
-                    {
-                        if (Lines[k].Trim() == "WHERE")
-                        {
-                            key = Lines[k + 1].Replace("ID =", string.Empty);
-                            break;
-                        }
-                    }
-
-                    for (int i = 0; i < Table.Count(); i++) //buscar la llave a eliminar
-                    {
-                        string[] row = Table[i].Split(',');
-                        if (row[0].Trim() == key.Trim()) //eliminarla de la tabla
-                        {
-                            Table = Table.Where(w => w != Table[i]).ToArray();
-                            break;
-                        }
-                    }
-                    //tree.Eliminar(int.Parse(key));
-                }
-                #endregion
-                #region Delete everything
                 else
                 {
-                    string[] headers = new string[1];
-                    headers[0] = Table[0];
-                    Table = headers;
-                }
-                #endregion
-                //sobreescribir el archivo
-                File.WriteAllText(path + "tablas\\" + tableName + ".tabla", "");
-                using (StreamWriter file = new StreamWriter(path + "tablas\\" + tableName + ".tabla", true))
-                {
-                    for (int i = 0; i < Table.Count(); i++)
-                    {
-                        file.WriteLine(Table[i]);
-                    }
-                }
+                    /*  SE ANALIZA SIN WHERE    */
 
-                return true;
+                    //Elimino todo el arbol
+                    File.Delete(path + "arbolesb\\" + datos[0]);
+
+                    //Creo nuevamente el árbol pero inicia vacio
+                    BTree<int, Fila> tree = new BTree<int, Fila>(datos[0], 5, path + "\\arbolesb");
+                    return 0;
+                }
             }
             catch
             {
-                return false;
+                return 44;
             }
         }
 
