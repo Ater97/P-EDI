@@ -1110,13 +1110,10 @@ namespace Proyecto_microSQL.Utilidades
 
         public int Insertar(InsertInto insercion)
         {
-<<<<<<< HEAD
             insertarArbol(insercion.TableName.Trim(), insercion.Values, insercion.Columns);
             //insertarArchivoTabla(insercion.TableName.Trim(), insercion.Values);
             listDataTable = TraerColumnas(insercion.TableName.Trim());
-=======
             return insertarArbol(insercion.TableName.Trim(), insercion.Values, insercion.Columns);           
->>>>>>> origin/master
         }
 
         #endregion
@@ -1246,13 +1243,11 @@ namespace Proyecto_microSQL.Utilidades
                 #endregion
 
                 listDataTable = showlst;
-
-<<<<<<< HEAD
-                return true;
+                return 0;
             }
             catch
             {
-                return false;
+                return 44;
             }
         }
 
@@ -1307,7 +1302,7 @@ namespace Proyecto_microSQL.Utilidades
 
                 if (columns[1].Trim() == "*") //Mostrar tabla completa
                 {
-                    if (Mostattod(columns, Table))
+                    //if (Mostattod(columns, Table))
                         return true;
                     return false;
                 }
@@ -1341,15 +1336,15 @@ namespace Proyecto_microSQL.Utilidades
                 List<int> missing = new List<int>();
                 Missing = new List<string>();
 
-                if (!check(flags, columns).Item1)  //verificar la existencia de las columnas solicitadas
-                {
-                    missing = check(flags, columns).Item2;
-                    for (int i = 0; i < missing.Count(); i++)
-                    {
-                        Missing.Add(columns[missing[i] + 1]);
-                    }
-                    return false;
-                }
+                //if (!check(flags, columns).Item1)  //verificar la existencia de las columnas solicitadas
+                //{
+                //    missing = check(flags, columns).Item2;
+                //    for (int i = 0; i < missing.Count(); i++)
+                //    {
+                //        Missing.Add(columns[missing[i] + 1]);
+                //    }
+                //    return false;
+                //}
                 int tablelenght = Table.Count() - 1;
                 if (fkey)
                 {
@@ -1373,13 +1368,12 @@ namespace Proyecto_microSQL.Utilidades
                 }                      //a la lista para mostar
                 listDataTable = showlst;
                 return true;
-=======
-                return 0;
->>>>>>> origin/master
+                //return 0;
             }
             catch
             {
-                return 44;
+                //  return 44;
+                return false;
             }
         }
 
@@ -1414,23 +1408,20 @@ namespace Proyecto_microSQL.Utilidades
             try
             {
                 listDataTable = new List<string>();
-<<<<<<< HEAD
-                string data = File.ReadAllText(path + "tablas\\" + tableName + ".tabla").Replace("\r\n", "$"); //cargar tabla
+                //string data = File.ReadAllText(path + "tablas\\" + tableName + ".tabla").Replace("\r\n", "$"); //cargar tabla
 
                 //****Arreglar asunto con el arbol primero*****
                 /*BTree<int, standardObject> tree = new BTree<int, standardObject>(tableName, 5);*/ // cargar arbol
-                string[] Table = data.Split('$');
+               // string[] Table = data.Split('$');
                 bool fkey = false;
                 // "WHERE"
-                if (Array.Exists(Lines, element => element.StartsWith(palabrasReemplazo[0])) && //Eliminar por llave fkey true
-                    Array.Exists(Lines, element => element.StartsWith("ID =")))    //Eliminar todos los datos fkey false
-=======
-                //BTree<int, Fila> tree = new BTree<int, Fila>(seleccion.TableName, path + "\\arbolesb");  // cargar arbol               
-                //List<string> showlst = new List<string>(); //Tabla para mostrar
-                string dataObtenida = string.Empty;
+                //if (Array.Exists(Lines, element => element.StartsWith(palabrasReemplazo[0])) && //Eliminar por llave fkey true
+                //    Array.Exists(Lines, element => element.StartsWith("ID =")))    //Eliminar todos los datos fkey false
+                ////BTree<int, Fila> tree = new BTree<int, Fila>(seleccion.TableName, path + "\\arbolesb");  // cargar arbol               
+                ////List<string> showlst = new List<string>(); //Tabla para mostrar
+                //string dataObtenida = string.Empty;
                 
                 if(datos[1] != string.Empty)
->>>>>>> origin/master
                 {
                     return 43;
                 }
