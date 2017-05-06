@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using Microsoft.VisualBasic.FileIO;
+using EstructurasDeDatos;
 
 namespace Proyecto_microSQL.Utilidades
 {
@@ -21,7 +22,7 @@ namespace Proyecto_microSQL.Utilidades
         public DataTable NewDataTable(string tableName)
         {
             DataTable csvData = new DataTable();
-         
+
             try
             {
                 using (TextFieldParser csvReader = new TextFieldParser(path + "tablas\\" + tableName + ".tabla"))
@@ -41,7 +42,7 @@ namespace Proyecto_microSQL.Utilidades
                     {
                         string[] fieldData = csvReader.ReadFields();
                         DataRow dr = csvData.NewRow();
-                        
+
                         for (int i = 0; i < fieldData.Length; i++)
                         {
                             if (fieldData[i] == null)
@@ -111,7 +112,7 @@ namespace Proyecto_microSQL.Utilidades
             try
             {
 
-               // csvReader.SetDelimiters(new string[] { "," });
+                // csvReader.SetDelimiters(new string[] { "," });
                 //csvReader.HasFieldsEnclosedInQuotes = true;
                 string[] colFields = list[0].Split(',');
 
@@ -140,6 +141,60 @@ namespace Proyecto_microSQL.Utilidades
                 }
 
                 return dataTable;
+            }
+            catch
+            {
+                return null;
+            }
+        }
+
+        public DataTable NewDataTabletree(string treeName)
+        {
+            try
+            {
+                BTree<int, Fila> tree = new BTree<int, Fila>(treeName, path + "\\arbolesb");  // cargar arbol  
+                List<string> IdLst = tree.RecorrerArbol();
+                Utilities U = new Utilities();
+                List<string> Columns = File.ReadAllText(path + "tablas\\" + treeName + ".tabla").Replace("\r\n", "$").Split('$')[0].Split(',').ToList();
+                string auxiliar = string.Empty;
+                List<string> showlst = new List<string>();
+                List<string> temp = new List<string>();
+
+                for (int i = 0; i < Columns.Count; i++)
+                {
+                    auxiliar += Columns[i] + ",";
+                }
+
+                showlst.Add(auxiliar.TrimEnd(','));
+
+
+                string dataObtenida = " ";
+                for (int i = 0; i < IdLst.Count; i++)
+                {
+                    auxiliar = string.Empty;
+                    dataObtenida = tree.TraerData(int.Parse(IdLst[i]));
+                    dataObtenida = dataObtenida.Replace("#", "");
+                    temp = dataObtenida.Split('_').ToList();
+
+                    //Elimino el espacio en blanco del final
+                    if (temp[temp.Count - 1] == string.Empty)
+                    {
+                        temp.RemoveAt(temp.Count - 1);
+                    }
+
+                    //Agregar datos
+                    auxiliar = string.Empty;
+                    for (int x = 0; x < Columns.Count; x++)
+                    {
+                        for (int j = 0; j < Columns.Count; j++)
+                        {
+                            auxiliar += temp[x] + ",";
+                            break;
+                        }
+                    }
+                    showlst.Add(auxiliar.TrimEnd(','));
+                }
+                return ToDataTable(showlst);
             }
             catch
             {
