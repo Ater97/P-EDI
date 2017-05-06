@@ -1104,7 +1104,7 @@ namespace Proyecto_microSQL.Utilidades
         public void Insertar(InsertInto insercion)
         {
             insertarArbol(insercion.TableName.Trim(), insercion.Values, insercion.Columns);
-            insertarArchivoTabla(insercion.TableName.Trim(), insercion.Values);
+            //insertarArchivoTabla(insercion.TableName.Trim(), insercion.Values);
         }
 
         #endregion

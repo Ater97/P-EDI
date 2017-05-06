@@ -543,7 +543,7 @@ namespace Proyecto_microSQL
 
         private void treeView1_AfterSelect(object sender, TreeViewEventArgs e)
         {
-            dataGridView1.DataSource = D.NewDataTable(e.Node.Text);
+            //dataGridView1.DataSource = D.NewDataTable(e.Node.Text);
         }
 
         private string selectPath()
