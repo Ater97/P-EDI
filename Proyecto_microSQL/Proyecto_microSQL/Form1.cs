@@ -53,7 +53,8 @@ namespace Proyecto_microSQL
         {
             gbOn();
             (frm2).Show();
-            comandolst = frm2.getcomando();
+            U.AlmacenarComandos(frm2.getcomando());
+            comandolst = U.CargarComando();
             tiposDeDato = U.CargarTiposDefault();
         }
 
@@ -509,6 +510,9 @@ namespace Proyecto_microSQL
         private void btnCargarLenguaje_Click(object sender, EventArgs e)
         {
             (frm2).Show();
+            U.AlmacenarComandos(frm2.getcomando());
+            comandolst = U.CargarComando();
+            tiposDeDato = U.CargarTiposDefault();
         }
     }
 }

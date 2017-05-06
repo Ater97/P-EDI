@@ -127,11 +127,36 @@ namespace Proyecto_microSQL.Utilidades
             }
         }
 
+        public bool AlmacenarComandos(List<string> comandos)
+        {
+            try
+            {
+                if (File.Exists(path + "microSQL\\microSQL.ini"))
+                {
+                    File.Delete(path + "microSQL\\microSQL.ini");
+                }
+                                
+                FileStream fs = File.Create(path + "microSQL\\microSQL.ini");
+                fs.Close();
+                using (StreamWriter file = new StreamWriter(path + "microSQL\\microSQL.ini", true))
+                {
+                    for(int i = 0; i < comandos.Count; i++)
+                    {
+                        file.WriteLine(comandos[i]);
+                    }
+                }
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
         public List<string> CargarComando()
         {
             try
             {
-
                 string[] line;
                 List<string> comandolst = new List<string>();
 
@@ -1303,7 +1328,6 @@ namespace Proyecto_microSQL.Utilidades
 
         #endregion
 
-        //****Sustituir "DROP TABLE" por su comando****
         #region DROP TABLE
         public bool DropTable(string tableName)
         {

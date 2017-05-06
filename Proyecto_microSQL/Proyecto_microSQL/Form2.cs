@@ -28,10 +28,6 @@ namespace Proyecto_microSQL
      
         public List<string> getcomando()
         {
-            comandolst.Add("INT PRIMARY KEY");
-            comandolst.Add("VARCHAR(100)");
-            comandolst.Add("DATETIME");
-            comandolst.Add("INT");
             return comandolst;
         }
 
@@ -46,14 +42,15 @@ namespace Proyecto_microSQL
                     string path = ofd.FileName;
                     if (ofd.FileName.Trim() != "")
                     {
-                        string data = File.ReadAllText(ofd.FileName).Replace("\r\n", ",");
-                        string[] strcomandos = data.Split(',');
+                        string data = File.ReadAllText(ofd.FileName).Replace("\r\n", "$");
+                        string[] strcomandos = data.Split('$');
                         //<Palabra Reservada>, <Comando en otro idioma> 
+
                         for (int i = 0; i < strcomandos.Length; i ++)
                         {
-                            line = strcomandos[i].Split(',');
                             comandolst.Add(strcomandos[i]);
                         }
+
                         Path.Text = path;
                     }
                 }
