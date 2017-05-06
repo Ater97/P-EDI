@@ -1086,26 +1086,20 @@ namespace Proyecto_microSQL.Utilidades
 
         public int insertarArbol(string tableName, List<string> values, List<string> columns)
         {
-            try
-            {
-                Fila nuevaFila = new Fila(values);
-                BTree<int, Fila> tree = new BTree<int, Fila>(tableName, path + "\\arbolesb");
+            Fila nuevaFila = new Fila(values);
+            BTree<int, Fila> tree = new BTree<int, Fila>(tableName, path + "\\arbolesb");
 
-                if(tree.Buscar(nuevaFila.Id) == int.MinValue)
-                {
-                    tree.Insertar(nuevaFila.Id, nuevaFila);
-                }
-                else
-                {
-                    return 46;
-                }
-               
-                return 0;
-            }
-            catch
+            if (tree.Buscar(nuevaFila.Id) == int.MinValue)
             {
-                return 44;
+                tree.Insertar(nuevaFila.Id, nuevaFila);
+                tree.Cerrar();
             }
+            else
+            {
+                return 46;
+            }
+
+            return 0;
         }
 
         public int Insertar(InsertInto insercion)
@@ -1314,7 +1308,8 @@ namespace Proyecto_microSQL.Utilidades
         public bool DropTable(string tableName)
         {
             try
-            {           
+            {
+                listDataTable = new List<string>();        
                 File.Delete(path + "tablas\\" + tableName + ".tabla");
                 File.Delete(path + "arbolesb\\" + tableName);
                 return true;
@@ -1326,6 +1321,46 @@ namespace Proyecto_microSQL.Utilidades
         }
 
         #endregion
+
+
+        public void MostrarContenidoArbol(string NombreTabla)
+        {
+            int i = 0;
+
+            listDataTable = new List<string>();
+            BTree<int, Fila> tree = new BTree<int, Fila>(NombreTabla, path + "\\arbolesb");  // cargar arbol     
+            List<string> columnas = new List<string>();                     
+            List<string> showlst = new List<string>(); //Tabla para mostrar
+
+            string dataObtenida = string.Empty;
+
+            List<string> IdLst = tree.RecorrerArbol();          
+            IdLst.Sort();
+
+            columnas = TraerColumnas(NombreTabla);
+
+            //Ingresar Cabecera
+            string auxiliar = string.Empty;
+
+            for (i = 0; i < columnas.Count; i++)
+            {
+                auxiliar += columnas[i] + ",";
+            }
+         
+            showlst.Add(auxiliar.TrimEnd(','));
+
+            for (i = 0; i < IdLst.Count; i++)
+            {
+                auxiliar = string.Empty;
+                dataObtenida = tree.TraerData(int.Parse(IdLst[i]));
+                dataObtenida = dataObtenida.Replace("#", "");
+                dataObtenida = dataObtenida.Replace("_", ",");
+
+                showlst.Add(dataObtenida.TrimEnd(','));
+            }
+
+            listDataTable = showlst;
+        }
 
         //****Sustituir la palabara "UPDATE" por su comando****
         //****Sustituir "WHERE" por su comando****

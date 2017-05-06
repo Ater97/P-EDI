@@ -131,6 +131,7 @@ namespace Proyecto_microSQL
             }
             return false;
         }
+
         public int[] getindexs(string[] lines, int n, string word)
         {
             int[] temp = new int[n];
@@ -145,6 +146,7 @@ namespace Proyecto_microSQL
             }
             return temp;
         }
+
         private void CheckKeyword(string word, Color color, int startIndex)
         {
             try
@@ -350,26 +352,6 @@ namespace Proyecto_microSQL
                 richTextBox1.Clear();
             }
 
-            #region The Old Code
-
-            /*
-                //UPDATE
-                if (Lines[ij].Contains("UPDATE"))  //****Sustituir la palabara "UPDATE" por su comando****
-                {
-                    if (!U.Update(Lines))
-                    {
-                        MessageBox.Show("Por favor revise la sintaxis");
-                        break;
-                    }
-                    richTextBox1.Clear();
-                    dataGridView1.DataSource = D.NewDataTable(Lines[i + 1].Trim());
-                    fg = true;
-                    break;
-                }
-            }
-            */
-            #endregion
-
         }
 
         private void EjecutarAcciones(string comando)
@@ -399,13 +381,20 @@ namespace Proyecto_microSQL
             if (comando == comandolst[5])
             {
                 U.DropTable(U.NombreTablaEliminar);
+                dataGridView1.DataSource = D.ToDataTable(U.listDataTable);
             }
 
             //INSERT INTO
             if (comando == comandolst[6])
             {
                 numeroError = U.Insertar(U.Insertar1);
-                dataGridView1.DataSource = D.NewDataTable(U.Insertar1.TableName);
+
+                if(numeroError == 0)
+                {
+                    U.MostrarContenidoArbol(U.Insertar1.TableName);
+                    dataGridView1.DataSource = D.ToDataTable(U.listDataTable);
+                }
+
             }
         }
 
@@ -514,20 +503,12 @@ namespace Proyecto_microSQL
 
         private string selectPath()
         {
-            try
-            {
-                FolderBrowserDialog folderFileDialog1 = new FolderBrowserDialog();
-                folderFileDialog1.ShowNewFolderButton = false;
-                if (folderFileDialog1.ShowDialog() == DialogResult.OK)
-                {
-                    return folderFileDialog1.SelectedPath + "\\microSQL\\";
-                }
-                return Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + "\\microSQL\\";
-            }
-            catch
-            {
-                return Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + "\\microSQL\\";
-            }
+            return Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + "\\microSQL\\";
+        }
+
+        private void btnCargarLenguaje_Click(object sender, EventArgs e)
+        {
+            (frm2).Show();
         }
     }
 }

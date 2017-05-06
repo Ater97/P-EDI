@@ -44,11 +44,17 @@
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabPage1 = new System.Windows.Forms.TabPage();
             this.tabPage2 = new System.Windows.Forms.TabPage();
+            this.CambiarLenguaje = new System.Windows.Forms.Label();
+            this.btnCargarLenguaje = new System.Windows.Forms.Button();
+            this.Lenguaje = new System.Windows.Forms.GroupBox();
+            this.lbIndicaciones = new System.Windows.Forms.Label();
             this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pBLineas)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
+            this.tabPage2.SuspendLayout();
+            this.Lenguaje.SuspendLayout();
             this.SuspendLayout();
             // 
             // groupBox1
@@ -183,12 +189,55 @@
             // tabPage2
             // 
             this.tabPage2.BackColor = System.Drawing.Color.Gainsboro;
+            this.tabPage2.Controls.Add(this.Lenguaje);
             this.tabPage2.Location = new System.Drawing.Point(4, 22);
             this.tabPage2.Name = "tabPage2";
             this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
             this.tabPage2.Size = new System.Drawing.Size(802, 470);
             this.tabPage2.TabIndex = 1;
             this.tabPage2.Text = "Opciones";
+            // 
+            // CambiarLenguaje
+            // 
+            this.CambiarLenguaje.AutoSize = true;
+            this.CambiarLenguaje.Location = new System.Drawing.Point(21, 36);
+            this.CambiarLenguaje.Name = "CambiarLenguaje";
+            this.CambiarLenguaje.Size = new System.Drawing.Size(92, 13);
+            this.CambiarLenguaje.TabIndex = 0;
+            this.CambiarLenguaje.Text = "Cambiar Lenguaje";
+            // 
+            // btnCargarLenguaje
+            // 
+            this.btnCargarLenguaje.Location = new System.Drawing.Point(149, 31);
+            this.btnCargarLenguaje.Name = "btnCargarLenguaje";
+            this.btnCargarLenguaje.Size = new System.Drawing.Size(97, 23);
+            this.btnCargarLenguaje.TabIndex = 1;
+            this.btnCargarLenguaje.Text = "Cargar Archivo";
+            this.btnCargarLenguaje.UseVisualStyleBackColor = true;
+            this.btnCargarLenguaje.Click += new System.EventHandler(this.btnCargarLenguaje_Click);
+            // 
+            // Lenguaje
+            // 
+            this.Lenguaje.BackColor = System.Drawing.Color.White;
+            this.Lenguaje.Controls.Add(this.lbIndicaciones);
+            this.Lenguaje.Controls.Add(this.CambiarLenguaje);
+            this.Lenguaje.Controls.Add(this.btnCargarLenguaje);
+            this.Lenguaje.Location = new System.Drawing.Point(6, 6);
+            this.Lenguaje.Name = "Lenguaje";
+            this.Lenguaje.Size = new System.Drawing.Size(790, 100);
+            this.Lenguaje.TabIndex = 3;
+            this.Lenguaje.TabStop = false;
+            this.Lenguaje.Text = "groupBox3";
+            // 
+            // lbIndicaciones
+            // 
+            this.lbIndicaciones.AutoSize = true;
+            this.lbIndicaciones.Location = new System.Drawing.Point(21, 68);
+            this.lbIndicaciones.Name = "lbIndicaciones";
+            this.lbIndicaciones.Size = new System.Drawing.Size(432, 13);
+            this.lbIndicaciones.TabIndex = 2;
+            this.lbIndicaciones.Text = "El archivo debe contener el formato indicado para poder leer los comandos en otro" +
+    " idioma.";
             // 
             // Form1
             // 
@@ -209,6 +258,9 @@
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).EndInit();
             this.tabControl1.ResumeLayout(false);
             this.tabPage1.ResumeLayout(false);
+            this.tabPage2.ResumeLayout(false);
+            this.Lenguaje.ResumeLayout(false);
+            this.Lenguaje.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -228,6 +280,10 @@
         private System.Windows.Forms.TabControl tabControl1;
         private System.Windows.Forms.TabPage tabPage1;
         private System.Windows.Forms.TabPage tabPage2;
+        private System.Windows.Forms.Button btnCargarLenguaje;
+        private System.Windows.Forms.Label CambiarLenguaje;
+        private System.Windows.Forms.GroupBox Lenguaje;
+        private System.Windows.Forms.Label lbIndicaciones;
     }
 }
 
