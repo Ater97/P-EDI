@@ -1123,7 +1123,7 @@ namespace Proyecto_microSQL.Utilidades
                 string data = File.ReadAllText(path + "tablas\\" + seleccion.TableName + ".tabla").Replace("\r\n", "$"); //cargar tabla
                 string[] strCol = File.ReadAllText(path + "tablas\\" + seleccion.TableName + ".tabla").Replace("\r\n", "$").Split('$')[0].Split(',');
                 BTree<int, Fila> tree = new BTree<int, Fila>(seleccion.TableName);  // cargar arbol
-
+                
                 List<string> showlst = new List<string>(); //Tabla para mostrar
              // string[] strCol = Table[0].Split(','); //etiquetas columnas
                 bool[] flags = new bool[9]; //banderas por columnas

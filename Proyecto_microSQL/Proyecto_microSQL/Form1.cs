@@ -107,14 +107,95 @@ namespace Proyecto_microSQL
 
             #endregion
         }
-
+        private bool checkright(string str, string word)
+        {
+            int lindex = str.LastIndexOf(word);
+            int index = str.IndexOf(word, 0);
+            if(str.Length==lindex+1)
+            {
+                return true;
+            }
+            if(str.Length > lindex + 2)
+            {
+                if (str[lindex + 2] == ' ')
+                    return true;
+            }
+            if(str.Trim() == word)
+            {
+                return true;
+            }
+            return false;
+        }
+        public int[] getindexs(string[] lines, int n, string word)
+        {
+            int[] temp = new int[n];
+            int j = 0;
+            for (int i = 0; i < lines.Count(); i++)
+            {
+                if (lines[i].Contains(word))
+                {
+                    temp[j] = i;
+                    j++;
+                }
+            }
+            return temp;
+        }
         private void CheckKeyword(string word, Color color, int startIndex)
         {
-            if (richTextBox1.Text.Contains(word))
+            try
+            {
+                if (richTextBox1.Text.Contains(word))
+                {
+                    string[] lines = richTextBox1.Lines;
+                    int index = -1;
+                    int selectStart = richTextBox1.SelectionStart;
+                    int wordcount = lines.Count(v => v.Contains(word));
+
+                    int a = Array.IndexOf(lines, word);
+                    int[] indexs = getindexs(lines, wordcount, word);
+                    if (a < 0)
+                        a = 0;
+                    if (wordcount > 1)
+                    {
+                        int k = 0;
+                        for (int i = 0; i < richTextBox1.Text.Length; i++)
+                        {
+                            index = richTextBox1.Text.IndexOf(word, (index + 1));
+                            if (checkright(lines[indexs[k]], word))
+                            {
+                                if (index == -1)
+                                {
+                                    break;
+                                }
+                                richTextBox1.Select((index + startIndex), word.Length);
+                                richTextBox1.SelectionColor = color;
+                                richTextBox1.Select(selectStart, 0);
+                                richTextBox1.SelectionColor = Color.Black;
+                            }
+                            k++;
+                            if (k > indexs.Count() - 1)
+                                break;
+                        }
+                    }
+                    else
+                    {
+                        if (checkright(lines[a], word))
+                        {
+                            while ((index = richTextBox1.Text.IndexOf(word, (index + 1))) != -1)
+                            {
+                                richTextBox1.Select((index + startIndex), word.Length);
+                                richTextBox1.SelectionColor = color;
+                                richTextBox1.Select(selectStart, 0);
+                                richTextBox1.SelectionColor = Color.Black;
+                            }
+                        }
+                    }
+                }
+            }
+            catch
             {
                 int index = -1;
                 int selectStart = richTextBox1.SelectionStart;
-
                 while ((index = richTextBox1.Text.IndexOf(word, (index + 1))) != -1)
                 {
                     richTextBox1.Select((index + startIndex), word.Length);
