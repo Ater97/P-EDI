@@ -27,10 +27,11 @@ namespace Proyecto_microSQL
         TreeViewManagement T = new TreeViewManagement();
         Errors system = new Errors();
 
-        string path = @"C:\Users\bryan\Desktop\microSQL\"; //direccion principal de los archivos
+        string path = @"C:\Users\sebas\Desktop\microSQL\"; //direccion principal de los archivos
 
         private void Form1_Load(object sender, EventArgs e)
         {
+            path = selectPath(); //direccion principal de los archivos
             /*  Para pintar el número de linea que se esta utilizando   */
             /*  Intervalo = 10 para evitar que parpadee 
                 Inicia el Timer */
@@ -107,14 +108,94 @@ namespace Proyecto_microSQL
 
             #endregion
         }
-
+        private bool checkright(string str, string word)
+        {
+            int lindex = str.LastIndexOf(word);
+            int index = str.IndexOf(word, 0);
+            if (str.Length > index + word.Length)
+            {
+                if (str[index + word.Length] == ' ')
+                    return true;
+            }
+            if (str.Trim() == word)
+            {
+                return true;
+            }
+            if (str.Length == index + word.Length)
+            {
+                if (str[index - 1] == ' ')
+                    return true;
+            }
+            return false;
+        }
+        public int[] getindexs(string[] lines, int n, string word)
+        {
+            int[] temp = new int[n];
+            int j = 0;
+            for (int i = 0; i < lines.Count(); i++)
+            {
+                if (lines[i].Contains(word))
+                {
+                    temp[j] = i;
+                    j++;
+                }
+            }
+            return temp;
+        }
         private void CheckKeyword(string word, Color color, int startIndex)
         {
-            if (richTextBox1.Text.Contains(word))
+            try
+            {
+                if (richTextBox1.Text.Contains(word))
+                {
+                    string[] lines = richTextBox1.Lines;
+                    int index = -1;
+                    int selectStart = richTextBox1.SelectionStart;
+                    int wordcount = lines.Count(v => v.Contains(word));
+
+                    
+                    int[] indexs = getindexs(lines, wordcount, word);
+                    if (wordcount > 1)
+                    {
+                        int k = 0;
+                        for (int i = 0; i < richTextBox1.Text.Length; i++)
+                        {
+                            index = richTextBox1.Text.IndexOf(word, (index + 1));
+                            if (checkright(lines[indexs[k]], word))
+                            {
+                                if (index == -1)
+                                {
+                                    break;
+                                }
+                                richTextBox1.Select((index + startIndex), word.Length);
+                                richTextBox1.SelectionColor = color;
+                                richTextBox1.Select(selectStart, 0);
+                                richTextBox1.SelectionColor = Color.Black;
+                            }
+                            k++;
+                            if (k > indexs.Count() - 1)
+                                break;
+                        }
+                    }
+                    else
+                    {
+                        if (checkright(lines[indexs[0]], word))
+                        {
+                            while ((index = richTextBox1.Text.IndexOf(word, (index + 1))) != -1)
+                            {
+                                richTextBox1.Select((index + startIndex), word.Length);
+                                richTextBox1.SelectionColor = color;
+                                richTextBox1.Select(selectStart, 0);
+                                richTextBox1.SelectionColor = Color.Black;
+                            }
+                        }
+                    }
+                }
+            }
+            catch
             {
                 int index = -1;
                 int selectStart = richTextBox1.SelectionStart;
-
                 while ((index = richTextBox1.Text.IndexOf(word, (index + 1))) != -1)
                 {
                     richTextBox1.Select((index + startIndex), word.Length);
@@ -250,7 +331,7 @@ namespace Proyecto_microSQL
                     /* AHORA VERIFICA Y EJECUTA LA ACCION SIN IMPORTAR QUE HAY DESPUES*/
                     if (numeroError == 0)
                     {
-                        EjecutarAcciones(comando);                    
+                        EjecutarAcciones(comando);
                     }
                 }
             }
@@ -265,7 +346,7 @@ namespace Proyecto_microSQL
                 T.PopulateTree(treeView1);
                 richTextBox1.Clear();
             }
-            
+
             #region The Old Code
 
             /*
@@ -387,7 +468,7 @@ namespace Proyecto_microSQL
             if (comando == comandolst[4])
             {
                 U.crearTabla(U.Tabla);
-                dataGridView1.DataSource = D.NewDataTable(U.Tabla.TableName);            
+                dataGridView1.DataSource = D.NewDataTable(U.Tabla.TableName);
             }
 
             //DROP TABLE
@@ -505,6 +586,27 @@ namespace Proyecto_microSQL
         private void treeView1_AfterSelect(object sender, TreeViewEventArgs e)
         {
             dataGridView1.DataSource = D.NewDataTable(e.Node.Text);
+        }
+
+        private string selectPath()
+        {
+            string pt = Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + "\\microSQL\\";
+            try
+            {
+                FolderBrowserDialog folderFileDialog1 = new FolderBrowserDialog();
+                folderFileDialog1.ShowNewFolderButton = false;
+                if (folderFileDialog1.ShowDialog() == DialogResult.OK)
+                {
+
+                    return folderFileDialog1.SelectedPath + "\\microSQL\\";
+                }
+
+                return pt;
+            }
+            catch
+            {
+                return Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + "\\microSQL\\";
+            }
         }
     }
 }
