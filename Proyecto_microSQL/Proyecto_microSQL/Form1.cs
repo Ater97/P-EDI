@@ -155,7 +155,7 @@ namespace Proyecto_microSQL
                     int selectStart = richTextBox1.SelectionStart;
                     int wordcount = lines.Count(v => v.Contains(word));
 
-                    
+
                     int[] indexs = getindexs(lines, wordcount, word);
                     if (wordcount > 1)
                     {
@@ -439,7 +439,9 @@ namespace Proyecto_microSQL
             if (comando == comandolst[6])
             {
                 U.Insertar(U.Insertar1);
-                dataGridView1.DataSource = D.NewDataTable(U.Insertar1.TableName);
+                dataGridView1.DataSource = D.NewDataTabletree(U.Insertar1.TableName);
+                //dataGridView1.DataSource = D.NewDataTable(U.Insertar1.TableName);
+                //dataGridView1.DataSource = D.ToDataTable(U.listDataTable);
             }
         }
 
@@ -543,7 +545,7 @@ namespace Proyecto_microSQL
 
         private void treeView1_AfterSelect(object sender, TreeViewEventArgs e)
         {
-            //dataGridView1.DataSource = D.NewDataTable(e.Node.Text);
+            dataGridView1.DataSource = D.NewDataTable(e.Node.Text);
         }
 
         private string selectPath()
