@@ -27,7 +27,7 @@ namespace Proyecto_microSQL
         TreeViewManagement T = new TreeViewManagement();
         Errors system = new Errors();
 
-        string path = @"C:\Users\sebas\Desktop\microSQL\"; //direccion principal de los archivos
+        string path = @"C:\Users\bryan\Desktop\microSQL\"; //direccion principal de los archivos
 
         private void Form1_Load(object sender, EventArgs e)
         {
@@ -454,6 +454,7 @@ namespace Proyecto_microSQL
             if (comando == comandolst[0])
             {
                 U.Select(U.Seleccion);
+                dataGridView1.DataSource = D.ToDataTable(U.listDataTable);
             }
 
             //DELETE
