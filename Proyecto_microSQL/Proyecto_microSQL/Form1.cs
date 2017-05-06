@@ -26,6 +26,7 @@ namespace Proyecto_microSQL
         DataGridViewManagement D = new DataGridViewManagement();
         TreeViewManagement T = new TreeViewManagement();
         Errors system = new Errors();
+        int numeroError = 0;
 
         string path = string.Empty; //direccion principal de los archivos
 
@@ -230,7 +231,7 @@ namespace Proyecto_microSQL
 
         private void Enter_Click_1(object sender, EventArgs e)
         {
-            int numeroError = 0;
+            numeroError = 0;
             bool flag;
             int i = 0;
             string texto = string.Empty;
@@ -352,40 +353,6 @@ namespace Proyecto_microSQL
             #region The Old Code
 
             /*
-           
-                //SELECT 
-                if (Lines[ij].Contains(comandolst[0]))
-                {
-                    int index = U.getSplitIndex(Lines, ij + 1, comandolst[1]);
-                    if (!U.Select(Lines, Lines[index - 1].Trim(), index))
-                    {
-                        string tem = "Por favor revise la sintaxis. Los siguientes campos son inexistentes:";
-                        for (int j = 0; j < U.Missing.Count(); j++)
-                        {
-                            tem = tem + " " + U.Missing[j];
-                        }
-                        MessageBox.Show(tem);
-                        break;
-                    }
-                    richTextBox1.Clear();
-                    dataGridView1.DataSource = D.ToDataTable(U.listDataTable);
-                    fg = true;
-                    break;
-                }
-                //DELETE FROM 
-                if (Lines[ij].Contains(comandolst[2]))
-                {
-                    if (!U.DeleteFrom(Lines))
-                    {
-                        MessageBox.Show("Por favor revise la sintaxis");
-                        break;
-                    }
-                    richTextBox1.Clear();
-                    dataGridView1.DataSource = D.NewDataTable(Lines[i + 1].Trim());
-                    fg = true;
-                    break;
-                }
-
                 //UPDATE
                 if (Lines[ij].Contains("UPDATE"))  //****Sustituir la palabara "UPDATE" por su comando****
                 {
@@ -399,7 +366,6 @@ namespace Proyecto_microSQL
                     fg = true;
                     break;
                 }
-
             }
             */
             #endregion
@@ -411,15 +377,15 @@ namespace Proyecto_microSQL
             //SELECT
             if (comando == comandolst[0])
             {
-                U.Select(U.Seleccion);
+                numeroError = U.Select(U.Seleccion);
                 dataGridView1.DataSource = D.ToDataTable(U.listDataTable);
             }
 
             //DELETE
             if (comando == comandolst[2])
             {
-                U.DeleteFrom(U.DeleteTabla);
-                dataGridView1.DataSource = D.NewDataTable(U.DeleteTabla[0]);
+                numeroError = U.DeleteFrom(U.DeleteTabla);
+                dataGridView1.DataSource = D.ToDataTable(U.listDataTable);
             }
 
             //CREATE TABLE
@@ -442,6 +408,8 @@ namespace Proyecto_microSQL
                 dataGridView1.DataSource = D.NewDataTabletree(U.Insertar1.TableName);
                 //dataGridView1.DataSource = D.NewDataTable(U.Insertar1.TableName);
                 //dataGridView1.DataSource = D.ToDataTable(U.listDataTable);
+                numeroError = U.Insertar(U.Insertar1);
+
             }
         }
 

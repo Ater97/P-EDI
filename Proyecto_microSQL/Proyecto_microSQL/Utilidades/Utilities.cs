@@ -1068,31 +1068,14 @@ namespace Proyecto_microSQL.Utilidades
             return info;
         }
 
-        //public bool insertarArchivoTabla(string tableName, List<string> values)
-        //{
-        //    try
-        //    {
-        //        using (StreamWriter file = new StreamWriter(path + "tablas\\" + tableName + ".tabla", true))
-        //        {
-        //            file.WriteLine(string.Join(",", values));
-        //        }
-        //        return true;
-        //    }
-        //    catch
-        //    {
-        //        return false;
-        //    }
-        //}
-
-        public bool insertarArbol(string tableName, List<string> values, List<string> columns)
+        public bool insertarArchivoTabla(string tableName, List<string> values)
         {
             try
             {
-                Fila nuevaFila = new Fila(values);
-                BTree<int, Fila> tree = new BTree<int, Fila>(tableName, path + "\\arbolesb");
-                tree.Insertar(nuevaFila.Id, nuevaFila);
-                tree.Cerrar();
-
+                using (StreamWriter file = new StreamWriter(path + "tablas\\" + tableName + ".tabla", true))
+                {
+                    file.WriteLine(string.Join(",", values));
+                }
                 return true;
             }
             catch
@@ -1101,22 +1084,49 @@ namespace Proyecto_microSQL.Utilidades
             }
         }
 
-        public void Insertar(InsertInto insercion)
+        public int insertarArbol(string tableName, List<string> values, List<string> columns)
         {
+            try
+            {
+                Fila nuevaFila = new Fila(values);
+                BTree<int, Fila> tree = new BTree<int, Fila>(tableName, path + "\\arbolesb");
+
+                if(tree.Buscar(nuevaFila.Id) == int.MinValue)
+                {
+                    tree.Insertar(nuevaFila.Id, nuevaFila);
+                }
+                else
+                {
+                    return 46;
+                }
+               
+                return 0;
+            }
+            catch
+            {
+                return 44;
+            }
+        }
+
+        public int Insertar(InsertInto insercion)
+        {
+<<<<<<< HEAD
             insertarArbol(insercion.TableName.Trim(), insercion.Values, insercion.Columns);
             //insertarArchivoTabla(insercion.TableName.Trim(), insercion.Values);
             listDataTable = TraerColumnas(insercion.TableName.Trim());
+=======
+            return insertarArbol(insercion.TableName.Trim(), insercion.Values, insercion.Columns);           
+>>>>>>> origin/master
         }
 
         #endregion
 
-        //****Sustituir "WHERE" por su comando****
         #region SELECT
         public List<string> listDataTable = new List<string>();
         public List<string> Missing = new List<string>();
 
         //public bool Select(string[] columns, string tableName, int index)
-        public bool Select(Selection seleccion)
+        public int Select(Selection seleccion)
         {
             try
             {
@@ -1140,6 +1150,13 @@ namespace Proyecto_microSQL.Utilidades
                     string[] filtro = seleccion.Filtro.Split('=');
 
                     dataObtenida = tree.TraerData(int.Parse(filtro[1]));
+
+                    if(dataObtenida == string.Empty)
+                    {
+                        return 45;
+                    }
+
+
                     dataObtenida = dataObtenida.Replace("#", "");
                     temp = dataObtenida.Split('_').ToList();
 
@@ -1182,6 +1199,7 @@ namespace Proyecto_microSQL.Utilidades
                 {
                     //Obtengo los id's del arbol 
                     List<string> IdLst = tree.RecorrerArbol();
+                    IdLst.Sort();
 
                     //Ingresar Cabecera
                     string auxiliar = string.Empty;
@@ -1229,6 +1247,7 @@ namespace Proyecto_microSQL.Utilidades
 
                 listDataTable = showlst;
 
+<<<<<<< HEAD
                 return true;
             }
             catch
@@ -1354,10 +1373,13 @@ namespace Proyecto_microSQL.Utilidades
                 }                      //a la lista para mostar
                 listDataTable = showlst;
                 return true;
+=======
+                return 0;
+>>>>>>> origin/master
             }
             catch
             {
-                return false;
+                return 44;
             }
         }
 
@@ -1382,64 +1404,17 @@ namespace Proyecto_microSQL.Utilidades
             return columnas;
         }
 
-        public Tuple<bool, List<int>> check(bool[] flags, string[] lines)
-        {
-            int index = 0;
-            List<int> missing = new List<int>();
-            bool fg = true;
-            for (int i = 1; i < lines.Count(); i++)
-            {
-                if (!fg)
-                    break;
-                if ("FROM" == lines[i].Trim())
-                {
-                    fg = false;
-                }
-                index++;
-
-            }
-            fg = true;
-            for (int i = 0; i < index - 2; i++)
-            {
-                if (!flags[i])
-                {
-                    missing.Add(i);
-                    fg = false;
-                }
-            }
-
-            return Tuple.Create(fg, missing);
-        }
-
-        public bool Mostattod(string[] columns, string[] rows)
-        {
-            try
-            {
-                for (int i = 0; i < rows.Count(); i++)
-                {
-                    listDataTable.Add(rows[i]);
-                }
-
-                return true;
-            }
-            catch
-            {
-                return false;
-            }
-        }
-
-
         #endregion
 
         //****Sustituir "DELETE FROM" por su comando****
         //****Sustituir "WHERE" por su comando****
         #region DELETE
-        public bool DeleteFrom(string[] Lines)
+        public int DeleteFrom(string[] datos)
         {
             try
             {
-                string tableName = Lines[Array.IndexOf(Lines, "DELETE FROM") + 1]; //obtener nombre de la tabla
                 listDataTable = new List<string>();
+<<<<<<< HEAD
                 string data = File.ReadAllText(path + "tablas\\" + tableName + ".tabla").Replace("\r\n", "$"); //cargar tabla
 
                 //****Arreglar asunto con el arbol primero*****
@@ -1449,58 +1424,31 @@ namespace Proyecto_microSQL.Utilidades
                 // "WHERE"
                 if (Array.Exists(Lines, element => element.StartsWith(palabrasReemplazo[0])) && //Eliminar por llave fkey true
                     Array.Exists(Lines, element => element.StartsWith("ID =")))    //Eliminar todos los datos fkey false
+=======
+                //BTree<int, Fila> tree = new BTree<int, Fila>(seleccion.TableName, path + "\\arbolesb");  // cargar arbol               
+                //List<string> showlst = new List<string>(); //Tabla para mostrar
+                string dataObtenida = string.Empty;
+                
+                if(datos[1] != string.Empty)
+>>>>>>> origin/master
                 {
-                    fkey = true;
+                    return 43;
                 }
-                #region Delete key
-                if (fkey)
-                {
-                    string key = "";
-
-                    for (int k = 0; k < Lines.Count(); k++) //obtener llave a eliminar
-                    {
-                        if (Lines[k].Trim() == "WHERE")
-                        {
-                            key = Lines[k + 1].Replace("ID =", string.Empty);
-                            break;
-                        }
-                    }
-
-                    for (int i = 0; i < Table.Count(); i++) //buscar la llave a eliminar
-                    {
-                        string[] row = Table[i].Split(',');
-                        if (row[0].Trim() == key.Trim()) //eliminarla de la tabla
-                        {
-                            Table = Table.Where(w => w != Table[i]).ToArray();
-                            break;
-                        }
-                    }
-                    //tree.Eliminar(int.Parse(key));
-                }
-                #endregion
-                #region Delete everything
                 else
                 {
-                    string[] headers = new string[1];
-                    headers[0] = Table[0];
-                    Table = headers;
-                }
-                #endregion
-                //sobreescribir el archivo
-                File.WriteAllText(path + "tablas\\" + tableName + ".tabla", "");
-                using (StreamWriter file = new StreamWriter(path + "tablas\\" + tableName + ".tabla", true))
-                {
-                    for (int i = 0; i < Table.Count(); i++)
-                    {
-                        file.WriteLine(Table[i]);
-                    }
-                }
+                    /*  SE ANALIZA SIN WHERE    */
 
-                return true;
+                    //Elimino todo el arbol
+                    File.Delete(path + "arbolesb\\" + datos[0]);
+
+                    //Creo nuevamente el árbol pero inicia vacio
+                    BTree<int, Fila> tree = new BTree<int, Fila>(datos[0], 5, path + "\\arbolesb");
+                    return 0;
+                }
             }
             catch
             {
-                return false;
+                return 44;
             }
         }
 
