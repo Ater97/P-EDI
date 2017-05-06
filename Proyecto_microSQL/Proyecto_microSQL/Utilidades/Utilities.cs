@@ -909,12 +909,13 @@ namespace Proyecto_microSQL.Utilidades
                         return 21;
                     }
 
-                    nuevaInsercion.Values[i] = nuevaInsercion.Values[i].Replace("'", string.Empty);
+                    //nuevaInsercion.Values[i] = nuevaInsercion.Values[i].Replace("'", string.Empty);
 
                     //string[] probar = nuevaInsercion.Values[i].Split('/');
-                   // string[] probar = nuevaInsercion.Values[i].Replace("'", String.Empty).Split('/');
+                    // string[] probar = nuevaInsercion.Values[i].Replace("'", String.Empty).Split('/');
 
-                    string[] probar = nuevaInsercion.Values[i].Replace("'", string.Empty).Split('/');
+                    string temp = nuevaInsercion.Values[i];
+                    string[] probar = temp.Replace("'", string.Empty).Split('/');
 
 
                     if(probar.Length != 3 || nuevaInsercion.Values[i].Length != 12)
@@ -1119,117 +1120,170 @@ namespace Proyecto_microSQL.Utilidades
         {
             try
             {
+                int i = 0;
+                int j = 0;
                 listDataTable = new List<string>();
-                string data = File.ReadAllText(path + "tablas\\" + seleccion.TableName + ".tabla").Replace("\r\n", "$"); //cargar tabla
-                string[] strCol = File.ReadAllText(path + "tablas\\" + seleccion.TableName + ".tabla").Replace("\r\n", "$").Split('$')[0].Split(',');
-                BTree<int, Fila> tree = new BTree<int, Fila>(seleccion.TableName);  // cargar arbol
-
+                //string data = File.ReadAllText(path + "tablas\\" + seleccion.TableName + ".tabla").Replace("\r\n", "$"); //cargar tabla
+                //string[] strCol = File.ReadAllText(path + "tablas\\" + seleccion.TableName + ".tabla").Replace("\r\n", "$").Split('$')[0].Split(',');
+                BTree<int, Fila> tree = new BTree<int, Fila>(seleccion.TableName);  // cargar arbol               
                 List<string> showlst = new List<string>(); //Tabla para mostrar
-             // string[] strCol = Table[0].Split(','); //etiquetas columnas
+                string dataObtenida = string.Empty;
+
+                //string[] strCol = Table[0].Split(','); //etiquetas columnas
                 bool[] flags = new bool[9]; //banderas por columnas
                 int[] orden = new int[9]; //Orden deseado de columnas
-                string temp = "";
+                List<string> temp;
+                List<string> columnas;
 
-                string[] Table = data.Split('$');
-                string[] columns = seleccion.Columns.ToArray<string>(); //sdfsd
+                //string[] Table = data.Split('$');
+                //string[] columns = seleccion.Columns.ToArray<string>(); //sdfsd
 
                 #region special case --> filtro llave primaria y mostar todo "*"
-                bool fkey = false;
-                if(seleccion.Filtro.Contains("ID ="))
+
+
+                if(seleccion.Filtro != string.Empty)
                 {
-                    fkey = true;
-                }
+                    //Caso en el que existe un filtro de ID
+                    string[] filtro = seleccion.Filtro.Split('=');
 
-                if (fkey) //Filtro a la llave primaria
-                {
-                    string[] keyRow = new string[2];
-                    string key = "";
+                    dataObtenida = tree.TraerData(int.Parse(filtro[1]));
+                    dataObtenida = dataObtenida.Replace("#", "");
+                    temp = dataObtenida.Split('_').ToList();
 
-                    for (int k = 0; k < columns.Count(); k++)
-                    {                               // "WHERE"
-                        if (columns[k].Trim() == palabrasReemplazo[3])
-                        {
-                            key = columns[k + 1].Replace("ID =", string.Empty);
-                            break;
-                        }
-                    }
-
-                    for (int k = 0; k < Table.Count(); k++)
+                    //Elimino el espacio en blanco del final
+                    if(temp[temp.Count - 1] == string.Empty)
                     {
-                        string[] row = Table[k].Split(',');
-                        if (row[0].Trim() == key.Trim())
+                        temp.RemoveAt(temp.Count - 1);
+                    }
+                    
+                    columnas = TraerColumnas(seleccion.TableName);
+
+                    //Ingresar Cabecera
+
+                    string auxiliar = string.Empty;
+
+                    for(i = 0; i < seleccion.Columns.Count; i++)
+                    {
+                        auxiliar += seleccion.Columns[i] + ",";
+                    }
+
+                    showlst.Add(auxiliar.TrimEnd(','));
+
+                    //Agregar datos
+                    auxiliar = string.Empty;
+                    for(i = 0; i < columnas.Count; i++)
+                    {
+                        for(j = 0; j < seleccion.Columns.Count; j++)
                         {
-                            keyRow[0] = Table[0];
-                            keyRow[1] = Table[k];
-                            break;
+                            if (columnas[i] == seleccion.Columns[j])
+                            {
+                                auxiliar += temp[i] + ",";
+                                break;
+                            }
                         }
                     }
-                    Table = keyRow;
+
+                    showlst.Add(auxiliar.TrimEnd(','));
                 }
 
 
-                if (columns[1].Trim() == "*") //Mostrar tabla completa
-                {
-                    if (Mostattod(columns, Table))
-                        return true;
-                    return false;
-                }
+                //bool fkey = false;
+                //if(seleccion.Filtro.Contains("ID ="))
+                //{
+                //    fkey = true;
+                //}
+
+                //if (fkey) //Filtro a la llave primaria
+                //{
+                //    string[] keyRow = new string[2];
+                //    string key = "";
+
+                //    for (int k = 0; k < columns.Count(); k++)
+                //    {                               // "WHERE"
+                //        if (columns[k].Trim() == palabrasReemplazo[3])
+                //        {
+                //            key = columns[k + 1].Replace("ID =", string.Empty);
+                //            break;
+                //        }
+                //    }
+
+                //    for (int k = 0; k < Table.Count(); k++)
+                //    {
+                //        string[] row = Table[k].Split(',');
+                //        if (row[0].Trim() == key.Trim())
+                //        {
+                //            keyRow[0] = Table[0];
+                //            keyRow[1] = Table[k];
+                //            break;
+                //        }
+                //    }
+                //    Table = keyRow;
+                //}
+
+
+                //if (columns[1].Trim() == "*") //Mostrar tabla completa
+                //{
+                //    if (Mostattod(columns, Table))
+                //        return true;
+                //    return false;
+                //}
+                
                 #endregion 
 
                 
 
-                #region preparations
-                var Remove = new string[] { "(INT)", "(VARCHAR(100))", "(DATETIME)" };
-                strCol = LimiarArray(strCol, Remove);
-                for (int i = 1; i < strCol.Count(); i++)
-                {
-                    for (int j = 0; j < strCol.Count(); j++)
-                    {
-                        if (columns[i].Trim() == strCol[j].Trim())
-                        {
-                            flags[i - 1] = true;
-                            temp = temp + columns[i] + ",";
-                            orden[j] = i;
-                            break;
-                        }
-                    }
-                }
+                //#region preparations
+                //var Remove = new string[] { "(INT)", "(VARCHAR(100))", "(DATETIME)" };
+                //strCol = LimiarArray(strCol, Remove);
+                //for (int i = 1; i < strCol.Count(); i++)
+                //{
+                //    for (int j = 0; j < strCol.Count(); j++)
+                //    {
+                //        if (columns[i].Trim() == strCol[j].Trim())
+                //        {
+                //            flags[i - 1] = true;
+                //            temp = temp + columns[i] + ",";
+                //            orden[j] = i;
+                //            break;
+                //        }
+                //    }
+                //}
 
-                temp = temp.TrimEnd(',');
-                showlst.Add(temp);
-                List<int> missing = new List<int>();
-                Missing = new List<string>();
+                //temp = temp.TrimEnd(',');
+                //showlst.Add(temp);
+                //List<int> missing = new List<int>();
+                //Missing = new List<string>();
 
-                if (!check(flags, columns).Item1)  //verificar la existencia de las columnas solicitadas
-                {
-                    missing = check(flags, columns).Item2;
-                    for (int i = 0; i < missing.Count(); i++)
-                    {
-                        Missing.Add(columns[missing[i] + 1]);
-                    }
-                    return false;
-                }
-                int tablelenght = Table.Count() - 1;
-                if (fkey)
-                {
-                    tablelenght = Table.Count();
-                }
-                #endregion
+                //if (!check(flags, columns).Item1)  //verificar la existencia de las columnas solicitadas
+                //{
+                //    missing = check(flags, columns).Item2;
+                //    for (int i = 0; i < missing.Count(); i++)
+                //    {
+                //        Missing.Add(columns[missing[i] + 1]);
+                //    }
+                //    return false;
+                //}
+                //int tablelenght = Table.Count() - 1;
+                //if (fkey)
+                //{
+                //    tablelenght = Table.Count();
+                //}
+                //#endregion
 
-                for (int i = 1; i < tablelenght; i++) //almacenar en temp los datos en orden
-                {
-                    temp = "";
-                    string[] row = Table[i].Split(',');
+                //for (int i = 1; i < tablelenght; i++) //almacenar en temp los datos en orden
+                //{
+                //    temp = "";
+                //    string[] row = Table[i].Split(',');
 
-                    for (int j = 0; j < orden.Count(); j++)
-                    {
-                        int ix = orden[j] - 1; //provee el orden de inserción
-                        if (ix >= 0)
-                            temp = temp + row[ix] + ",";
-                    }
-                    temp = temp.TrimEnd(',');
-                    showlst.Add(temp); //agrega el string nuevo con los parametros deseados y en orden 
-                }                      //a la lista para mostar
+                //    for (int j = 0; j < orden.Count(); j++)
+                //    {
+                //        int ix = orden[j] - 1; //provee el orden de inserción
+                //        if (ix >= 0)
+                //            temp = temp + row[ix] + ",";
+                //    }
+                //    temp = temp.TrimEnd(',');
+                //    showlst.Add(temp); //agrega el string nuevo con los parametros deseados y en orden 
+                //}                      //a la lista para mostar
                 listDataTable = showlst;
                 return true;
             }
@@ -1362,6 +1416,28 @@ namespace Proyecto_microSQL.Utilidades
                 return false;
             }
         }
+
+        private List<string> TraerColumnas(string nombreTabla)
+        {
+            StreamReader file = new StreamReader(path + "tablas\\" + nombreTabla + ".tabla");
+            List<string> columnas = new List<string>();
+
+            string linea = file.ReadLine();
+            string[] elementos = linea.Split(',');
+            string[] datos;
+
+            columnas.Add(elementos[0]);
+
+            for (int i = 1; i < elementos.Length; i++)
+            {
+                datos = elementos[i].Split(' ');
+                columnas.Add(datos[0]);
+            }
+            file.Close();
+
+            return columnas;
+        }
+
         public Tuple<bool, List<int>> check(bool[] flags, string[] lines)
         {
             int index = 0;
@@ -1390,6 +1466,7 @@ namespace Proyecto_microSQL.Utilidades
 
             return Tuple.Create(fg, missing);
         }
+
         public bool Mostattod(string[] columns, string[] rows)
         {
             try
