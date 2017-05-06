@@ -1068,21 +1068,21 @@ namespace Proyecto_microSQL.Utilidades
             return info;
         }
 
-        public bool insertarArchivoTabla(string tableName, List<string> values)
-        {
-            try
-            {
-                using (StreamWriter file = new StreamWriter(path + "tablas\\" + tableName + ".tabla", true))
-                {
-                    file.WriteLine(string.Join(",", values));
-                }
-                return true;
-            }
-            catch
-            {
-                return false;
-            }
-        }
+        //public bool insertarArchivoTabla(string tableName, List<string> values)
+        //{
+        //    try
+        //    {
+        //        using (StreamWriter file = new StreamWriter(path + "tablas\\" + tableName + ".tabla", true))
+        //        {
+        //            file.WriteLine(string.Join(",", values));
+        //        }
+        //        return true;
+        //    }
+        //    catch
+        //    {
+        //        return false;
+        //    }
+        //}
 
         public bool insertarArbol(string tableName, List<string> values, List<string> columns)
         {

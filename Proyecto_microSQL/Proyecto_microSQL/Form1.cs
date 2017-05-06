@@ -548,18 +548,15 @@ namespace Proyecto_microSQL
 
         private string selectPath()
         {
-            string pt = Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + "\\microSQL\\";
             try
             {
                 FolderBrowserDialog folderFileDialog1 = new FolderBrowserDialog();
                 folderFileDialog1.ShowNewFolderButton = false;
                 if (folderFileDialog1.ShowDialog() == DialogResult.OK)
                 {
-
                     return folderFileDialog1.SelectedPath + "\\microSQL\\";
                 }
-
-                return pt;
+                return Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + "\\microSQL\\";
             }
             catch
             {
